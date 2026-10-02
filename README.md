@@ -15,3 +15,7 @@ School and exams, NPC relationships and memories, weather and gear, health, fami
 The v4 rebuild fixes the v3 Begin Life runtime crash. `game.js` is syntax-checked before packaging. A `?smoke=1` query hook is included for automated browser startup checks.
 
 See `CHANGELOG.md` for the detailed update history.
+
+## v5 developmental simulation
+Early-life actions are dependency-aware. Babies and toddlers receive caregiver-led actions; autonomy is learned through developmental skills. Kindergarten, playdates, household permission and childhood events are contextual rather than automatic.
+See `CHANGELOG.md` for the full update log.
