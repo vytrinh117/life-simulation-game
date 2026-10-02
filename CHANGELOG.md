@@ -1,5 +1,21 @@
 # Life Simulator Update Log
 
+## v7.1 — Developmental Activities, Household Permissions & UI Cleanup
+- Reworked Daily Life personal activities by developmental stage.
+- Infants now get sensory play, caregiver story time, radio music and babbling/interaction instead of independent reading/journaling/screens.
+- Toddlers get toys, picture books with caregiver, simple art, radio and optional caregiver-approved TV; no independent journal/computer/phone actions.
+- Independent reading starts around young-child age; journaling starts later as picture journal before full journaling.
+- Added radio music as a no-screen alternative and radio news only when communication/age is sufficient.
+- Added one centralized per-day caregiver permission system for TV, shared electronics/tablets/computers/game consoles, phone use and stove/cooking appliances while under 18.
+- Electronic inventory items now enforce the same permission rule when used.
+- Phone messaging/calls/apps/social posting now enforce household permission in addition to ownership + phone-age rules.
+- Stove/cooking now enforces caregiver permission for minors.
+- Removed the duplicate Recent life log from World & Journal; the chronological Life log now appears only once.
+- Reduced the visible Life log to the latest 40 entries while preserving older history in save data.
+- Fixed desktop sidebar overlap: the entire left column is sticky as one unit instead of the nav floating over Identity while scrolling.
+- Mobile sidebar remains non-sticky and horizontally scrollable.
+
+
 ## v7 — Full Core Simulation & UI/UX Overhaul
 
 ### Architecture / stabilization

@@ -39,3 +39,7 @@ All runtime asset paths are relative, so project-site URLs such as `https://user
 - `AGE_ACTION_RULES.md` — life-stage eligibility design
 - `MIGRATION_NOTES.md` — legacy save handling
 - `QC_REPORT.md` — tests and known limitations
+
+
+## v7.1 focused fixes
+Daily Life now uses developmental activity sets for infants/toddlers/children, minors require caregiver permission for household electronics and stove use, radio provides a non-screen music/news option, the duplicate World-panel log was removed, and the desktop sidebar now scrolls/sticks as one unit without overlapping Identity.
