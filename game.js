@@ -132,7 +132,121 @@ function careerPanel(){return `<div class="dashboard"><div class="card"><h3>Care
 function worldPanel(){return `<div class="dashboard"><div class="card"><h3>Travel</h3><div class="row"><span>Trips taken</span><b>${S.travel.trips}</b></div><p class="muted-text">Trips cost money and time, and can create chance encounters.</p><button class="action" data-act="tripPlan"><strong>Plan a short trip</strong><small>Transport + time + unpredictable encounters.</small></button></div><div class="card"><h3>Online presence</h3><div class="row"><span>Followers</span><b>${S.social.followers}</b></div><div class="row"><span>Posts</span><b>${S.social.posts}</b></div><div class="row"><span>Reputation</span><b>${S.social.reputation}</b></div><button class="action" data-act="social"><strong>Post / interact</strong><small>Attention can grow slowly or suddenly.</small></button></div></div>`}
 
 function renderPanel(){let html=active==='school'?schoolPanel():active==='people'?peoplePanel():active==='phone'?phonePanel():active==='places'?placesPanel():active==='weather'?weatherPanel():active==='business'?businessPanel():active==='needs'?needsPanel():active==='development'?developmentPanel():active==='family'?familyPanel():active==='health'?healthPanel():active==='career'?careerPanel():active==='world'?worldPanel():homePanel();$('panel-host').innerHTML=html;today()}
-function renderNeedsHud(){S.wants=wants();const icons={hunger:'🍽️',hygiene:'🧼',toilet:'🚽',fun:'🎈',social:'👥',comfort:'🏠',sleep:'💤'};$('need-stage').textContent=lifeStage();$('needs-hud').innerHTML=Object.entries(S.needs).map(([k,v])=>{const u=needUrgency(k,v);return `<div class="need-mini ${u>=75?'urgent':''}"><span>${icons[k]||'•'} ${esc(k[0].toUpperCase()+k.slice(1))}</span><b>${needLabel(k,v)}</b><i><em style="width:${clamp(u)}%"></em></i></div>`}).join('');$('wants-hud').innerHTML=S.wants.length?S.wants.map(w=>`<span class="want-pill">${esc(w)}</span>`).join(''):'<span class="muted-text">Content for now</span>'}
+
+function needActionFor(key){
+  const d=S.development||{};
+  if(key==='hunger'){
+    if(S.age<2) return {id:'needEat',label:'Ask / signal to be fed',note:'A caregiver handles feeding at this age.'};
+    if(S.age<5 && (d.selfFeeding||0)<60) return {id:'needEat',label:'Practice eating with help',note:'A caregiver assists while you learn.'};
+    if(S.age<10) return {id:'needEat',label:'Eat something',note:'Choose an available child-safe meal or snack.'};
+    if(S.age<15) return {id:'needEat',label:'Make / get food',note:'Simple food may still depend on household rules.'};
+    return {id:'needEat',label:'Eat / prepare food',note:'Prepare, buy, or eat available food.'};
+  }
+  if(key==='toilet'){
+    if(S.age<2) return {id:'needToilet',label:'Signal caregiver',note:'You still rely on diaper/toileting care.'};
+    if((d.potty||0)<70) return {id:'needToilet',label:'Potty practice',note:'Try with caregiver help.'};
+    return {id:'needToilet',label:'Use bathroom',note:'Relieve yourself independently.'};
+  }
+  if(key==='hygiene'){
+    if(S.age<4) return {id:'needHygiene',label:'Ask caregiver for bath',note:'Bathing requires close supervision.'};
+    if(S.age<8 && (d.bathing||0)<70) return {id:'needHygiene',label:'Bath / shower with help',note:'Practice washing with caregiver support.'};
+    return {id:'needHygiene',label:'Shower / wash up',note:'Take care of your hygiene.'};
+  }
+  if(key==='sleep'){
+    if(S.age<4) return {id:'needSleep',label:'Ask for bedtime / nap',note:'A caregiver settles you down.'};
+    return {id:'needSleep',label:'Sleep',note:'Rest and recover energy.'};
+  }
+  if(key==='fun'){
+    return {id:'needFun',label:S.age<6?'Play':'Do something fun',note:'Choose something enjoyable for your age.'};
+  }
+  if(key==='social'){
+    return {id:'needSocial',label:S.age<6?'Seek caregiver / playmate':'Spend time with someone',note:'Meet a social need through a real relationship.'};
+  }
+  if(key==='comfort'){
+    return {id:'needComfort',label:S.age<6?'Seek comfort':'Get comfortable',note:'Warm up, cool down, rest, or use suitable gear.'};
+  }
+  return null;
+}
+
+function resolveNeedAction(id){
+  const d=S.development||{};
+  if(id==='needEat'){
+    if(S.age<2){
+      S.needs.hunger=clamp(S.needs.hunger-55);S.happiness=clamp(S.happiness+4);
+      log('🍽️ Feeding',`${primaryCaregiver()} notices your cues and feeds you.`);
+    }else if(S.age<5 && (d.selfFeeding||0)<60){
+      d.selfFeeding=clamp((d.selfFeeding||0)+8);S.needs.hunger=clamp(S.needs.hunger-45);S.happiness=clamp(S.happiness+3);
+      log('🥄 Self-feeding practice',`${primaryCaregiver()} helps while you practice eating by yourself.`);
+    }else{
+      S.needs.hunger=clamp(S.needs.hunger-50);S.energy=clamp(S.energy+6);
+      log('🍽️ Ate',S.age<10?'You eat a meal or snack available at home.':'You get something to eat and feel less hungry.');
+    }
+    advance(1);return true;
+  }
+  if(id==='needToilet'){
+    if(S.age<2){
+      S.needs.toilet=clamp(S.needs.toilet-70);S.needs.hygiene=clamp(S.needs.hygiene+8);
+      log('🧷 Caregiver help',`${primaryCaregiver()} takes care of your toileting needs.`);
+    }else if((d.potty||0)<70){
+      d.potty=clamp((d.potty||0)+10);S.needs.toilet=clamp(S.needs.toilet-65);S.happiness=clamp(S.happiness+2);
+      log('🚽 Potty practice',`${primaryCaregiver()} helps you practice using the potty.`);
+    }else{
+      S.needs.toilet=clamp(S.needs.toilet-80);
+      log('🚻 Bathroom','You use the bathroom and feel relieved.');
+    }
+    advance(1);return true;
+  }
+  if(id==='needHygiene'){
+    if(S.age<4){
+      S.needs.hygiene=clamp(S.needs.hygiene+65);S.happiness=clamp(S.happiness+2);
+      log('🛁 Bath time',`${primaryCaregiver()} gives you a bath.`);
+    }else if(S.age<8 && (d.bathing||0)<70){
+      d.bathing=clamp((d.bathing||0)+9);S.needs.hygiene=clamp(S.needs.hygiene+60);
+      log('🚿 Washing practice',`${primaryCaregiver()} supervises while you learn to wash yourself.`);
+    }else{
+      S.needs.hygiene=clamp(S.needs.hygiene+70);
+      log('🚿 Shower','You shower and clean up.');
+    }
+    advance(1);return true;
+  }
+  if(id==='needSleep'){
+    S.needs.sleep=clamp(S.needs.sleep+80);S.energy=clamp(S.energy+55);S.stress=clamp(S.stress-10);
+    log(S.age<4?'😴 Nap / bedtime':'😴 Sleep',S.age<4?`${primaryCaregiver()} settles you down to sleep.`:'You get some proper rest.');
+    advance(S.age<4?1:2);return true;
+  }
+  if(id==='needFun'){
+    S.needs.fun=clamp(S.needs.fun+55);S.happiness=clamp(S.happiness+8);
+    log('🎈 Fun',S.age<6?'You spend time playing.':'You make time for something you enjoy.');
+    advance(1);return true;
+  }
+  if(id==='needSocial'){
+    S.needs.social=clamp(S.needs.social+50);S.happiness=clamp(S.happiness+5);
+    log('👥 Connection',S.age<6?`You get attention and interaction from ${primaryCaregiver()} or a playmate.`:'You spend meaningful time with someone.');
+    advance(1);return true;
+  }
+  if(id==='needComfort'){
+    S.needs.comfort=clamp(S.needs.comfort+50);S.stress=clamp(S.stress-5);
+    log('🏠 Comfort',weatherAdvice());
+    advance(1);return true;
+  }
+  return false;
+}
+
+function renderNeedsHud(){
+ S.wants=wants();
+ const icons={hunger:'🍽️',hygiene:'🧼',toilet:'🚽',fun:'🎈',social:'👥',comfort:'🏠',sleep:'💤'};
+ $('need-stage').textContent=lifeStage();
+ $('needs-hud').innerHTML=Object.entries(S.needs).map(([k,v])=>{
+   const u=needUrgency(k,v),a=needActionFor(k);
+   return `<button type="button" class="need-mini need-button ${u>=75?'urgent':''}" data-need-act="${a?a.id:''}" aria-label="${esc(k)}: ${needLabel(k,v)}. ${a?esc(a.label):''}">
+     <span>${icons[k]||'•'} ${esc(k[0].toUpperCase()+k.slice(1))}</span>
+     <b>${needLabel(k,v)}</b>
+     <i><em style="width:${clamp(u)}%"></em></i>
+     ${a?`<small>${esc(a.label)}</small>`:''}
+   </button>`;
+ }).join('');
+ $('wants-hud').innerHTML=S.wants.length?S.wants.map(w=>`<span class="want-pill">${esc(w)}</span>`).join(''):'<span class="muted-text">Content for now</span>';
+}
 function render(){if(!S)return;$('life-name').textContent=S.name;$('life-subtitle').textContent=`Age ${S.age} • Day ${S.day} • ${S.place}`;$('s-age').textContent=S.age;$('s-money').textContent=money(S.money);$('s-health').textContent=Math.round(S.health);$('s-happy').textContent=Math.round(S.happiness);$('s-energy').textContent=Math.round(S.energy);$('s-stress').textContent=Math.round(S.stress);$('s-luck').textContent=Math.round(S.luck)+'%';$('s-mentality').textContent=S.mentality;$('i-place').textContent=S.place;$('i-dob').textContent=S.dob;$('i-zodiac').textContent=S.zodiac;$('i-family').textContent=S.wealth;$('event-meta').textContent=`DAY ${S.day} • AGE ${S.age} • ${S.weather.type.toUpperCase()}`;$('event-title').textContent=S.current.title;$('event-text').textContent=S.current.text;$('event-actions').innerHTML=S.age>=6?`<button data-act="friend">See someone</button>${S.school?'<button data-act="school">Go to school</button>':''}${canUseOwnPhone()?'<button data-act="message">Check phone</button>':''}`:'';$('people').innerHTML=S.people.slice(0,6).map(p=>`<div class="person"><b>${esc(p.name)}</b><small>${esc(p.mood)} • relationship ${p.rel}</small></div>`).join('');const nav=lifeNav();if(!nav.some(x=>x[0]===active))active='home';$('tabs').innerHTML=nav.map(x=>`<button class="side-link ${active===x[0]?'active':''}" data-tab="${x[0]}"><span>${x[1]}</span><b>${x[2]}</b></button>`).join('');renderNeedsHud();renderPanel();$('log').innerHTML=S.log.map(e=>`<div class="log-entry"><div class="log-date">DAY ${e.day} • AGE ${e.age}</div><b>${esc(e.title)}</b><p>${esc(e.text)}</p></div>`).join('')}
 function ageUp(){if(!S)return;const days=365;advance(days);S.age++;resolveGiftRequests('Birthday');S.people=makePeople(S.age);schedule(S.age);ensureEvents();developmentalEvents();S.energy=100;S.stress=clamp(S.stress-5);setWeather();log('🎂 Birthday',`You turned ${S.age}. Your household may celebrate with cake, relatives, friends or a quieter family tradition depending on relationships and circumstances.`);if(S.age<=12&&Math.random()<.75)S.familyEvents.unshift({day:S.day,text:`A birthday celebration is being planned for your ${S.age}${S.age===1?'st':S.age===2?'nd':S.age===3?'rd':'th'} birthday.`});S.current={title:`Age ${S.age}`,text:'A full year passed. Not everything important happened on a button you pressed.'};render();save();toast(`Age ${S.age}!`)}
 $('tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(!b)return;active=b.dataset.tab;render()};
@@ -141,4 +255,12 @@ $('event-actions').onclick=e=>{const b=e.target.closest('[data-act]');if(b)act(b
 $('begin').onclick=()=>{try{S=makeState();enterGame()}catch(err){console.error(err);const box=$('creator-error');box.hidden=false;box.textContent='Could not start life: '+(err?.message||err);}};$('save').onclick=save;$('export').onclick=exportSave;$('load-last').onclick=()=>{const x=localStorage.getItem(KEY);if(!x){toast('No autosave found');return}try{S=JSON.parse(x);migrate();enterGame()}catch{toast('Autosave is invalid')}};$('import-btn').onclick=importFile;$('menu-import').onclick=importFile;$('menu-save').onclick=save;$('menu-export').onclick=exportSave;$('clear-log').onclick=()=>{if(S){S.log=[];render();save()}};$('menu-new').onclick=()=>{S=null;localStorage.removeItem(KEY);$('overlay').classList.add('hidden');$('game').classList.add('hidden');$('creator').classList.remove('hidden')};$('pause').onclick=()=>$('overlay').classList.remove('hidden');$('close-menu').onclick=()=>$('overlay').classList.add('hidden');document.addEventListener('keydown',e=>{if(e.key==='Escape')$('overlay').classList.toggle('hidden')});
 function enterGame(){migrate();schedule(S.age);ensureEvents();if(!S.log.length)log('Life begins',S.current.text);$('creator').classList.add('hidden');$('game').classList.remove('hidden');render();save()}
 setInterval(()=>{if(S)save()},30000);if(new URLSearchParams(location.search).get('smoke')==='1'){setTimeout(()=>{try{$('begin').click();document.body.dataset.smoke=(!$('game').classList.contains('hidden')&&S)?'pass':'fail'}catch(e){document.body.dataset.smoke='fail';document.body.dataset.smokeError=e.message}},0)}
+document.addEventListener('click',e=>{
+ const btn=e.target.closest('[data-need-act]');
+ if(!btn||!S)return;
+ const id=btn.dataset.needAct;
+ if(!id)return;
+ if(resolveNeedAction(id)){save();render();}
+});
 })();
+

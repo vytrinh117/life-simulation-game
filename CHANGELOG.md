@@ -1,5 +1,17 @@
 # Update Log
 
+## v6.1 — Needs Interaction Hotfix
+- Fixed a v6 regression where Hunger, Toilet, Hygiene and Sleep were visible but not actionable.
+- Need cards in the main HUD are now clickable/tappable; no extra Needs tab was reintroduced.
+- Hunger now resolves by life stage: caregiver feeding → assisted self-feeding → eating independently.
+- Toilet now resolves by life stage: caregiver toileting → potty practice → independent bathroom use.
+- Hygiene now resolves by life stage: caregiver bath → supervised washing → independent shower.
+- Sleep now resolves as caregiver-settled naps/bedtime for very young children and independent sleep later.
+- Fun, Social and Comfort needs are also actionable from the HUD.
+- Developmental skill progress is updated during self-feeding, potty and bathing practice.
+- Need actions advance time and write to Life History.
+
+
 ## v6 — Contextual UI, Phone Milestone & Deferred Gifts
 - Replaced long horizontal tabs with age-responsive side navigation.
 - Needs & Wants now live beside Age/current context.
