@@ -1,0 +1,61 @@
+from harness import *
+import random
+INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,now=today+'T'+String(S.clock.minute).padStart(4,'0');
+ const term=['Completed','Attended','Missed','Excused','Cancelled','Expired','Resolved','Superseded','No-show','Withdrew'];
+ const exOpen=e=>['Scheduled','Due','In progress'].includes(e.status);
+ for(const c of S.calendar){if(c.type==='exam'){const e=S.exams.find(x=>x.id===c.payload.examId);if(e&&!exOpen(e)&&!term.includes(c.status))bad.push('exam terminal but calendar '+c.status);if(e&&exOpen(e)&&term.includes(c.status))bad.push('exam open but calendar '+c.status)}
+   if(!term.includes(c.status)&&c.dateISO<today)bad.push('past calendar still '+c.status+' '+c.type+' '+c.dateISO);
+   if(c.status==='Attending')bad.push('dangling Attending '+c.type)}
+ for(const e of S.exams){if(e.status==='In progress')bad.push('exam stuck in progress');if(exOpen(e)&&e.dateISO<today)bad.push('open exam in the past')}
+ if(S.age>=6&&S.pendingDecisions.some(p=>p.type==='kindergarten'&&!p.resolved))bad.push('active kindergarten at '+S.age);
+ for(const e of S.events)if(e.status==='Open'&&e.expiresAt&&(e.expiresAt.dateISO+'T'+String(e.expiresAt.minute).padStart(4,'0'))<now)bad.push('open event past expiry '+e.type);
+ for(const n of S.notifications)if(n.sourceType==='exam'&&['Unread','Read'].includes(n.status)){const e=S.exams.find(x=>x.id===n.sourceId);if(!e||!exOpen(e))bad.push('active note for resolved exam')}
+ if(S.school&&S.school.subjects)for(const s of S.school.subjects){const h=s.homework;if(h&&h.status==='Late'){const d=(Date.parse(today)-Date.parse(h.dueDate))/864e5;if(d>4)bad.push('homework late forever')}}
+ const c=S.current;if(c.sourceType==='exam'){const e=S.exams.find(x=>x.id===c.sourceId);if(!e||!exOpen(e))bad.push('hero points at resolved exam')}
+ if(c.sourceType==='event'){const e=S.events.find(x=>x.id===c.sourceId);if(!e||e.status!=='Open')bad.push('hero points at closed event')}
+ if(S.school&&S.school.clubs)for(const cl of S.school.clubs){const live=S.calendar.filter(e=>e.type==='clubSession'&&e.payload.clubId===cl.id&&!term.includes(e.status));if(cl.status==='Active'&&live.length>1)bad.push('duplicate live club sessions');if(cl.status!=='Active'&&live.length)bad.push('session for inactive club')}
+ return bad}"""
+SKIP=['menu-new','pause','export','menu-export','import-btn','menu-import','clear-log','close-menu']
+async def main():
+  random.seed(7); total_bad=[]; steps=0
+  async with async_playwright() as p:
+    b=await p.chromium.launch(executable_path=CHROME)
+    for run,age in enumerate([3,6,8,11,14,17]):
+        pg=await new_page(b,1366,768); pg.on('dialog',lambda d:asyncio.ensure_future(d.dismiss()))
+        await new_life(pg,dob=f'200{run}-0{run+2}-1{run}'); await T(pg,f"setAge({age})")
+        for i in range(140):
+            steps+=1
+            r=random.random()
+            modal=await pg.is_visible('#choice-overlay')
+            if modal:
+                mb=[x for x in await pg.query_selector_all('#choice-content button') if await x.is_visible()]
+                tgt=random.choice(mb) if mb and random.random()<0.85 else await pg.query_selector('#close-choice')
+                try: await tgt.click(timeout=1500)
+                except Exception: pass
+                continue
+            if r<0.06:
+                try: await pg.click('#next-day',timeout=1500)
+                except Exception: pass
+            elif r<0.08: await T(pg,"advanceMinutes(%d)"%random.choice([45,180,600]))
+            elif r<0.085 and age<16: await T(pg,"ageUp()")
+            elif r<0.10:
+                await pg.reload(); await pg.click('#load-last')
+            else:
+                if random.random()<0.25:
+                    tabs=await pg.query_selector_all('#tabs [data-tab]')
+                    try: await random.choice(tabs).click(timeout=1500)
+                    except Exception: pass
+                btns=[x for x in await pg.query_selector_all('#event-actions button, #panel-host button') if await x.is_visible() and await x.is_enabled()]
+                if btns:
+                    bt=random.choice(btns)
+                    try: await bt.click(timeout=1500)
+                    except Exception: pass
+            if i%10==9:
+                bad=await pg.evaluate(INV)
+                if bad: total_bad.append((age,i,bad[:3])); print('  invariant @age',age,'step',i,bad[:3])
+        s=await st(pg)
+        check(f'fuzz start-age {age}: no JS errors ({s["age"]} now)', not pg.errs, pg.errs[:3])
+        await pg.close()
+    check(f'fuzz: invariants held over {steps} random player steps', not total_bad, total_bad[:5])
+    await b.close()
+asyncio.run(main())
