@@ -10,3 +10,7 @@
 .need-button:hover,.need-button:focus-visible{background:#171b22;border-color:var(--line);outline:none}
 .need-button small{grid-column:1/-1;color:var(--muted);font-size:9px;margin-top:2px}
 .need-button.urgent{background:rgba(255,110,120,.05);border-color:rgba(255,110,120,.18)}
+
+/* v6.2 age-permission QC */
+.age-rule-note{border-left:3px solid var(--mint);padding-left:10px;color:var(--muted)}
+.action[disabled]{opacity:.5;cursor:not-allowed}

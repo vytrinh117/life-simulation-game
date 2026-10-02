@@ -19,3 +19,7 @@ See `CHANGELOG.md` for the detailed update history.
 ## v5 developmental simulation
 Early-life actions are dependency-aware. Babies and toddlers receive caregiver-led actions; autonomy is learned through developmental skills. Kindergarten, playdates, household permission and childhood events are contextual rather than automatic.
 See `CHANGELOG.md` for the full update log.
+
+
+## v6.2 age-permission rule
+Actions now change by life stage. Children see caregiver-led or permission-based versions of travel, outings, selling and social interaction instead of adult actions that merely fail after clicking. See `AGE_ACTION_RULES.md` and `QC_REPORT.md`.
