@@ -1,3 +1,19 @@
+# Update Log
+
+## v6 — Contextual UI, Phone Milestone & Deferred Gifts
+- Replaced long horizontal tabs with age-responsive side navigation.
+- Needs & Wants now live beside Age/current context.
+- Weather is contextual rather than a permanent top-level tab.
+- Toddler UI hides adult systems.
+- Phone appears at high school (age 15 in current school model) and requires ownership.
+- First phone costs $600; cash + savings can be combined.
+- Birthday/Christmas requests remain pending until the actual occasion.
+- Repeated begging is remembered and can affect family tension/outcomes.
+- Birthday requests resolve on birthdays; Christmas requests on Christmas.
+- Added Christmas presents and private-feeling vs outward-reaction choices.
+- Added Lunar New Year lucky money for relevant/generated traditions.
+- Existing developmental, school, family, weather, business, NPC, health, career and travel systems retained.
+
 # Life Sim — Update Log
 
 ## v5 — Developmental Life Stages
