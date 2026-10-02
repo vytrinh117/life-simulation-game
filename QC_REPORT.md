@@ -1,21 +1,22 @@
-# QC Report — Life Simulator v7.2 (phase 1)
+# QC Report — Life Simulator v7.2 (phases 1–2)
 
 ## Method
 The v7.1 report marked features PASS when buttons were wired. Real play still exposed lifecycle bugs, so this QC was redone **from the player's perspective**. Every check drives the real game in headless Chromium (`index.html` + `game.js`) and follows the full lifecycle: **create → display → interact → resolve → leave the active UI → persist after reload → never reappear**.
 
 The two confirmed bugs were reproduced with the **original v7.1 code**, and those exact saves are used as fixtures (`qa/fixture_*_v71.json`).
 
-**Result: 156 checks passed, 0 failed, 0 JavaScript errors** on the final build.
+**Result: 204 deterministic checks passed, 0 failed, plus the fuzz run (6 per-age checks; all invariants held over 840 random steps), with 0 JavaScript errors** on the final build. All phase 1 suites were re-run after phase 2.
 
 | Suite | Checks | Covers |
 |---|---|---|
 | `t_regress.py` | 16 | §50 kindergarten regression, v7.1 exam/calendar mismatch repair |
-| `t_exam.py` | 29 | §51 take exam, §52 missed exam, make-up grant/deny branches |
+| `t_exam.py` | 34 | §51 take exam, §52 missed exam, make-up grant/deny branches |
 | `t_day.py` | 29 | §121 Next Day, sleep/nap, school-day windows, homework lifecycle, kindergarten auto-decision, invitation expiry |
 | `t_commit.py` | 24 | Club attendance/warnings/removal, contest attendance/no-show, absence → caregiver chain, Age Up year simulation |
 | `t_balance.py` | 1 | Six consecutive Age Ups: grades/attendance stay plausible |
 | `t_ui.py` | 50 | Education screen at 7 viewports, hero content, modals |
-| `t_fuzz.py` | 7 | 840 random player clicks (ages 3–17) with reloads, Next Day and Age Up; cross-system invariants checked every 10 steps |
+| `t_items.py` | 50 | §53 item tests, phone sync, slots, multiple ownership, books/rereading, diminishing returns, perishables, gifts, store, card fields, v7.1 item migration |
+| `t_fuzz.py` | 7 | 840 random player clicks (ages 3–17, run per age pair) with reloads, Next Day, Age Up and heavy Money & Items use; cross-system + inventory invariants every 10 steps |
 
 ## Scenarios (selected)
 **§50 Kindergarten.** v7.1 save: age 6, Grade 1, "Waiting for your preference". After load: Grade 1 intact; record `Superseded` / "Primary school age reached"; absent from Home and Calendar pending lists; journal entry kept; still resolved after reload; no errors. Normal flow: a 3-year-old who never answers → "Family discussing" after 14 days → family decides 2 days later.
@@ -44,6 +45,10 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 
 **Deployment.** `?smoke=1` passes; all paths relative; `.nojekyll` and the Pages workflow unchanged; localStorage save/reload verified in tests.
 
+**Phase 2 items (§53 and related).** Buying 3 snack packs gives one stack ×3. Eating 25% leaves 2 unopened + 1 opened at 75%; half of what remains → 37.5%; "all" eats only the 37.5% (≈11 hunger, not a full serving); only the opened unit disappears. A toy survives 120 plays, loses under 15 points in the first 10, and eventually goes Good → Worn. Art supplies decrease per session, raise art skill and fun, and are removed at 0%. The water bottle drops 600 → 500 ml, stays when empty, an empty bottle gives no water, and Refill restores 600. Phone: after 25 uses inventory and Phone page match (97/97), and still match after repair (95/95); battery drains and charges. A second phone triggers the switch/keep/sell/give choice. Two books and two bikes can be owned. Sweater + raincoat + sunglasses + backpack can be worn together; a hoodie replaces only the sweater. Reading gains over six sessions in one day: 2.5 → 1.84 → 1.21 → 0.72 → 0.18 → 0.08. A book finishes after 4 sessions and rereading yields ~half. A sandwich goes stale, then is thrown out. Giving one greeting card from a stack of 2 raises trust. Store: category filter and a quantity purchase of 3 juice boxes. Cards: snack shows "2 unopened" (no condition), phone shows condition + battery, bottle shows ml. No overflow at 1440 and 390 px. The v7.1 item save (generated with the original code) migrates to: snacks ×3 stack, makeup 84% remaining, phone 83% = 83% (was 83 vs 100), one top equipped, all items with lifecycle metadata. Unused items age over years.
+
+**Fuzz inventory invariants (never violated).** Phone item condition = phone page; at most one item per slot; quantities ≥ 1; no used-up supplies lingering; container contents within capacity; every item has a lifecycle.
+
 ## Bugs found during this QC and fixed
 - Age Up marked every school day absent (end-of-day processing took the "missed" path instead of simulation).
 - "Attend school" at 11 PM left the day "Scheduled" until time passed.
@@ -52,7 +57,8 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 ## Known limitations
 - Nothing in the game currently makes the character ill, so "excused for illness" only occurs in Age Up simulation and on approved family trips.
 - School breaks are fixed (Dec 23–Jan 2, Jun 12–Aug 24, northern-hemisphere style). Regional calendars come with the holiday engine.
-- Not yet implemented (later phases): inventory/item lifecycles (§12–23, 42–45), holiday engine and month calendar (§24–28, 48–49, 89–90), light/dark/auto themes and icon system (§29–31, 35), schedule-conflict choices (§28), and the social/story systems (§60–123).
+- Inventory: the gift reaction system is basic (price/personal/wear/sentiment). NPC interests and occasion-awareness come with the social phase. Item uses are not yet tied to clubs/tryouts.
+- Not yet implemented (later phases): holiday engine and month calendar (§24–28, 48–49, 89–90), light/dark/auto themes and icon system (§29–31, 35), schedule-conflict choices (§28), and the social/story systems (§60–123).
 - Tests use a QC-only clock jump (`setClock`). In normal play time always passes through the processors; a few test-only artifacts (e.g. homework shown "Late" right after a jump) do not occur in real play.
 
 ## Running QC

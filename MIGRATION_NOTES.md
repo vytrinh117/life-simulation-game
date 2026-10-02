@@ -40,3 +40,14 @@ The original legacy browser key is not silently deleted during migration. Restar
   - **Homework** `Done` → `Submitted`, `Archived` → `None`. **Clubs** get attendance, leader, warnings and position fields, plus a scheduled session if missing.
   - Mis-typed conditional purchase answers → `conditionalPurchase` with a 180-day expiry.
 - New containers: `S.archive` (pending / calendar / events / exams), `S.followUps`, `S.school.record`, `S.schoolHistory` and `S.family.restrictions`. Nothing in existing history is deleted. Resolved records older than ~3–4 weeks move to `S.archive`, and finished school-day records are summarized into `S.school.record`.
+
+
+## v7.2 phase 2 — inventory records
+`normalizeInventory()` upgrades old item records in place, deriving defaults from `data.js`:
+- Adds `lifecycleType`, `quantity`, `opened`, `remaining`, `slot`, `battery`, `capacity`/`contents`, `progress`/`completions`, `freshUntil`, `timesUsed`, `useLog` and `origin` where relevant.
+- Finite items that used "condition" as an amount (e.g. makeup) keep that number as `remaining`; their condition is reset to 100.
+- Separate legacy records of stackable items (e.g. three snack packs) merge into one stack.
+- Only one equipped item per slot is kept (the old category-based rule could leave two tops equipped).
+- **Phone:** the phone inventory item becomes canonical; `S.phone.condition/model/owned/battery` are re-derived from it, and an active phone is chosen (`S.phone.activeItemId`). An owned phone with no item record gets one.
+- The stale stored `currentValue` field is removed; value is computed live.
+- `S.skills` and `S.practiceLog` are added with zeros. Nothing is deleted from ownership history.

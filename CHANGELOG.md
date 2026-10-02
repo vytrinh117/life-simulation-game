@@ -1,5 +1,49 @@
 # Life Simulator Update Log
 
+## v7.2 (phase 2) — Item lifecycles, inventory & store
+
+### Item lifecycle system
+- Every catalog item declares a `lifecycleType`: **consumable**, **finite** (limited supply), **durable**, **wearable**, **device**, **container**, **progress**, **perishable** or **gift**. Behavior comes from catalog data (`uses`, `effects`, `skills`, `consume`, `wear`, `progress`, `prep`, `battery`, `slot`, `capacity`, `freshnessDays`, `agingPerYear`, `repairable`, `maxQuantity`) instead of a hardcoded `useInventoryItem()` switch.
+- 44 items across 13 categories (food & drinks, books, toys & games, arts & crafts, school supplies, clothes, beauty & care, sports, electronics, gifts, weather & outdoors, furniture, transport). Every item has a real gameplay use; there is no decorative filler.
+
+### Food, drinks & containers
+- Partial eating/drinking: **Eat a little** (25%), **Eat half** (half of what remains), **Eat all** (exactly what remains). Hunger/comfort scale with the amount actually eaten.
+- Stacks: identical unopened items stack (Snack pack ×3). Eating opens one unit: ×2 unopened + 1 opened at 75%. Only the opened unit disappears when finished.
+- Perishables (sandwich, fruit, flowers) go Fresh → Eat soon → Stale → Spoiled. Eating spoiled food can upset your stomach, and long-spoiled food gets thrown out.
+- Water bottle: 600 ml capacity with tracked contents. Drink a little / half / finish, Refill (needs a tap at home or school), Clean. An empty bottle stays; it never produces water by itself. A badly worn bottle leaks and cannot be filled all the way.
+
+### Condition, aging & repair
+- Condition labels: Excellent (90+) / Good / Worn / Poor / Nearly broken / Broken. Durable use causes probabilistic wear (toys slowly, bikes per ride, devices very slowly), worn clothes lose condition daily, and everything ages slightly per year even when unused (less when stored).
+- Broken items: Repair, Sell for parts, or Discard. Repair cost scales with damage; minors need caregiver approval.
+- Value is always derived from price, condition, remaining amount and device age (`itemValue()`), never a stale stored number.
+
+### Phone (desync fixed)
+- The inventory item is the single source of truth. `S.phone` is a mirror synced by `syncPhoneState()` / `setItemCondition()`, so the Phone page and Inventory always show the same condition and battery.
+- Phone use drains battery and slightly wears the phone (rare cracked-screen accidents). It charges overnight or via Charge.
+- A second phone triggers a choice: switch / keep current / switch and sell old / switch and give old away. Spares can be switched to later.
+
+### Ownership, slots & skills
+- Multiple ownership: several books, toys, clothes, gifts and devices are separate instances; consumables stack, with a sensible `maxQuantity`.
+- Equipment slots: top, bottom, outerwear, shoes, eyewear, head, accessory, bag. A sweater, raincoat, sunglasses and backpack can all be worn at once; wearing a hoodie replaces only the sweater.
+- New hobby skills: art, creativity, fitness, sports, cycling, music, programming, writing, knowledge, imagination, gaming, style (reading continues to use the existing skill). Shown in Daily Life → Skills & hobbies.
+- Anti-farming: the same skill practiced repeatedly in one day gives 100% → 75% → 50% → 30% → 15% → 7%; higher levels gain more slowly; using the same item many times in a day gets boring (smaller fun gains); every use costs time, and energy where relevant.
+- Books/puzzles/games track progress (Unread → % → Finished → Rereading); rereading gives reduced skill gains. Laptops and tablets offer different uses (study / programming / write / game / watch) with different outcomes.
+
+### Daily life connections
+- Rain: an umbrella or worn raincoat prevents soaked, shortened outings. Cold: a worn sweater/hoodie improves comfort. Sun: sunglasses or a cap help.
+- Desk lamp boosts study; a notebook speeds homework and uses pages; a worn backpack makes school days less tiring; worn sneakers add fitness when exercising.
+- Daily Life gets a **Use your things** section. Basic actions (drink water at home, eat a meal) never require owning anything.
+
+### Memories & gifts
+- Meaningful items record their origin ("Your first phone, at age 15.", "A Christmas gift when you were 9."). Selling or discarding them stings a little.
+- Gifts give one unit from a stack. Reactions consider price, personal items (a greeting card builds trust), wear, spoilage, and whether it meant something to you.
+
+### UI
+- **Your things**: category filter, a worn-items strip, and cards showing only the fields that matter (a snack shows its portion and never "Condition"; makeup shows % remaining and uses left; a phone shows condition and battery). Primary actions are up front; secondary ones sit under **More**.
+- **Shop**: product cards with icon, description, effects, type (Reusable / 15 sessions / 600 ml • refillable / Fresh for 2 days…), owned count, caregiver-permission note, quantity picker for cheap consumables, and Buy / Ask caregiver / Birthday wish / Christmas wish.
+- The Age Up year summary reports item wear ("Bicycle wore down to good (88%)").
+
+
 ## v7.2 (phase 1) — State lifecycle, obligations, Next Day & consequences
 
 Central rule: **nothing important stays pending forever**, and one transition updates every related record.

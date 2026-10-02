@@ -103,3 +103,44 @@
 .summary-section p{margin:4px 0;font-size:12px}
 @media(max-width:760px){.summary-grid{grid-template-columns:1fr}.hero-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.time-buttons{width:100%}.time-buttons button{flex:1}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===================== v7.2 phase 2: inventory & store ===================== */
+.tone-food{--tone:#f4b26b}.tone-books{--tone:#9fb7ff}.tone-toys{--tone:#ffb3d1}.tone-arts{--tone:#d9a8ff}.tone-school{--tone:#8fd3ff}.tone-clothes{--tone:#a7e3c4}.tone-beauty{--tone:#ffb0a8}.tone-sports{--tone:#9ce6ba}.tone-tech{--tone:#9cefe1}.tone-gifts{--tone:#ffd38b}.tone-weather{--tone:#a9c8ff}.tone-home{--tone:#e4c9a0}.tone-transport{--tone:#c3cad6}.tone-misc{--tone:#aeb7c7}
+.filter-row{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:thin}
+.filter-chip{flex:0 0 auto;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:700;background:transparent}
+.filter-chip.active{background:rgba(156,239,225,.14);border-color:rgba(156,239,225,.5);color:var(--text)}
+.slot-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.slot-chip{font-size:11px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;background:rgba(255,255,255,.02)}
+.slot-chip em{font-style:normal;color:var(--soft);font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-right:4px}
+.item-grid,.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.item-card,.product-card{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#12171e;min-width:0}
+.item-card.is-equipped{border-color:color-mix(in srgb,var(--tone) 55%,transparent)}
+.item-card.is-stored{opacity:.62}
+.item-icon,.product-art{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--tone) 16%,transparent);border:1px solid color-mix(in srgb,var(--tone) 32%,transparent)}
+.item-body,.product-body{display:flex;flex-direction:column;gap:4px;min-width:0}
+.item-title{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.item-title b{font-size:13px}
+.item-sub{font-size:10px;color:var(--soft)}
+.item-status{font-size:11px;font-weight:700;color:var(--text)}
+.item-status.warn{color:var(--warn)}.item-status.bad{color:var(--bad)}
+.item-meter{height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.item-meter i{display:block;height:100%;background:var(--tone);border-radius:inherit}
+.item-meter.warn i{background:var(--warn)}.item-meter.bad i{background:var(--bad)}
+.item-origin{margin:2px 0;font-size:11px;font-style:italic;color:var(--muted)}
+.fx-row{display:flex;flex-wrap:wrap;gap:4px}
+.fx-chip{font-size:10px;padding:2px 7px;border-radius:999px;color:var(--tone);background:color-mix(in srgb,var(--tone) 10%,transparent)}
+.item-actions,.product-actions{display:flex;flex-wrap:wrap;gap:5px;align-items:flex-start;margin-top:6px}
+.more-menu{position:relative}
+.more-menu>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;min-height:32px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);font-size:11px;font-weight:700;color:var(--muted)}
+.more-menu>summary::-webkit-details-marker{display:none}
+.more-menu[open]>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.product-card.is-later{opacity:.55}
+.product-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.product-head b{font-size:13px}.product-head strong{font-size:14px;white-space:nowrap}
+.product-body p{margin:0;font-size:11px;color:var(--muted)}
+.product-type{font-size:10px;color:var(--soft)}.product-type b{color:var(--good)}
+.perm-note{font-size:10px;color:var(--warn)}
+.qty-select{min-height:32px;padding:4px 6px;border-radius:8px;background:#1b212c;color:var(--text);border:1px solid var(--line);font-size:11px}
+@media(max-width:760px){.item-grid,.product-grid{grid-template-columns:1fr}}
+.product-actions .qty-select{width:auto;min-width:52px;flex:0 0 auto}
+.product-actions button{flex:0 0 auto}
