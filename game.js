@@ -1,419 +1,65 @@
-(() => {
-"use strict";
-
-const $ = id => document.getElementById(id);
-const STORAGE_KEY = "lifeSim_v1_autosave";
-const SLOTS_KEY = "lifeSim_v1_slots";
-const VERSION = 1;
-
-const personalityList = ["Kind","Ambitious","Curious","Calm","Bold","Funny","Romantic","Practical","Creative","Competitive","Shy","Social","Stubborn","Empathetic","Independent","Adventurous"];
-const talentList = ["Music","Writing","Art","Sports","Math","Science","Programming","Business","Languages","Acting","Fashion","Cooking","Photography","Gaming","Leadership","Dance"];
-const names = ["Mina","Lena","Sofia","Emma","Ari","Nora","Maya","Iris","Lina","Elena","Avery","Jade","Theo","Noah","Leo","Eli","Kai","Lucas","Julian","Alex"];
-const places = ["Ho Chi Minh City, Vietnam","Seoul, South Korea","Tokyo, Japan","London, UK","Paris, France","New York City, USA","Vancouver, Canada","Singapore","Bangkok, Thailand","Sydney, Australia","a small town in northern Spain","a coastal village in Greece","a mountain town in Switzerland","a quiet suburb outside Melbourne"];
-const genders = ["Girl","Boy","Non-binary","Other"];
-const attractions = ["Men","Women","All genders","Not sure yet","Asexual / romantic"];
-const wealth = ["Struggling","Modest","Middle class","Comfortable","Wealthy","Extremely wealthy"];
-const homes = ["Warm and stable","Busy but loving","Strict","Chaotic","Quiet","Highly privileged","Unpredictable"];
-const zodiac = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
-
-let S = null;
-let selected = { personality: [], talents: [] };
-let currentMode = "custom";
-
-function rand(a){ return a[Math.floor(Math.random()*a.length)]; }
-function clamp(n,a=0,b=100){ return Math.max(a,Math.min(b,n)); }
-function money(n){ return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(n); }
-function esc(s){ return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
-function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
-
-function zodiacFromDate(date){
-  if(!date) return rand(zodiac);
-  const m=Number(date.slice(5,7)), d=Number(date.slice(8,10));
-  if((m==3&&d>=21)||(m==4&&d<=19))return"Aries";
-  if((m==4&&d>=20)||(m==5&&d<=20))return"Taurus";
-  if((m==5&&d>=21)||(m==6&&d<=20))return"Gemini";
-  if((m==6&&d>=21)||(m==7&&d<=22))return"Cancer";
-  if((m==7&&d>=23)||(m==8&&d<=22))return"Leo";
-  if((m==8&&d>=23)||(m==9&&d<=22))return"Virgo";
-  if((m==9&&d>=23)||(m==10&&d<=22))return"Libra";
-  if((m==10&&d>=23)||(m==11&&d<=21))return"Scorpio";
-  if((m==11&&d>=22)||(m==12&&d<=21))return"Sagittarius";
-  if((m==12&&d>=22)||(m==1&&d<=19))return"Capricorn";
-  if((m==1&&d>=20)||(m==2&&d<=18))return"Aquarius";
-  return"Pisces";
-}
-
-function randomDate(){
-  const year = 1980 + Math.floor(Math.random()*35);
-  const month = String(1+Math.floor(Math.random()*12)).padStart(2,"0");
-  const day = String(1+Math.floor(Math.random()*28)).padStart(2,"0");
-  return `${year}-${month}-${day}`;
-}
-
-function makeChips(){
-  $("personality").innerHTML = personalityList.map(x=>`<button class="chip" data-chip="personality" data-value="${esc(x)}">${esc(x)}</button>`).join("");
-  $("talents").innerHTML = talentList.map(x=>`<button class="chip" data-chip="talents" data-value="${esc(x)}">${esc(x)}</button>`).join("");
-}
-
-function updateChips(){
-  document.querySelectorAll(".chip").forEach(c=>{
-    c.classList.toggle("selected", selected[c.dataset.chip].includes(c.dataset.value));
-  });
-}
-
-function pickMany(kind){
-  const list = kind==="personality" ? personalityList : talentList;
-  const count = 2 + Math.floor(Math.random()*4);
-  return [...list].sort(()=>Math.random()-.5).slice(0,count);
-}
-
-function fillRandom(field){
-  const map = {
-    name: ["c-name",rand(names)], dob:["c-dob",randomDate()], place:["c-place",rand(places)],
-    zodiac:["c-zodiac",rand(zodiac)], gender:["c-gender",rand(genders)], attraction:["c-attraction",rand(attractions)],
-    wealth:["c-wealth",rand(wealth)], home:["c-home",rand(homes)]
-  };
-  if(!map[field])return;
-  $(map[field][0]).value=map[field][1];
-  if(field==="dob" && $("c-zodiac").value==="auto"){}
-}
-
-function randomAll(){
-  Object.keys({name:1,dob:1,place:1,zodiac:1,gender:1,attraction:1,wealth:1,home:1}).forEach(fillRandom);
-  selected.personality=pickMany("personality");
-  selected.talents=pickMany("talents");
-  updateChips();
-  toast("Character randomized.");
-}
-
-function readCreator(){
-  const dob = $("c-dob").value || randomDate();
-  let z = $("c-zodiac").value;
-  if(z==="auto") z=zodiacFromDate(dob);
-  return {
-    name: $("c-name").value.trim() || rand(names),
-    dob, place:$("c-place").value.trim() || rand(places), zodiac:z,
-    gender:$("c-gender").value, attraction:$("c-attraction").value,
-    wealth:$("c-wealth").value, home:$("c-home").value,
-    personality:[...selected.personality], talents:[...selected.talents]
-  };
-}
-
-function familyMoney(w){
-  return ({Struggling:800,Modest:3500,"Middle class":12000,Comfortable:35000,Wealthy:180000,"Extremely wealthy":1000000}[w]||12000);
-}
-
-function peopleInit(c){
-  const mother = rand(["Maya","Anna","Sofia","Nina","Elena","Grace"])+" (mother)";
-  const father = rand(["Daniel","David","Michael","James","Alex","Leo"])+" (father)";
-  const siblingChance = Math.random();
-  const people = [
-    {id:"mom",name:mother,role:"Parent",closeness:75,history:[]},
-    {id:"dad",name:father,role:"Parent",closeness:72,history:[]}
-  ];
-  if(siblingChance>.25) people.push({id:"sib",name:rand(["Lily","Noah","Mia","Evan","Sora","Max"]),role:"Sibling",closeness:60,history:[]});
-  return people;
-}
-
-function logEvent(title,text){
-  if(!S) return;
-  S.log.unshift({day:S.day,title,text});
-  S.log=S.log.slice(0,150);
-}
-
-function save(){
-  if(!S)return false;
-  S.updatedAt=new Date().toISOString();
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(S));
-  $("save-status").textContent="Saved "+new Date().toLocaleTimeString();
-  return true;
-}
-
-function saveSlot(slot){
-  if(!S)return;
-  const slots=JSON.parse(localStorage.getItem(SLOTS_KEY)||"{}");
-  slots[slot]=S;
-  localStorage.setItem(SLOTS_KEY,JSON.stringify(slots));
-  toast(`Save slot ${slot} updated.`);
-  save();
-}
-
-function loadSave(data){
-  if(!data || data.version!==VERSION || !data.character) throw new Error("This save is not compatible with this version.");
-  S=JSON.parse(JSON.stringify(data));
-  renderGame();
-  $("creator").classList.add("hidden"); $("game").classList.remove("hidden");
-  toast("Save loaded.");
-}
-
-function startGame(){
-  try{
-    const c=readCreator();
-    S={
-      version:VERSION, character:c, age:0, day:1, year:0, money:familyMoney(c.wealth),
-      health:100, happiness:70, energy:100, stress:10, school:{grade:null,gpa:null},
-      people:peopleInit(c), log:[], flags:{}, updatedAt:null
-    };
-    logEvent("Born",`You were born in ${c.place}. Your family is ${c.wealth.toLowerCase()}.`);
-    logEvent("A new story begins",`Your zodiac is ${c.zodiac}. Some traits may subtly shape your tendencies, but nothing determines your fate.`);
-    save();
-    renderGame();
-    $("creator").classList.add("hidden");
-    $("game").classList.remove("hidden");
-    $("overlay").classList.add("hidden");
-    window.scrollTo(0,0);
-    toast("Your life has begun.");
-  }catch(err){
-    $("creator-error").hidden=false;
-    $("creator-error").textContent="The game couldn't start: "+err.message;
-    console.error(err);
-  }
-}
-
-function familyText(){
-  return S.character.wealth;
-}
-
-function renderGame(){
-  const c=S.character;
-  $("life-name").textContent=c.name;
-  $("life-subtitle").textContent=`Age ${S.age} • ${c.gender} • ${c.zodiac}`;
-  $("s-age").textContent=S.age;
-  $("s-money").textContent=money(S.money);
-  $("s-health").textContent=Math.round(S.health);
-  $("s-happy").textContent=Math.round(S.happiness);
-  $("s-energy").textContent=Math.round(S.energy);
-  $("s-stress").textContent=Math.round(S.stress);
-  $("i-place").textContent=c.place;
-  $("i-dob").textContent=c.dob;
-  $("i-zodiac").textContent=c.zodiac;
-  $("i-family").textContent=familyText();
-
-  $("people").innerHTML=S.people.map(p=>`<div class="person"><b>${esc(p.name)}</b><small>${esc(p.role)} • closeness ${p.closeness}</small></div>`).join("");
-  const last=S.log[0]||{title:"Your story begins.",text:""};
-  $("event-meta").textContent=`AGE ${S.age} • DAY ${S.day}`;
-  $("event-title").textContent=last.title;
-  $("event-text").textContent=last.text;
-  $("log").innerHTML=S.log.map((e,i)=>`<div class="log-entry ${i===0?"new":""}"><div class="log-date">DAY ${e.day} • AGE ${S.age}</div><b>${esc(e.title)}</b><p>${esc(e.text)}</p></div>`).join("");
-  requestAnimationFrame(()=>{ $("log").scrollTop=0; });
-
-  renderActions();
-}
-
-function advance(days=1){
-  for(let i=0;i<days;i++){
-    S.day++;
-    S.energy=clamp(S.energy+8);
-    S.stress=clamp(S.stress-2);
-    if(S.day%365===0){
-      S.age++;
-      S.year++;
-      S.energy=100;
-      S.happiness=clamp(S.happiness+4);
-      birthday();
-    }
-    randomWorldTick();
-  }
-  save();
-  renderGame();
-}
-
-function ageUp(){
-  if(!S) return;
-  // Move directly to the next birthday.
-  const remaining = 365 - (S.day % 365);
-  const days = remaining === 365 ? 365 : remaining;
-  S.energy = 100;
-  S.stress = clamp(S.stress - 5);
-  advance(days);
-  logEvent(`🎂 You turned ${S.age}`, `A full year has passed. Your world has changed, even if you cannot yet see every consequence.`);
-  save();
-  renderGame();
-  requestAnimationFrame(()=>{ $("log").scrollTop=0; });
-  toast(`Age ${S.age}!`);
-}
-
-function birthday(){
-  const age=S.age;
-  const birthdayEvents = {
-    1:"You are learning to walk, speak, and understand the people around you.",
-    5:"Your personality is becoming clearer. Small childhood friendships start to matter.",
-    6:"School begins. There are teachers, classmates, homework and an entirely new social world.",
-    13:"Your teenage years begin. Friendships, identity and emotions become more complicated.",
-    16:"More independence is possible now. Depending on where you live, part-time work may be available.",
-    18:"Adulthood opens a new set of choices: study, work, travel, relationships and independence.",
-    21:"You are settling into adult life. The choices you make now can echo for years.",
-    30:"A new decade. Careers, relationships, money and identity may all be changing.",
-    40:"Life is becoming less about proving yourself and more about deciding what matters.",
-    50:"You look back on choices that once felt small.",
-    60:"Retirement, family, health and long-term plans begin to take a different shape.",
-    70:"Old friends, memories and family history become increasingly meaningful."
-  };
-  logEvent(`Birthday — age ${age}`, birthdayEvents[age] || `You turn ${age}. Another year of life has passed, with possibilities you cannot yet see.`);
-}
-
-function randomWorldTick(){
-  const r=Math.random();
-  if(r<.012 && S.age>=6){
-    const events=[
-      ["A new person enters your orbit",`Someone named ${rand(names)} starts appearing around your school, neighborhood or work.`],
-      ["A small coincidence",`A completely ordinary choice puts you in the right place at an unexpected moment.`],
-      ["Nothing dramatic happens","Today is simply an ordinary day. Not every moment needs to become a story."]
-    ];
-    const e=rand(events); logEvent(e[0],e[1]);
-  }
-  if(r<.006 && S.age>=16){
-    S.money+=Math.floor(Math.random()*500);
-    logEvent("Unexpected money", "A small financial opportunity, gift or refund lands in your life.");
-  }
-}
-
-function action(id){
-  if(!S)return;
-  const age=S.age;
-  if(id==="observe"){ advance(7); return; }
-  if(id==="sleep"){ S.energy=clamp(S.energy+35); S.stress=clamp(S.stress-10); advance(1); logEvent("Rest", "You sleep and recover some energy."); renderGame(); return; }
-  if(id==="family"){ S.happiness=clamp(S.happiness+6); S.people.forEach(p=>{if(p.role==="Parent")p.closeness=clamp(p.closeness+3,0,100)}); advance(1); logEvent("Family time","You spend time with your family. One small conversation may be remembered for years."); renderGame(); return; }
-  if(id==="play"){ S.happiness=clamp(S.happiness+8); S.energy=clamp(S.energy-8); advance(1); logEvent("Play","You play, explore or entertain yourself."); renderGame(); return; }
-  if(id==="school"){
-    S.happiness=clamp(S.happiness+2); S.energy=clamp(S.energy-12); S.stress=clamp(S.stress+4);
-    if(!S.school.grade) S.school.grade=rand(["A","B","B+","A-"]);
-    advance(1); logEvent("School","You attend school. Teachers, classmates and your reputation are slowly taking shape."); renderGame(); return;
-  }
-  if(id==="study"){
-    S.energy=clamp(S.energy-15); S.stress=clamp(S.stress+5); S.happiness=clamp(S.happiness-1);
-    advance(1); logEvent("Study","You put in extra effort. It may pay off later."); renderGame(); return;
-  }
-  if(id==="friend"){
-    S.happiness=clamp(S.happiness+10); S.energy=clamp(S.energy-8);
-    advance(1);
-    if(S.age>=6 && !S.flags.childhoodFriend){
-      S.flags.childhoodFriend=true;
-      const p={id:"friend",name:rand(names),role:"Childhood friend",closeness:70,history:["Met during childhood"]};
-      S.people.push(p);
-      logEvent("A friendship begins",`${p.name} becomes someone you keep seeing. You don't know yet how important this person will become.`);
-    } else logEvent("Time with a friend","You hang out, talk and make another memory together.");
-    renderGame(); return;
-  }
-  if(id==="work"){
-    const income=30+Math.floor(Math.random()*120);
-    S.money+=income; S.energy=clamp(S.energy-20); S.stress=clamp(S.stress+5);
-    advance(1); logEvent("Work",`You work a shift and earn ${money(income)}.`); renderGame(); return;
-  }
-  if(id==="business"){
-    const cost=150;
-    if(S.money<cost){toast("You need more money.");return}
-    S.money-=cost; S.flags.business=true; S.energy=clamp(S.energy-20); S.stress=clamp(S.stress+8);
-    advance(1); logEvent("Business experiment","You spend money on a small business idea. It might become something—or quietly disappear."); renderGame(); return;
-  }
-  if(id==="travel"){
-    const cost=100+Math.floor(Math.random()*600);
-    if(S.money<cost){toast(`Travel costs about ${money(cost)} right now.`);return}
-    S.money-=cost; S.energy=clamp(S.energy-15); S.happiness=clamp(S.happiness+14);
-    advance(3); logEvent("Travel",`You travel somewhere new. Prices, people and opportunities are never completely predictable.`); renderGame(); return;
-  }
-  if(id==="phone"){
-    const chance=Math.random();
-    if(chance<.25){S.happiness=clamp(S.happiness+7);logEvent("A message","A message from someone you haven't heard from in a while changes the tone of your day.");}
-    else if(chance<.5){S.stress=clamp(S.stress+5);logEvent("Group chat","A conversation gets unexpectedly complicated.");}
-    else logEvent("Phone","You scroll through messages, social media and the little digital world surrounding you.");
-    advance(1); renderGame(); return;
-  }
-}
-
-function renderActions(){
-  const age=S.age;
-  let a=[];
-  if(age<5){
-    a=[["observe","Observe the world","Let a week pass"],["family","Family time","Bond with the people raising you"],["play","Play","Explore your little world"],["sleep","Sleep","Recover and let time pass"]];
-  } else if(age<13){
-    a=[["school","Go to school","Classes, teachers and classmates"],["study","Study","Improve your academic habits"],["friend","See a friend","Build memories"],["family","Family time","Talk, eat and spend time together"],["play","Play","Games, hobbies and exploration"],["phone","Check phone","Messages and social world"],["sleep","Sleep","Recover"]];
-  } else if(age<16){
-    a=[["school","Go to school","Classes, exams and social life"],["study","Study","Assignments and exams"],["friend","See a friend","Friendship, crushes and drama can emerge"],["phone","Check phone","Messages, posts and group chats"],["family","Family time","Family relationships"],["travel","Take a trip","If you can afford it"],["sleep","Sleep","Recover"]];
-  } else if(age<18){
-    a=[["school","Go to school","Classes, exams and school life"],["study","Study","Grades and opportunities"],["friend","See a friend","Relationships evolve"],["work","Part-time work","Earn money and gain independence"],["phone","Check phone","Social media, dating and messages"],["travel","Travel","Chance encounters happen"],["business","Try a business","Start small"],["sleep","Sleep","Recover"]];
-  } else {
-    a=[["work","Work","Career, money and coworkers"],["business","Build a business","Risk money for an idea"],["friend","See someone","Friends and relationships"],["phone","Check phone","Messages, social media and opportunities"],["travel","Travel","Go somewhere new"],["family","Family time","People you love"],["study","Learn something","Education never has to end"],["sleep","Sleep","Recover"]];
-  }
-  $("actions").innerHTML=a.map(x=>`<button class="action" data-action="${x[0]}"><strong>${x[1]}</strong><small>${x[2]}</small></button>`).join("");
-  $("action-hint").textContent=age===0?"At birth, the world moves around you. Use AGE UP to jump to your first birthday.":"Every action can create small or lasting consequences. Use AGE UP to jump one year.";
-}
-
-function openMenu(){ $("overlay").classList.remove("hidden"); }
-function closeMenu(){ $("overlay").classList.add("hidden"); }
-
-function exportSave(){
-  if(!S)return;
-  save();
-  const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a"); a.href=url; a.download=`life-sim-${S.character.name.replace(/[^a-z0-9]/gi,"_")}.json`; a.click();
-  URL.revokeObjectURL(url); toast("Save exported.");
-}
-
-function importSaveFile(){
-  $("import-file").click();
-}
-
-$("personality").addEventListener("click",e=>{
-  const c=e.target.closest(".chip"); if(!c)return;
-  const k=c.dataset.chip,v=c.dataset.value,arr=selected[k];
-  if(arr.includes(v)) selected[k]=arr.filter(x=>x!==v);
-  else if(arr.length<5) arr.push(v);
-  else toast("Choose up to 5.");
-  updateChips();
-});
-$("talents").addEventListener("click",e=>{
-  const c=e.target.closest(".chip"); if(!c)return;
-  const k=c.dataset.chip,v=c.dataset.value,arr=selected[k];
-  if(arr.includes(v)) selected[k]=arr.filter(x=>x!==v);
-  else if(arr.length<5) arr.push(v);
-  else toast("Choose up to 5.");
-  updateChips();
-});
-document.addEventListener("click",e=>{
-  const r=e.target.closest("[data-random]"); if(r)fillRandom(r.dataset.random);
-  const mode=e.target.closest(".mode");
-  if(mode){currentMode=mode.dataset.mode;document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));mode.classList.add("active");if(currentMode!=="custom")randomAll();}
-  const ac=e.target.closest("[data-action]"); if(ac)action(ac.dataset.action);
-});
-$("random-all").onclick=randomAll;
-$("begin").onclick=startGame;
-$("save").onclick=()=>{save();toast("Game saved.");};
-$("export").onclick=exportSave;
-$("pause").onclick=openMenu;
-$("age-up").onclick=ageUp;
-$("close-menu").onclick=closeMenu;
-$("menu-save").onclick=()=>{save();toast("Game saved.");};
-$("menu-export").onclick=exportSave;
-$("menu-import").onclick=importSaveFile;
-$("menu-new").onclick=()=>{
-  if(confirm("Start a completely new life? Your current autosave will remain until you overwrite it.")){
-    closeMenu(); $("game").classList.add("hidden"); $("creator").classList.remove("hidden"); $("creator-error").hidden=true; window.scrollTo(0,0);
-  }
-};
-$("load-last").onclick=()=>{
-  try{
-    const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
-    if(!data) return toast("No autosave found.");
-    loadSave(data);
-  }catch(e){toast("Could not load autosave.");}
-};
-$("import-file").onchange=async e=>{
-  const file=e.target.files[0]; if(!file)return;
-  try{loadSave(JSON.parse(await file.text()));}catch(err){toast("Invalid save file.");}
-  e.target.value="";
-};
-$("clear-log").onclick=()=>{if(S){S.log=[];save();renderGame();}};
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){
-    if(!$("game").classList.contains("hidden")){
-      $("overlay").classList.toggle("hidden");
-    }
-  }
-});
-setInterval(()=>{if(S && !$("game").classList.contains("hidden"))save();},30000);
-
-makeChips();
-$("c-dob").value=randomDate();
+(()=>{'use strict';
+const $=id=>document.getElementById(id), clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n)), money=n=>'$'+Math.round(n).toLocaleString();
+const KEY='lifeSim_v2_livingWorld';
+const personalities=['Kind','Ambitious','Curious','Calm','Bold','Funny','Romantic','Practical','Creative','Competitive','Shy','Social','Stubborn','Empathetic','Independent','Adventurous'];
+const talents=['Music','Writing','Art','Sports','Math','Science','Programming','Business','Languages','Acting','Fashion','Cooking','Photography','Gaming','Leadership','Dance'];
+const names=['Mina','Lena','Sofia','Emma','Ari','Nora','Maya','Iris','Lina','Elena','Avery','Jade','Theo','Noah','Leo','Eli','Kai','Lucas','Julian','Alex'];
+const places=['Ho Chi Minh City, Vietnam','Seoul, South Korea','Tokyo, Japan','London, UK','Paris, France','New York City, USA','Vancouver, Canada','Singapore','Bangkok, Thailand','Sydney, Australia'];
+let mode='custom',S=null,active='home',selectedP=[],selectedT=[];
+const rand=a=>a[Math.floor(Math.random()*a.length)], esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+function toast(t){const x=$('toast');x.textContent=t;x.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.classList.remove('show'),1800)}
+function chips(id,list,sel){$(id).innerHTML=list.map(x=>`<button type="button" class="chip ${sel.includes(x)?'selected':''}" data-chip="${x}">${x}</button>`).join('')}
+chips('personality',personalities,selectedP);chips('talents',talents,selectedT);
+$('personality').onclick=e=>{let b=e.target.closest('[data-chip]');if(!b)return;let v=b.dataset.chip;if(selectedP.includes(v))selectedP=selectedP.filter(x=>x!==v);else if(selectedP.length<5)selectedP.push(v);chips('personality',personalities,selectedP)};
+$('talents').onclick=e=>{let b=e.target.closest('[data-chip]');if(!b)return;let v=b.dataset.chip;if(selectedT.includes(v))selectedT=selectedT.filter(x=>x!==v);else if(selectedT.length<5)selectedT.push(v);chips('talents',talents,selectedT)};
+document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===b));if(mode!=='custom')randomize(false)});
+function randomize(all=true){$('c-name').value=rand(names);$('c-place').value=rand(places);$('c-gender').value=rand(['Girl','Boy','Non-binary','Other']);$('c-attraction').value=rand(['Men','Women','All genders','Not sure yet','Asexual / romantic']);$('c-wealth').value=rand(['Struggling','Modest','Middle class','Comfortable','Wealthy']);$('c-home').value=rand(['Warm and stable','Busy but loving','Strict','Chaotic','Quiet','Highly privileged','Unpredictable']);$('c-dob').value=`${1998+Math.floor(Math.random()*15)}-${String(1+Math.floor(Math.random()*12)).padStart(2,'0')}-${String(1+Math.floor(Math.random()*27)).padStart(2,'0')}`;selectedP=[rand(personalities),rand(personalities)];selectedT=[rand(talents),rand(talents)];chips('personality',personalities,selectedP);chips('talents',talents,selectedT);if(all)toast('Character randomized')}
+document.querySelectorAll('[data-random]').forEach(b=>b.onclick=()=>randomize(true));$('random-all').onclick=()=>randomize(true);
+function makePeople(age){const base=age<6?['Mom','Dad','Grandmother']:age<13?['Mom','Dad','Mia • classmate','Noah • neighbor']:age<18?['Mom','Dad','Mia • best friend','Noah • classmate','Jade • club member','Leo • crush']:['Mom','Dad','Mia • old friend','Noah • colleague','Jade • friend','Leo • connection'];return base.map((name,i)=>({name,rel:clamp(72-i*8+Math.floor(Math.random()*12)),memory:'A small shared memory waiting to be discovered.',mood:rand(['good','busy','quiet','excited','stressed'])}))}
+function makeState(){const age=0;return {version:2,name:$('c-name').value.trim()||rand(names),dob:$('c-dob').value||'2010-01-01',place:$('c-place').value.trim()||rand(places),zodiac:$('c-zodiac').value==='auto'?'Unknown':$('c-zodiac').value,gender:$('c-gender').value,attraction:$('c-attraction').value,wealth:$('c-wealth').value,home:$('c-home').value,personality:selectedP.length?selectedP:[rand(personalities)],talents:selectedT.length?selectedT:[rand(talents)],age,day:1,money:['Struggling','Modest'].includes($('c-wealth').value)?80:300,health:100,happiness:70,energy:100,stress:10,gpa:null,school:null,people:makePeople(0),log:[],events:[],exams:[],messages:[],flags:{},current:{title:'Welcome to the world.',text:'Your story is beginning. Your family, neighborhood and future are already moving around you.'}}}
+function log(title,text){S.log.unshift({day:S.day,age:S.age,title,text});if(S.log.length>250)S.log.pop()}
+function save(){if(!S)return;localStorage.setItem(KEY,JSON.stringify(S));$('save-status').textContent='Saved '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+function exportSave(){if(!S)return;let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));a.download=`life-${S.name.replace(/\s+/g,'-')}.json`;a.click();URL.revokeObjectURL(a.href)}
+function importFile(){ $('import-file').click() }
+$('import-file').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{S=JSON.parse(await f.text());enterGame();toast('Save imported')}catch{toast('Invalid save file')}};
+function schedule(age){S.exams=[];if(age>=6&&age<=18){const subs=['Mathematics','English','Literature','Science','History','Computer Science'];subs.forEach((subject,i)=>S.exams.push({subject,days:5+i*4,score:null,type:i%3===0?'Midterm':'Quiz'}));S.school={name:rand(['Riverside Academy','Central International School','Westside High','Sunrise Secondary School']),grade:age<=11?'Primary':age<=14?'Middle school':'High school',className:`${age}-${String.fromCharCode(65+Math.floor(Math.random()*4))}`,attendance:96,gpa:S.gpa??(2.8+Math.random()*1.1),rank:Math.floor(8+Math.random()*25),subjects:subs.map((x,i)=>({name:x,score:72+Math.floor(Math.random()*24),trend:i%2?'→':'↑'})),clubs:[]}}else S.school=null}
+function ensureEvents(){S.events=[];if(S.age>=6&&S.age<=18){S.events.push({kind:'school',title:'School day',text:'Classes, teachers, classmates and unscheduled moments are waiting.'});S.events.push({kind:'deadline',title:'Academic calendar',text:'Your next assessments are visible in School → Exams.'})}if(S.age>=13)S.events.push({kind:'social',title:'Your social world is changing',text:'People remember what happens between you, not just a relationship score.'});S.events.push({kind:'world',title:'Life keeps moving',text:'Someone nearby is making a decision that may or may not cross your path.'})}
+function advance(days){for(let d=0;d<days;d++){S.day++;S.energy=clamp(S.energy-2);S.stress=clamp(S.stress+(Math.random()<.15?2:-1));if(S.age>=13)S.happiness=clamp(S.happiness+(Math.random()-.48)*2);S.exams.forEach(x=>x.days--);if(S.day%30===0)worldTick()}if(days>0&&Math.random()<.45)randomLifeEvent()}
+function worldTick(){S.people.forEach(p=>{p.rel=clamp(p.rel+(Math.random()<.5?1:-1));p.mood=rand(['good','busy','quiet','excited','stressed'])});if(S.school)S.school.subjects.forEach(s=>{s.score=clamp(s.score+(Math.random()<.45?1:-1),0,100)});}
+function randomLifeEvent(){if(!S)return;const pool=[];if(S.age<6)pool.push(['Family moment','A family member does something ordinary that becomes part of your early memories.']);if(S.age>=6&&S.age<=18)pool.push(['Unexpected school moment','A teacher changes the plan for the day. A classmate reacts strongly.'],['New school opportunity','Someone mentions a club, contest or activity you could join.']);if(S.age>=13)pool.push(['New message','Someone you know sends a message you did not expect.'],['Social ripple','You hear two different versions of the same story about someone you know.']);pool.push(['Neighborhood life','A nearby family is celebrating, moving, arguing, renovating or simply changing their routine.'],['Small coincidence','A normal trip puts you in the same place as someone from another part of your life.']);const e=rand(pool);S.current={title:e[0],text:e[1]};S.eventPrompt=e[0];log(e[0],e[1])}
+function act(id,arg){if(!S)return;let days=1;
+if(id==='study'){if(!S.school){toast('There is no current school schedule.');return}S.energy=clamp(S.energy-12);S.stress=clamp(S.stress+3);S.school.subjects[rand(S.school.subjects)].score=clamp(S.school.subjects[0].score+2);log('Study session','You spend focused time preparing for whatever comes next.');}
+else if(id==='exam'){let x=S.exams.find(e=>e.subject===arg);if(!x){return}if(x.days>0){toast(`The ${x.subject} exam is in ${x.days} days.`);return}let sub=S.school.subjects.find(s=>s.name===x.subject);x.score=clamp(Math.round(sub.score+(Math.random()-.25)*18),0,100);log(`${x.subject} exam`,x.score>=70?`You finished the exam with ${x.score}%.`:`The exam was difficult. You scored ${x.score}%.`);S.stress=clamp(S.stress+8);}
+else if(id==='school') {log('School','You attend classes. Something small, useful or strange may happen between lessons.');S.energy=clamp(S.energy-8);}
+else if(id==='friend'){let p=rand(S.people.filter(x=>!['Mom','Dad','Grandmother'].includes(x.name))||S.people);p.rel=clamp(p.rel+6);p.memory='You spent time together today.';log('Time with '+p.name,`You made a new memory together. ${p.name} seems ${p.mood}.`);S.happiness=clamp(S.happiness+5)}
+else if(id==='message'){let p=rand(S.people);S.messages.unshift({from:p.name,text:rand(['Are you around later?','I need to tell you something.','Did you hear what happened?','Want to do something this weekend?']),day:S.day,read:false});log('New message',`${p.name} sent you a message.`)}
+else if(id==='reply'){let p=rand(S.people);p.rel=clamp(p.rel+4);log('Conversation',`You replied to ${p.name}. The conversation continues outside your control.`)}
+else if(id==='walk'){S.energy=clamp(S.energy-6);S.happiness=clamp(S.happiness+5);log('Out and about','You went for a walk. The park, street or neighborhood had its own little rhythm.')}
+else if(id==='exercise'){S.energy=clamp(S.energy-18);S.health=clamp(S.health+3);S.stress=clamp(S.stress-4);log('Exercise','You exercised and felt a little better afterward.')}
+else if(id==='sleep'){days=1;S.energy=100;S.stress=clamp(S.stress-8);log('Sleep','You slept through the night. Tomorrow may look different.')}
+else if(id==='meal'){S.energy=clamp(S.energy+12);S.happiness=clamp(S.happiness+2);log('Meal','You ate. What and where you eat depends on the life you build.')}
+else if(id==='family'){let p=rand(S.people.filter(x=>['Mom','Dad','Grandmother'].includes(x.name))||S.people);p.rel=clamp(p.rel+5);p.memory='A family moment from today.';log('Family time',`You spent time with ${p.name}. Family relationships are built from many ordinary moments.`)}
+else if(id==='work'){if(S.age<16){toast('Part-time work is not available at your current age in this location.');return}let income=25+Math.floor(Math.random()*120);S.money+=income;S.energy=clamp(S.energy-18);S.stress=clamp(S.stress+4);log('Part-time work',`You worked a shift and earned ${money(income)}.`)}
+else if(id==='business'){if(S.money<100){toast('You need at least $100 to try this.');return}S.money-=100;let result=Math.random();if(result>.55){let gain=100+Math.floor(Math.random()*350);S.money+=gain;log('Business experiment',`Your small idea found a few customers. You made ${money(gain)} revenue.`)}else log('Business experiment','You tested an idea. It did not immediately work, but you learned something useful.')}
+else if(id==='travel'){let cost=80+Math.floor(Math.random()*350);if(S.money<cost){toast(`This trip would cost about ${money(cost)}.`);return}S.money-=cost;days=3;S.happiness=clamp(S.happiness+10);log('Trip','You traveled. A chance encounter, photo, message or opportunity may follow.')}
+else if(id==='social'){S.happiness=clamp(S.happiness+5);log('Social life','You checked invitations, plans and people. Not every invitation becomes an important event.')}
+else if(id==='dress'){S.happiness=clamp(S.happiness+2);log('Getting ready','You changed your look and got ready for the day.')}
+else if(id==='shower'){log('Routine','You took care of yourself and reset for the day.')}
+else if(id==='contest'){log('Contest opportunity','You registered interest in a school contest. Preparation and selection will happen over time.');if(S.school)S.school.clubs.push('Contest team')}
+else if(id==='club'){if(S.school){let c=rand(['Debate','Music','Sports','Coding','Art','Drama','Science']);if(!S.school.clubs.includes(c))S.school.clubs.push(c);log('Club','You explored the '+c+' club. A new group of people may enter your life.')}else toast('Clubs become available through school or other communities.')}
+advance(days);render();save()}
+function ageUp(){if(!S)return;let target=S.age+1;S.age=target;S.energy=100;S.stress=clamp(S.stress-5);schedule(S.age);ensureEvents();log('🎂 Birthday',`You turned ${S.age}. A year passed. People changed, plans changed, and some consequences are still hidden.`);S.current={title:`Age ${S.age}`,text:'A new year begins. Check your calendar, people and opportunities before choosing what matters.'};render();save();toast(`Age ${S.age}`)}
+function today(){let arr=[];S.exams.filter(x=>x.days<=14&&x.days>=0).slice(0,3).forEach(x=>arr.push(`<div class="row"><span>${esc(x.subject)} exam</span><b class="countdown">${x.days===0?'TODAY':x.days+'d'}</b></div>`));if(S.messages.some(x=>!x.read))arr.push(`<div class="row"><span>Unread messages</span><b>${S.messages.filter(x=>!x.read).length}</b></div>`);if(!arr.length)arr.push('<p class="muted-text">No urgent deadlines. That can change.</p>');$('today-list').innerHTML=arr.join('')}
+function schoolPanel(){if(!S.school)return `<div class="dashboard"><div class="card wide"><h3>No school right now</h3><p class="muted-text">School becomes a living system during school-age years. Other education, training and work systems can take its place later.</p></div></div>`;return `<div class="dashboard"><div class="card"><h3>${esc(S.school.name)}</h3><p>${S.school.grade} • Class ${S.school.className}</p><div class="row"><span>GPA</span><b>${S.school.gpa.toFixed(2)}</b></div><div class="row"><span>Class rank</span><b>#${S.school.rank}</b></div><div class="row"><span>Attendance</span><b>${S.school.attendance}%</b></div></div><div class="card"><h3>Clubs & contests</h3><p class="muted-text">${S.school.clubs.length?S.school.clubs.join(' • '):'You are not committed to a club yet.'}</p><div class="action-grid"><button class="action" data-act="club"><strong>Explore clubs</strong><small>Meet people and discover interests</small></button><button class="action" data-act="contest"><strong>Contest opportunities</strong><small>Auditions, teams and competitions</small></button></div></div><div class="card wide"><h3>Subjects</h3><div class="list">${S.school.subjects.map(s=>`<div class="row"><span>${esc(s.name)} <span class="tag">${s.trend}</span><div class="progress"><i style="width:${s.score}%"></i></div></span><b>${s.score}</b></div>`).join('')}</div></div><div class="card wide"><h3>Exam calendar</h3><div class="list">${S.exams.map(x=>`<div class="row"><span><b>${esc(x.subject)}</b><br><span class="muted-text">${x.type}</span></span><span class="countdown">${x.score!=null?'Score '+x.score:(x.days<=0?'TODAY':x.days+' days')}</span>${x.score==null&&x.days<=0?`<button class="small" data-exam="${esc(x.subject)}">Take exam</button>`:''}</div>`).join('')}</div></div></div>`}
+function peoplePanel(){return `<div class="dashboard"><div class="card wide"><h3>People have lives outside you</h3><p class="muted-text">Their mood, routines, relationships and memories change over time. Your relationship is more than a number.</p></div>${S.people.map((p,i)=>`<div class="card"><h3>${esc(p.name)}</h3><p><span class="tag">${p.mood}</span> Relationship ${p.rel}</p><div class="progress"><i style="width:${p.rel}%"></i></div><p class="muted-text">Memory: ${esc(p.memory)}</p><div class="action-grid"><button class="action" data-person="${i}"><strong>Spend time</strong><small>Create a specific memory</small></button><button class="action" data-person-msg="${i}"><strong>Message</strong><small>Start a conversation</small></button></div></div>`).join('')}</div>`}
+function phonePanel(){return `<div class="dashboard"><div class="card"><h3>Messages</h3><div class="list">${S.messages.length?S.messages.slice(0,8).map((m,i)=>`<div class="row"><span><b>${esc(m.from)}</b><br>${esc(m.text)}</span><span class="tag">${m.read?'read':'new'}</span></div>`).join(''):'<p class="muted-text">No messages. People are living their own day.</p>'}</div><button class="action" data-act="message"><strong>Check messages</strong><small>Sometimes the important thing arrives unexpectedly.</small></button></div><div class="card"><h3>Social world</h3><div class="action-grid"><button class="action" data-act="social"><strong>Open social feed</strong><small>Posts, stories, invitations and rumors</small></button><button class="action" data-act="message"><strong>Send a message</strong><small>Reach out to someone</small></button></div></div><div class="card wide"><h3>Phone is not just a menu</h3><p class="muted-text">Later systems can add dating, gaming, travel bookings, banking, shopping, creator accounts and group chats. Messages can become events; events can become memories.</p></div></div>`}
+function placesPanel(){return `<div class="dashboard"><div class="card"><h3>Home</h3><div class="action-grid"><button class="action" data-act="meal"><strong>Eat / make food</strong><small>Meals, routines and family moments</small></button><button class="action" data-act="family"><strong>Family</strong><small>Talk, help, argue, reconnect</small></button><button class="action" data-act="shower"><strong>Get ready</strong><small>Shower and personal routine</small></button><button class="action" data-act="dress"><strong>Dress & style</strong><small>Your appearance can affect social situations</small></button></div></div><div class="card"><h3>Outside</h3><div class="action-grid"><button class="action" data-act="walk"><strong>Walk the neighborhood</strong><small>Parks, streets and chance encounters</small></button><button class="action" data-act="travel"><strong>Travel</strong><small>Trips, transport and unfamiliar people</small></button></div></div><div class="card"><h3>Body & wellbeing</h3><div class="action-grid"><button class="action" data-act="exercise"><strong>Exercise</strong><small>Fitness, stress and health</small></button><button class="action" data-act="sleep"><strong>Sleep</strong><small>Advance one day and recover</small></button></div></div><div class="card"><h3>Work & money</h3><div class="action-grid"><button class="action" data-act="work"><strong>Work</strong><small>Age and location rules apply</small></button><button class="action" data-act="business"><strong>Business idea</strong><small>Risk money and build something</small></button></div></div></div>`}
+function homePanel(){return `<div class="dashboard"><div class="card wide"><h3>What's happening?</h3><div class="event-card card"><b>${esc(S.current.title)}</b><p class="muted-text">${esc(S.current.text)}</p></div></div><div class="card"><h3>Upcoming</h3>${S.exams.slice(0,4).map(x=>`<div class="row"><span>${esc(x.subject)}</span><b>${x.days<=0?'Today':x.days+'d'}</b></div>`).join('')||'<p class="muted-text">Nothing scheduled.</p>'}</div><div class="card"><h3>Contextual actions</h3><div class="action-grid">${quickActions().map(x=>`<button class="action" data-act="${x[0]}"><strong>${x[1]}</strong><small>${x[2]}</small></button>`).join('')}</div></div></div>`}
+function quickActions(){let a=[];if(S.age>=6&&S.age<=18)a.push(['school','Go to school','Attend classes and see what happens']);if(S.age>=6)a.push(['study','Study','Work on your current subjects']);if(S.age>=6)a.push(['friend','See someone','A relationship can change through one afternoon']);a.push(['meal','Eat','Take care of your body']);if(S.age>=8)a.push(['walk','Go outside','Parks, streets, shops and chance encounters']);if(S.age>=13)a.push(['message','Check messages','People may have contacted you']);return a}
+function renderPanel(){let html=active==='school'?schoolPanel():active==='people'?peoplePanel():active==='phone'?phonePanel():active==='places'?placesPanel():homePanel();$('panel-host').innerHTML=html;today()}
+function render(){if(!S)return;$('life-name').textContent=S.name;$('life-subtitle').textContent=`Age ${S.age} • Day ${S.day} • ${S.place}`;$('s-age').textContent=S.age;$('s-money').textContent=money(S.money);$('s-health').textContent=Math.round(S.health);$('s-happy').textContent=Math.round(S.happiness);$('s-energy').textContent=Math.round(S.energy);$('s-stress').textContent=Math.round(S.stress);$('i-place').textContent=S.place;$('i-dob').textContent=S.dob;$('i-zodiac').textContent=S.zodiac;$('i-family').textContent=S.wealth;$('event-meta').textContent=`DAY ${S.day} • AGE ${S.age}`;$('event-title').textContent=S.current.title;$('event-text').textContent=S.current.text;$('event-actions').innerHTML=S.age>=6?`<button data-act="study">Study</button><button data-act="friend">See someone</button><button data-act="message">Check messages</button>`:'';$('people').innerHTML=S.people.slice(0,6).map(p=>`<div class="person"><b>${esc(p.name)}</b><small>${p.mood} • relationship ${p.rel}</small></div>`).join('');$('tabs').innerHTML=[['home','Overview'],['school','🎓 School'],['people','👥 People'],['phone','📱 Phone'],['places','🏙️ Places & actions']].map(x=>`<button class="tab ${active===x[0]?'active':''}" data-tab="${x[0]}">${x[1]}</button>`).join('');renderPanel();$('log').innerHTML=S.log.map(e=>`<div class="log-entry"><div class="log-date">DAY ${e.day} • AGE ${e.age}</div><b>${esc(e.title)}</b><p>${esc(e.text)}</p></div>`).join('');}
+$('tabs').onclick=e=>{let b=e.target.closest('[data-tab]');if(!b)return;active=b.dataset.tab;render()};$('panel-host').onclick=e=>{let b=e.target.closest('[data-act],[data-exam],[data-person],[data-person-msg]');if(!b)return;if(b.dataset.exam)act('exam',b.dataset.exam);else if(b.dataset.person)act('friend');else if(b.dataset.personMsg)act('message');else act(b.dataset.act)};$('event-actions').onclick=e=>{let b=e.target.closest('[data-act]');if(b)act(b.dataset.act)};$('age-up').onclick=ageUp;
+function enterGame(){schedule(S.age);ensureEvents();if(!S.log.length)log('Life begins',S.current.text);$('creator').classList.add('hidden');$('game').classList.remove('hidden');render();save()}
+$('begin').onclick=()=>{S=makeState();enterGame()};$('save').onclick=save;$('export').onclick=exportSave;$('load-last').onclick=()=>{let x=localStorage.getItem(KEY);if(!x){toast('No autosave found');return}try{S=JSON.parse(x);enterGame()}catch{toast('Autosave is invalid')}};$('import-btn').onclick=importFile;$('menu-import').onclick=importFile;$('menu-save').onclick=save;$('menu-export').onclick=exportSave;$('clear-log').onclick=()=>{if(S){S.log=[];render();save()}};$('menu-new').onclick=()=>{S=null;localStorage.removeItem(KEY);$('overlay').classList.add('hidden');$('game').classList.add('hidden');$('creator').classList.remove('hidden')};$('pause').onclick=()=>$('overlay').classList.remove('hidden');$('close-menu').onclick=()=>$('overlay').classList.add('hidden');document.addEventListener('keydown',e=>{if(e.key==='Escape')$('overlay').classList.toggle('hidden')});$('menu-import').onclick=importFile;
+setInterval(()=>{if(S)save()},30000);
 })();
