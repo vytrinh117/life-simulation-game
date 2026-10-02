@@ -1,5 +1,42 @@
 # Life Simulator Update Log
 
+## v7.2 (phase 1) — State lifecycle, obligations, Next Day & consequences
+
+Central rule: **nothing important stays pending forever**, and one transition updates every related record.
+
+### Confirmed bugs fixed
+- **Stale kindergarten decision.** Pending decisions now have a lifecycle (`createdDate`, `resolveDate`, `expiresDate`, `minAge`, `maxAge`, `resolved`, `resolvedDate`, `resolutionReason`, `supersededBy`). At age 6 an unanswered kindergarten question is resolved as `Superseded` ("Primary school age reached") and leaves the active list; a journal entry is kept. If a 3-year-old never answers, the family moves to "Family discussing" after 14 days and decides on its own.
+- **Exam ↔ calendar desync / stale "assessment today" banner.** All assessment outcomes go through `finalizeExam()`, which updates the exam record, its calendar event, subject grade, notifications, the hero context and the life log in one step. `exam = Completed` with `calendar = Due` can no longer happen; existing v7.1 saves are repaired on load.
+- `normalizeSchool()` used to overwrite exam statuses on every render (it even turned a missed exam with score 0 into "Completed").
+- A new school year wiped `S.exams` but left the old calendar events "Scheduled" forever. Old assessments are now archived and their events cancelled.
+- Exams could be scheduled on weekends; they now land on school days.
+- A caregiver "conditional" purchase answer (save half) kept the wrong type and could never be completed. It now becomes a real conditional request with a 180-day lifecycle.
+- Homework finished once per year never regenerated (status `Done` ≠ `None`). Homework now cycles.
+
+### New systems
+- **`reconcileState()`** runs after migrate, on game entry, at birthdays, every day and after major transitions. It repairs impossible school stages, out-of-age pending decisions, exam/calendar mismatches, past obligations with active statuses, stale hero banners, expired events, outdated club/contest approvals, duplicate calendar entries and missing lifecycle fields. History is moved into `S.archive` instead of being deleted.
+- **Obligation engine.** Calendar events are now obligations with `startMinute`, `endMinute`, `graceMinute` (arrival cutoff), `required`, `importance`, `location`, `attendanceStatus` and a status history. Lifecycle: Scheduled → Due → Attending → Attended/Completed, or → Missed / Excused / No-show / Withdrew / Cancelled / Expired. Obligations are resolved at 11:59 PM before the date changes.
+- **School days** are real obligations (weekdays, 8:00–3:00, on time by 8:15, absent after 11:00, winter and summer breaks). "Attend school" at 11 PM gives no credit. Taking an assessment during school hours includes going to school for the day.
+- **Missed assessments**: score 0 / incomplete, a teacher relationship hit (stronger for strict teachers) and attendance loss, applied exactly once. A follow-up event, "You missed Mathematics", offers four choices: Explain honestly / Claim you were sick / Ask for a make-up / Ignore it. The outcome depends on teacher personality, relationship and repeat offences. Make-ups are scheduled after school, and the grade penalty is reverted if a make-up is granted. Excused absences get an automatic make-up.
+- **Homework deadlines**: Assigned → Due tomorrow / Due today → Late (reduced credit, up to 3 days) → Missing. Finishing gives Submitted or Submitted late. Escalation: 1 missing = minor note, 3 = caregiver conversation, 6 = parent–teacher meeting.
+- **Clubs are commitments**: weekly sessions at 3:30 PM with Attend / Skip / "Tell the leader you can't come" (excused). Tracked: attendance %, attended/missed/excused, consecutive misses, leader relationship, position and warnings. Three misses in recent sessions → warning event. Four in a row (or repeated misses after a warning) → removed from the club. Teammates may comment the next day.
+- **Contests require attendance**: registering creates an obligation; the result is only produced if you check in (10:00–11:30). Otherwise the outcome is No-show (reputation and stress consequences), or Withdrew if sick.
+- **Delayed consequence chains (`S.followUps`)**: absence → school notice that evening → caregiver conversation on repeat offences (Apologize / Make up an excuse / Argue / Explain). Lying can be caught. Grounding blocks outings, trips and invitations.
+- **Event response windows**: invitations must be answered by 6 PM (or the next day at noon if they arrive late). Other events expire after about a day. Expired events have contextual reactions and can no longer be acted on.
+- **Notifications** have status (Unread / Read / Resolved / Expired) and source IDs. They resolve automatically with their source and are shown on the home screen.
+- **Hero context lifecycle**: `S.current` is now an object with `sourceType`, `sourceId`, `priority`, `createdAt` and `expiresAt`. It is validated before every render and replaced by the next most relevant context (exam → club/contest → event → school day → today's agenda). Assessments show Preparation / Skill / Sleep / Stress and a direct **Take Assessment** button. Quiet moments show today's agenda instead of empty space.
+- **NEXT DAY** button (separate from Age Up). It warns about today's unresolved obligations (Return / Advance anyway), finishes the day, sleeps and shows a morning summary (sleep, overnight changes, today's agenda, messages, what happened).
+- **Sleep → morning**: sleeping in the evening/night carries you into the next morning (school-day alarm 6:30). Outcomes include slept well / restless / bad dream / woke at night / woke early / overslept. Sleeping in the afternoon is a nap.
+- **Bedtimes by age** (7:30 PM toddlers → 10:30 PM older teens). Staying up late may be noticed, depending on household strictness.
+- **Age Up simulates the year**: school days, assessments, homework and club sessions are attended or missed by probability (responsibility, stress, health, personality). The result is a **Year summary** (attendance %, assessments, make-ups, homework, club attendance, contests, relationship changes, money, notable events) instead of hundreds of popups.
+
+### UI
+- Education cards: structured header (subject / teacher · relationship / grade) and spaced metadata. This fixes "MathematicsMs. Kim" and "Skill100%Prep100%". A due assessment gets a high-priority callout with its own button; Study is a compact menu (30 min / 1 h / 3 h).
+- Home: Today agenda, Notifications, open events with "respond by" times.
+- Calendar: Today, attendance record, upcoming items with status/location/required flag, and "Recently resolved".
+- Upcoming strip: terminal items disappear immediately; items happening now are highlighted.
+
+
 ## v7.1 — Developmental Activities, Household Permissions & UI Cleanup
 - Reworked Daily Life personal activities by developmental stage.
 - Infants now get sensory play, caregiver story time, radio music and babbling/interaction instead of independent reading/journaling/screens.

@@ -1,124 +1,59 @@
-# QC Report — Life Simulator v7
+# QC Report — Life Simulator v7.2 (phase 1)
 
-## Result
-**PASS for the implemented v7 scope.**
+## Method
+The v7.1 report marked features PASS when buttons were wired. Real play still exposed lifecycle bugs, so this QC was redone **from the player's perspective**. Every check drives the real game in headless Chromium (`index.html` + `game.js`) and follows the full lifecycle: **create → display → interact → resolve → leave the active UI → persist after reload → never reappear**.
 
-## Static checks
-- `node --check game.js`: PASS
-- `node --check data.js`: PASS
-- Duplicate HTML IDs: none found
-- Missing static DOM references: none, excluding intentionally dynamic stand/yard-sale form fields
-- Duplicate function declarations: none
-- Absolute `/assets/...` style paths: none
-- GitHub Pages workflow present
-- `.nojekyll` present
-- ZIP/static structure verified at repository root
-- Visible panel buttons audited for a routing ID/data-action: no unhandled clickable-looking panel buttons found in tested age states
+The two confirmed bugs were reproduced with the **original v7.1 code**, and those exact saves are used as fixtures (`qa/fixture_*_v71.json`).
 
-## Browser runtime QC
-The environment blocks Chromium navigation to localhost with `ERR_BLOCKED_BY_ADMINISTRATOR`. To still perform browser-level runtime testing, QC injected the **exact generated HTML, CSS, data.js and game.js** into a Chromium blank page and exercised the real DOM/event handlers. This catches JavaScript exceptions, broken selectors, UI state failures and layout overflow. LocalStorage was replaced only in the test harness with an in-memory implementation because opaque blank-page origins cannot use browser storage.
+**Result: 156 checks passed, 0 failed, 0 JavaScript errors** on the final build.
 
-Observed uncaught page/console errors during the full injected-browser suite: **0**.
+| Suite | Checks | Covers |
+|---|---|---|
+| `t_regress.py` | 16 | §50 kindergarten regression, v7.1 exam/calendar mismatch repair |
+| `t_exam.py` | 29 | §51 take exam, §52 missed exam, make-up grant/deny branches |
+| `t_day.py` | 29 | §121 Next Day, sleep/nap, school-day windows, homework lifecycle, kindergarten auto-decision, invitation expiry |
+| `t_commit.py` | 24 | Club attendance/warnings/removal, contest attendance/no-show, absence → caregiver chain, Age Up year simulation |
+| `t_balance.py` | 1 | Six consecutive Age Ups: grades/attendance stay plausible |
+| `t_ui.py` | 50 | Education screen at 7 viewports, hero content, modals |
+| `t_fuzz.py` | 7 | 840 random player clicks (ages 3–17) with reloads, Next Day and Age Up; cross-system invariants checked every 10 steps |
 
-### Start / state lifecycle
-- Begin Life opens game: PASS
-- Initial needs initialize/render: PASS
-- Manual save: PASS
-- Load into a fresh browser page: PASS
-- Restart confirmation and return to creator: PASS
-- Restart preserves unrelated browser-storage key: PASS
-- Representative v6.3 autosave migration → v7: PASS
-- Legacy contest timing → v7 date fields: PASS
+## Scenarios (selected)
+**§50 Kindergarten.** v7.1 save: age 6, Grade 1, "Waiting for your preference". After load: Grade 1 intact; record `Superseded` / "Primary school age reached"; absent from Home and Calendar pending lists; journal entry kept; still resolved after reload; no errors. Normal flow: a 3-year-old who never answers → "Family discussing" after 14 days → family decides 2 days later.
 
-### Age-stage checks
-Test characters at ages **1, 3, 6, 10, 13, 16, 18, 25, 40 and 70**.
-- All visible navigation panels rendered non-empty: PASS
-- Age 3 no independent phone: PASS
-- Age 3 travel presented as caregiver/family context: PASS
-- Age 10 Money & Items available: PASS
-- Age 13 Phone tab hidden: PASS
-- Age 16 Phone tab visible but ownership still required: PASS
-- Age 70 Work & Retirement state visible: PASS
+**§51 Exam.** At 9:00 the hero shows the Math assessment with Preparation/Skill/Sleep/Stress and a Take Assessment button, and the calendar shows `Due`. After taking it: exam `Completed` with a score, calendar `Completed`, hero cleared, gone from the upcoming strip, notification `Resolved`, school day counted as attended. It cannot be taken twice, does not reappear the next day, and persists after reload.
 
-### Needs / daily actions
-Forced Hunger, Toilet, Hygiene and Sleep to severe states at age 3.
-- Each need remained actionable: PASS
-- Each recovery action advanced simulation time: PASS
-- Age-appropriate labels/methods: PASS
-- Eat, Drink, Toilet, Wash/Bath, Brush Teeth, Dress, Sleep, Nap and Rest visible in Daily Life: PASS
+**§52 Missed exam.** Doing nothing from 7:00 to 12:00 gives: exam `Missed`, calendar `Missed`, hero switches to "You missed Mathematics", teacher relationship reduced, `examsMissed = 1` and the school day marked absent. After three more days the consequence has **not** repeated; the follow-up is answerable during its 3-day window and expires afterwards. A make-up exam was both granted and denied across runs; a granted make-up replaces the original record.
 
-### School
-- Club exploration produces a single offer: PASS
-- Under-13 club join creates delayed caregiver decision: PASS
-- Favorable caregiver decision activates club: PASS
-- Active club contains real actions and changes sessions/skill: PASS
-- School-event exploration creates event with registration deadline + event date: PASS
-- Exam schedule/countdown exists: PASS
-- Advance to exam date exposes Take Exam: PASS
-- Exam action resolves to a score: PASS
+**§121 Next Day.** A free Saturday advances with no warnings and shows the morning summary. On an exam day, a warning modal appears; Return keeps the day, and Advance anyway gives exam `Missed` and one absence, counted exactly once, waking the next morning. Reload keeps the state. Sleeping at 9 PM reaches the next morning; sleeping at 2 PM is a nap on the same day.
 
-### Money / requests / phone
-- Child parent-managed savings counted toward a purchase with permission: PASS
-- Age 12 can own a purchased phone but cannot independently use Phone system: PASS
-- Same owned phone becomes usable at configured high-school phone age: PASS
-- Controlled caregiver request entered `Considering`: PASS
-- Advancing to decision date resolves or converts it to a clear condition: PASS
-- Birthday gift request remains unresolved before birthday: PASS
-- Birthday request resolves on the birthday: PASS
-- Christmas request remained unresolved Dec 24 and resolved Dec 25: PASS
-- Christmas gift trigger did not repeat on Dec 26: PASS
+**School-day windows.** "Attend" at 11 PM gives no credit (day marked Missed). Arriving at 9:20 is marked `Tardy` and returns home at 3 PM. Absences schedule a delayed school notice.
 
-### Small business / inventory
-- Age 6 small stand can initialize with favorable caregiver approval: PASS
-- One session did not create runaway thousands of dollars in revenue: PASS
-- Adult item purchase enters structured inventory: PASS
-- Inventory exposes real item actions: PASS
-- Use/Wear/Gift/Sell/Repair/Store/Discard paths are wired to logic
+**Homework.** Assigned → Late after the due date → Missing after the late window (not Late forever). Finishing it gives Submitted / Submitted late.
 
-### Age Up
-- Advances exactly one birthday in tested state: PASS
-- Scheduled/holiday logic processes during skip: PASS
-- Does not generate hundreds of routine daily log entries: PASS
+**Clubs.** Joining schedules a real session; a due session takes the hero; attending counts and schedules the next one. Telling the leader beforehand is `Excused`. Repeated no-shows → warning event; 4 in a row → `Removed` with no live sessions; persists after reload.
 
-### Responsive layout
-No document-level horizontal overflow detected at:
-- 1920×1080: PASS
-- 1440×900: PASS
-- 1366×768: PASS
-- 768×1024: PASS
-- 390×844: PASS
+**Contests.** Registration alone gives no result; checking in runs the competition; absence gives `No-show` / "Did not attend".
 
-## Known limitations / intentionally simplified areas
-- Lunar New Year currently uses a simplified in-game February period rather than an astronomical lunar-calendar library.
-- Real-world country-specific laws, school calendars, transport systems, currencies and prices are not a complete geographic/legal database.
-- University/trade-school, housing, marriage/children, inheritance/legal disputes, full company management and celebrity-industry careers are not yet as deep as the core needs/family/school/money systems.
-- Vehicle fuel, insurance and maintenance are abstracted.
-- Browser QC could not navigate the local HTTP URL due to environment policy; static path/workflow checks were done separately and exact assets were runtime-tested by injection.
+**§46 Consequence chain.** The second absence → a caregiver conversation that evening (not instantly). The choice resolves with a narrative.
 
+**§11 Age Up.** The year summary shows realistic attendance (91–97% across runs, with unexcused/excused/late days), completed and missed assessments, make-ups and homework. No past obligation is left active.
 
-## v7.1 focused regression targets
-- Verify age 0/1 Daily Life has no independent Read, Journal, TV, Computer or Phone actions.
-- Verify toddler Daily Life uses Play & discovery and only caregiver-approved TV as an optional screen activity.
-- Verify age 5+ reading and age 6+ journaling progression.
-- Verify radio music works without screen permission and radio news remains development-gated.
-- Verify TV/computer/tablet/console/phone/stove use has logic-level caregiver permission for minors.
-- Verify World & Journal no longer duplicates the chronological Life log.
-- Verify desktop sidebar/Identity never overlap while scrolling; mobile remains non-sticky.
+**UI** (1920×1080, 1440×900, 1366×768, 1180×820, 820×1180, 768×1024, 390×844): no horizontal overflow; subject name and teacher never touch; Skill/Prep/Exam spaced; subject buttons never overlap; due-assessment CTA in both the card and the hero; hero never empty.
 
+**Fuzz invariants (never violated).** Exam/calendar status always agree; no active past calendar entries; no dangling "Attending"; no exam stuck "In progress"; no active kindergarten at 6+; no open event past expiry; no active notification for a resolved exam; no homework Late for more than 4 days; the hero never points at a resolved source; no duplicate or orphaned club sessions.
 
-### v7.1 executed browser regression
-Using Chromium with the exact final HTML/CSS/JS injected into a browser DOM, plus a storage shim only because sandboxed `about:blank` blocks native localStorage:
-- PASS: game starts.
-- PASS: age 0 has sensory play/story/radio/babbling and no independent Read/Journal/TV/Computer.
-- PASS: age 2 uses toys/picture-book/radio and caregiver-approved TV; no Journal.
-- PASS: age 5 reading appears; Journal remains hidden.
-- PASS: age 6 picture journal appears.
-- PASS: age 8 radio news appears.
-- PASS: age 7 stove/cooking permission is enforced and remembered for that in-game day.
-- PASS: age 10 TV permission is enforced.
-- PASS: owned tablet uses the shared-electronics permission path.
-- PASS: age 16 owned phone requires the phone permission path before app use.
-- PASS: World & Journal no longer includes a duplicate Recent life log.
-- PASS: desktop scrolled sidebar nav does not overlap Identity and stays inside viewport.
-- PASS: 390px mobile sidebar is non-sticky with no document-level horizontal overflow.
-- Browser console warnings/errors from tested gameplay: 0.
+**Deployment.** `?smoke=1` passes; all paths relative; `.nojekyll` and the Pages workflow unchanged; localStorage save/reload verified in tests.
+
+## Bugs found during this QC and fixed
+- Age Up marked every school day absent (end-of-day processing took the "missed" path instead of simulation).
+- "Attend school" at 11 PM left the day "Scheduled" until time passed.
+- Simulated exams dragged grades down every year; they now assume a typical year of study, and attendance slowly builds skill.
+
+## Known limitations
+- Nothing in the game currently makes the character ill, so "excused for illness" only occurs in Age Up simulation and on approved family trips.
+- School breaks are fixed (Dec 23–Jan 2, Jun 12–Aug 24, northern-hemisphere style). Regional calendars come with the holiday engine.
+- Not yet implemented (later phases): inventory/item lifecycles (§12–23, 42–45), holiday engine and month calendar (§24–28, 48–49, 89–90), light/dark/auto themes and icon system (§29–31, 35), schedule-conflict choices (§28), and the social/story systems (§60–123).
+- Tests use a QC-only clock jump (`setClock`). In normal play time always passes through the processors; a few test-only artifacts (e.g. homework shown "Late" right after a jump) do not occur in real play.
+
+## Running QC
+Install Playwright with Chromium (`pip install playwright && playwright install chromium`), then from `qa/` run e.g. `python3 t_exam.py`. If needed, change `URL` and `CHROME` in `qa/harness.py` to match your setup.

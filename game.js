@@ -98,13 +98,13 @@ function makeState(){
  const personality=selectedP.length?[...selectedP]:[rand(D.personalities)],talents=selectedT.length?[...selectedT]:[rand(D.talents)];
  const dob=$('c-dob').value||randomBirthDate(),place=$('c-place').value.trim()||rand(D.places),wealth=$('c-wealth').value||'Middle class',home=$('c-home').value||'Warm and stable';
  const moneyStart=['Struggling','Modest'].includes(wealth)?0:wealth==='Middle class'?10:25;
- return {version:7.1,name:$('c-name').value.trim()||rand(D.names),dob,place,zodiac:$('c-zodiac').value==='auto'?zodiacFromDate(dob):$('c-zodiac').value,gender:$('c-gender').value,attraction:$('c-attraction').value,wealth,home,personality,talents,age:0,day:1,clock:{dateISO:dob,minute:480},location:'Home',money:moneyStart,health:100,happiness:75,energy:95,stress:5,luck:clamp(35+Math.random()*30),mentality:mentalityFor(personality),emotion:{current:'Calm',reason:'Life is just beginning.',intensity:30},needs:needDefaults(),development:{skills:skillDefaults(),kindergarten:{asked:false,enrolled:false,preference:null,decision:null},milestones:[]},family:{closeness:72,tension:6,responsibility:0,allowance:0,rules:familyRuleSeed(home,wealth)},people:makePeople(0),school:initialSchool(),exams:[],calendar:[],pendingDecisions:[],events:[],eventCooldowns:{},messages:[],notifications:[],log:[],milestones:[],flags:{},weather:initialWeather(),homeAmenities:initialAmenities(wealth),inventory:{umbrella:0,raincoat:0,sweater:0,firewood:0,sunglasses:0,waterBottle:0},inventoryItems:[],possessions:[],phone:{owned:false,model:null,price:600,condition:100,appsUnlocked:[]},finance:initialFinance(),permissions:{stand:null,yardSale:null,dailyAccess:{dateISO:dob,tv:false,sharedDevice:false,phone:false,stove:false}},stall:null,purchaseHistory:[],giftRequests:[],giftHistory:[],traditions:initialTraditions(place),familyEvents:[],choresDone:0,career:initialCareer(),healthState:{fitness:50,sleep:80,illness:null},social:{followers:0,reputation:50,posts:0,fame:0},romance:{status:'Single',partner:null,history:[]},travel:{trips:0,lastTrip:null,passport:false},current:{title:'Welcome to the world.',text:'At first, almost everything happens through caregivers. Your independence will grow with age, skills, trust and circumstances.'}}
+ return {version:7.2,name:$('c-name').value.trim()||rand(D.names),dob,place,zodiac:$('c-zodiac').value==='auto'?zodiacFromDate(dob):$('c-zodiac').value,gender:$('c-gender').value,attraction:$('c-attraction').value,wealth,home,personality,talents,age:0,day:1,clock:{dateISO:dob,minute:480},location:'Home',money:moneyStart,health:100,happiness:75,energy:95,stress:5,luck:clamp(35+Math.random()*30),mentality:mentalityFor(personality),emotion:{current:'Calm',reason:'Life is just beginning.',intensity:30},needs:needDefaults(),development:{skills:skillDefaults(),kindergarten:{asked:false,enrolled:false,preference:null,decision:null},milestones:[]},family:{closeness:72,tension:6,responsibility:0,allowance:0,rules:familyRuleSeed(home,wealth)},people:makePeople(0),school:initialSchool(),exams:[],calendar:[],pendingDecisions:[],events:[],eventCooldowns:{},messages:[],notifications:[],log:[],milestones:[],flags:{},weather:initialWeather(),homeAmenities:initialAmenities(wealth),inventory:{umbrella:0,raincoat:0,sweater:0,firewood:0,sunglasses:0,waterBottle:0},inventoryItems:[],possessions:[],phone:{owned:false,model:null,price:600,condition:100,appsUnlocked:[]},finance:initialFinance(),permissions:{stand:null,yardSale:null,dailyAccess:{dateISO:dob,tv:false,sharedDevice:false,phone:false,stove:false}},stall:null,purchaseHistory:[],giftRequests:[],giftHistory:[],traditions:initialTraditions(place),familyEvents:[],choresDone:0,career:initialCareer(),healthState:{fitness:50,sleep:80,illness:null},social:{followers:0,reputation:50,posts:0,fame:0},romance:{status:'Single',partner:null,history:[]},travel:{trips:0,lastTrip:null,passport:false},current:{title:'Welcome to the world.',text:'At first, almost everything happens through caregivers. Your independence will grow with age, skills, trust and circumstances.'}}
 }
 
 function legacyClock(){const dob=parseISO(S.dob||'2010-01-01');dob.setUTCFullYear(dob.getUTCFullYear()+safeNum(S.age,0,0,120));const within=Math.max(0,((safeNum(S.day,1,1)-1)%365));dob.setUTCDate(dob.getUTCDate()+within);return {dateISO:isoDate(dob),minute:480}}
 function migrate(){
  if(!S||typeof S!=='object')throw new Error('Save data is not an object.');
- S.version=7.1;S.name=String(S.name||'Unnamed');S.dob=/^\d{4}-\d{2}-\d{2}$/.test(S.dob||'')?S.dob:'2010-01-01';S.place=S.place||'Unknown';S.age=safeNum(S.age,0,0,120);S.day=safeNum(S.day,1,1);S.clock=S.clock&&/^\d{4}-\d{2}-\d{2}$/.test(S.clock.dateISO||'')?{dateISO:S.clock.dateISO,minute:safeNum(S.clock.minute,480,0,1439)}:legacyClock();
+ S.version=7.2;S.name=String(S.name||'Unnamed');S.dob=/^\d{4}-\d{2}-\d{2}$/.test(S.dob||'')?S.dob:'2010-01-01';S.place=S.place||'Unknown';S.age=safeNum(S.age,0,0,120);S.day=safeNum(S.day,1,1);S.clock=S.clock&&/^\d{4}-\d{2}-\d{2}$/.test(S.clock.dateISO||'')?{dateISO:S.clock.dateISO,minute:safeNum(S.clock.minute,480,0,1439)}:legacyClock();
  S.money=safeNum(S.money,0,0);S.health=clamp(S.health??100);S.happiness=clamp(S.happiness??70);S.energy=clamp(S.energy??90);S.stress=clamp(S.stress??10);S.luck=clamp(S.luck??50);S.personality=Array.isArray(S.personality)?S.personality:[];S.talents=Array.isArray(S.talents)?S.talents:[];S.mentality=S.mentality||mentalityFor(S.personality);S.emotion=Object.assign({current:'Calm',reason:'',intensity:30},S.emotion||{});
  S.needs=Object.assign(needDefaults(),S.needs||{});Object.keys(S.needs).forEach(k=>S.needs[k]=clamp(S.needs[k]));S.development=S.development||{};S.development.skills=Object.assign(skillDefaults(),S.development.skills||{});S.development.kindergarten=Object.assign({asked:false,enrolled:false,preference:null,decision:null},S.development.kindergarten||{});S.development.milestones=S.development.milestones||[];
  S.family=Object.assign({closeness:65,tension:10,responsibility:0,allowance:0,rules:familyRuleSeed(S.home||'',S.wealth||'Middle class')},S.family||{});S.family.rules=Object.assign(familyRuleSeed(S.home||'',S.wealth||'Middle class'),S.family.rules||{});normalizePeople();
@@ -112,12 +112,12 @@ function migrate(){
  S.weather=Object.assign(initialWeather(),S.weather||{});S.homeAmenities=Object.assign(initialAmenities(S.wealth||'Middle class'),S.homeAmenities||{});S.inventory=Object.assign({umbrella:0,raincoat:0,sweater:0,firewood:0,sunglasses:0,waterBottle:0},S.inventory||{});S.inventoryItems=Array.isArray(S.inventoryItems)?S.inventoryItems:[];S.possessions=Array.isArray(S.possessions)?S.possessions:[];S.purchaseHistory=Array.isArray(S.purchaseHistory)?S.purchaseHistory:[];
  S.phone=Object.assign({owned:false,model:null,price:600,condition:100,appsUnlocked:[]},S.phone||{});S.finance=Object.assign(initialFinance(),S.finance||{});S.permissions=Object.assign({stand:null,yardSale:null,dailyAccess:{}},S.permissions||{});S.permissions.dailyAccess=Object.assign({dateISO:currentDate(),tv:false,sharedDevice:false,phone:false,stove:false},S.permissions.dailyAccess||{});S.giftRequests=Array.isArray(S.giftRequests)?S.giftRequests:[];S.giftHistory=Array.isArray(S.giftHistory)?S.giftHistory:[];S.traditions=Object.assign(initialTraditions(S.place),S.traditions||{});S.familyEvents=Array.isArray(S.familyEvents)?S.familyEvents:[];S.choresDone=safeNum(S.choresDone,0,0);
  if(typeof S.career?.job==='string'&&S.career.job)S.career.job={title:S.career.job,pay:16,hours:4,performance:50};S.career=Object.assign(initialCareer(),S.career||{});S.healthState=Object.assign({fitness:50,sleep:80,illness:null},S.healthState||{});S.social=Object.assign({followers:0,reputation:50,posts:0,fame:0},S.social||{});S.romance=Object.assign({status:'Single',partner:null,history:[]},S.romance||{});S.travel=Object.assign({trips:0,lastTrip:null,passport:false},S.travel||{});S.location=S.location||'Home';S.current=S.current||{title:'Your life continues.',text:'The world is still moving.'};
- normalizeInventory();normalizeSchool();normalizeRequests();addStagePeople();ensurePhoneApps();ensureCalendarBasics();
+ ensureLifecycleContainers();normalizeInventory();normalizeSchool();normalizeRequests();addStagePeople();ensurePhoneApps();ensureCalendarBasics();reconcileState('migrate');
 }
 
 function save(){if(!S)return;try{localStorage.setItem(KEY,JSON.stringify(S));const el=$('save-status');if(el)el.textContent='Saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}catch(e){console.error('Save failed',e);toast('Could not save this life.')}}
 function loadRaw(){let raw=localStorage.getItem(KEY);if(raw)return raw;for(const k of LEGACY_KEYS){raw=localStorage.getItem(k);if(raw)return raw}return null}
-function exportSave(){if(!S)return;const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`life-${S.name.replace(/\s+/g,'-').toLowerCase()}-v7.1.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function exportSave(){if(!S)return;const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`life-${S.name.replace(/\s+/g,'-').toLowerCase()}-v7.2.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function importFile(){$('import-file').click()}
 function restart(){if(!confirm('Start a new life? This clears only this Life Simulator autosave. Export first if you want to keep it.'))return;S=null;localStorage.removeItem(KEY);LEGACY_KEYS.forEach(k=>localStorage.removeItem(k));closeAllModals();$('game').classList.add('hidden');$('creator').classList.remove('hidden');$('creator-error').hidden=true;toast('Ready for a new life')}
 
@@ -214,56 +214,16 @@ function useInventoryItem(id,action='use'){
  if(action==='store'){it.stored=!it.stored;feedback(it.stored?'Stored item':'Took item out',it.name,5);return}
  if(action==='discard'){if(!confirm(`Discard ${it.name}? This cannot be undone.`))return;removeItem(it.id);feedback(`Discarded ${it.name}`,'The item is no longer in your possessions.',5)}
 }
-function createCalendarEvent(ev){const e=Object.assign({id:uid('cal'),type:'generic',title:'Scheduled event',dateISO:currentDate(),minute:0,status:'Scheduled',payload:{},source:'system'},ev||{});if(!e.id)e.id=uid('cal');if(!S.calendar.some(x=>x.id===e.id))S.calendar.push(e);return e}
-function createPending(p){const x=Object.assign({id:uid('pending'),createdDate:currentDate(),status:'Pending',detail:'',resolved:false},p);S.pendingDecisions.push(x);return x}
-function normalizeRequests(){S.pendingDecisions=(S.pendingDecisions||[]).map(x=>Object.assign({id:uid('pending'),createdDate:currentDate(),status:'Pending',resolved:false},x));S.giftRequests=(S.giftRequests||[]).map(x=>Object.assign({id:uid('giftreq'),begging:1,chancePenalty:0,resolved:false,status:`Waiting for ${x.occasion||'occasion'}`},x))}
 function nextOccurrence(month,day,from=currentDate()){const f=parseISO(from),y=f.getUTCFullYear();let d=new Date(Date.UTC(y,month-1,day));if(d<=f)d=new Date(Date.UTC(y+1,month-1,day));return isoDate(d)}
 function nextBirthday(){const b=parseISO(S.dob),f=parseISO(currentDate());let d=new Date(Date.UTC(f.getUTCFullYear(),b.getUTCMonth(),b.getUTCDate()));if(d<=f)d=new Date(Date.UTC(f.getUTCFullYear()+1,b.getUTCMonth(),b.getUTCDate()));return isoDate(d)}
 function ensureCalendarBasics(){S.calendar=S.calendar||[];if(S.school)syncExamCalendar()}
-function upcomingEvents(limit=7){const arr=[];arr.push({id:'birthday',title:`${S.name}'s birthday`,dateISO:nextBirthday(),type:'birthday'});if(S.traditions.christmas)arr.push({id:'christmas',title:'Christmas',dateISO:nextOccurrence(12,25),type:'holiday'});if(S.traditions.newYear)arr.push({id:'newyear',title:'New Year',dateISO:nextOccurrence(1,1),type:'holiday'});if(S.traditions.lunarNewYear)arr.push({id:'lunar',title:'Lunar New Year period',dateISO:nextOccurrence(2,1),type:'holiday'});for(const e of S.calendar.filter(x=>!['Resolved','Cancelled','Completed'].includes(x.status)))arr.push(e);for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.resolveDate))arr.push({id:p.id,title:p.title,dateISO:p.resolveDate,type:'decision'});return arr.filter(x=>x.dateISO>=currentDate()).sort((a,b)=>a.dateISO.localeCompare(b.dateISO)||(a.minute||0)-(b.minute||0)).slice(0,limit)}
-function processCalendar({skipRoutine=false}={}){
- for(const ev of S.calendar){if(['Resolved','Completed','Cancelled'].includes(ev.status))continue;if(ev.dateISO>currentDate())continue;if(ev.dateISO===currentDate()&&(ev.minute??0)>currentMinute())continue;handleCalendarEvent(ev,{skipRoutine})}
- processPendingDecisions();checkConditionalRequests();
-}
-function handleCalendarEvent(ev,{skipRoutine=false}={}){
- if(ev.type==='exam'){
-  ev.status='Due';const exam=S.exams.find(x=>x.id===ev.payload?.examId);
-  if(exam&&exam.score==null){exam.status='Due';if(!skipRoutine){S.current={title:`${exam.subject} ${exam.type} today`,text:'The exam is due. Preparation, sleep, stress and subject skill will all matter.'};notify('Exam today',`${exam.subject} is due today.`)}}return;
- }
- if(ev.type==='clubSession'){
-  ev.status='Resolved';const c=S.school?.clubs?.find(x=>x.id===ev.payload?.clubId);
-  if(c&&c.status==='Active'){if(!skipRoutine)notify('Club session',`${c.name} has a session today.`);c.nextSessionDate=addDays(currentDate(),7);createCalendarEvent({type:'clubSession',title:`${c.name} session`,dateISO:c.nextSessionDate,minute:960,payload:{clubId:c.id},source:'club'})}return;
- }
- if(ev.type==='schoolEvent'){
-  ev.status='Resolved';const c=S.school?.contests?.find(x=>x.id===ev.payload?.contestId);if(c&&c.status==='Registered')resolveContest(c);return;
- }
- if(ev.type==='party'){
-  ev.status='Resolved';if(!skipRoutine)queueEvent({type:'party',title:ev.title,text:ev.text||'A social event you were expecting has arrived.',choices:[{id:'go',label:'Go'},{id:'skip',label:'Skip'}]});return;
- }
- ev.status='Resolved'
-}
-function notify(title,text){S.notifications.unshift({id:uid('note'),dateISO:currentDate(),minute:currentMinute(),title,text,read:false});if(S.notifications.length>40)S.notifications.length=40}
 function createConsideringDecision(key){const d=catalogItem(key),days=2+Math.floor(Math.random()*5);createPending({type:'purchaseConsideration',title:`${d.name} request`,resolveDate:addDays(currentDate(),days),payload:{key},status:'Considering',detail:`Decision expected ${formatDate(addDays(currentDate(),days))}.`})}
-function resolvePurchaseDecision(p){const d=catalogItem(p.payload?.key);if(!d){p.resolved=true;p.status='Cancelled';return}const score=purchaseScore(d,true)+(S.luck-50)*.08;const r=Math.random()*100;if(r<score){addItem(p.payload.key,'caregiver purchase after consideration');p.status='Approved';log('Request approved',`After thinking it over, your caregivers buy ${d.name}.`,true)}else if(r<score+18){p.status='Conditional';p.resolveDate=null;p.payload.condition='saveHalf';p.payload.target=Math.ceil(d.price/2);p.detail=`Save ${money(p.payload.target)}; your caregivers will reconsider.`;log('A conditional answer',`Your caregivers will help with ${d.name} if you save ${money(p.payload.target)}.`);return}else{p.status='Denied';log('Request denied',`After considering ${d.name}, your caregivers decide against it for now.`)}p.resolved=true}
+function resolvePurchaseDecision(p){const d=catalogItem(p.payload?.key);if(!d){p.resolved=true;p.status='Cancelled';return}const score=purchaseScore(d,true)+(S.luck-50)*.08;const r=Math.random()*100;if(r<score){addItem(p.payload.key,'caregiver purchase after consideration');p.status='Approved';log('Request approved',`After thinking it over, your caregivers buy ${d.name}.`,true)}else if(r<score+18){p.type='conditionalPurchase';p.status='Conditional';p.resolveDate=null;p.expiresDate=addDays(currentDate(),180);p.payload.condition='saveHalf';p.payload.target=Math.ceil(d.price/2);p.detail=`Save ${money(p.payload.target)}; your caregivers will reconsider.`;log('A conditional answer',`Your caregivers will help with ${d.name} if you save ${money(p.payload.target)}.`);return}else{p.status='Denied';log('Request denied',`After considering ${d.name}, your caregivers decide against it for now.`)}p.resolved=true}
 function resolveJobDecision(p){const job=p.payload?.job;if(!job){p.resolved=true;p.status='Cancelled';return}const chanceVal=clamp(48+S.career.skills*4+(S.family.responsibility||0)*.2+(S.luck-50)*.18);if(chance(chanceVal)){S.career.job={id:job.id,title:job.title,pay:job.pay,hours:job.hours,performance:50,manager:rand(['Morgan','Taylor','Casey','Riley']),coworkers:[rand(D.names),rand(D.names)]};p.status='Offer';log('Job offer',`You are offered a position as ${job.title} at ${money(job.pay)}/hour.`,true)}else{p.status='Rejected';log('Job application',`The ${job.title} application does not turn into an offer this time.`)}p.resolved=true}
 function checkConditionalRequests(){for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.type==='conditionalPurchase')){const d=catalogItem(p.payload?.key);if(!d)continue;if(p.payload.condition==='saveHalf'&&availableFunds()>=p.payload.target){if(spendOwn(p.payload.target)){addItem(p.payload.key,'shared purchase');p.resolved=true;p.status='Completed';log('You saved your share',`You pay ${money(p.payload.target)} toward ${d.name}; your caregivers cover the rest.`,true)}}else if(p.payload.condition==='chores'&&(S.choresDone||0)>=p.payload.target){addItem(p.payload.key,'earned through chores');p.resolved=true;p.status='Completed';log('You earned it',`After following through on chores, your caregivers buy ${d.name}.`,true)}else if(p.payload.condition==='grades'&&S.school&&schoolAverage()>=p.payload.target){addItem(p.payload.key,'grade reward');p.resolved=true;p.status='Completed';log('Grade reward',`You meet the academic condition and receive ${d.name}.`,true)}}}
 
 function driftNeeds(minutes){const h=Math.max(0,minutes)/60;if(!S.needs)return;S.needs.hunger=clamp(S.needs.hunger+h*2.4);S.needs.toilet=clamp(S.needs.toilet+h*2);S.needs.hygiene=clamp(S.needs.hygiene-h*.8);S.needs.fun=clamp(S.needs.fun-h*.5);S.needs.social=clamp(S.needs.social-h*.25);S.needs.comfort=clamp(S.needs.comfort-h*.15);S.needs.sleep=clamp(S.needs.sleep-h*1.45);S.energy=clamp(S.energy-h*1.8)}
-function advanceTime(minutes,{skipNeeds=false,silent=false,skipRoutine=false}={}){
- minutes=Math.max(0,Math.round(minutes)||0);if(!minutes)return;if(!skipNeeds)driftNeeds(minutes);
- let remaining=minutes;
- while(remaining>0){
-  const untilMidnight=1440-S.clock.minute;
-  if(remaining<untilMidnight){S.clock.minute+=remaining;remaining=0;processCalendar({skipRoutine})}
-  else{remaining-=untilMidnight;S.clock.minute=0;S.clock.dateISO=addDays(S.clock.dateISO,1);S.day++;dailyTick({skipRoutine});processCalendar({skipRoutine})}
- }
- if(!skipNeeds)applyNeedConsequences();if(!silent&&!skipRoutine)maybeRandomEvent();checkConditionalRequests()
-}
 function advance(days){advanceTime(Math.max(0,days)*1440,{skipNeeds:true,silent:true,skipRoutine:true})}
-function dailyTick({skipRoutine=false}={}){
- setWeather();ageSync();schoolDailyTick(skipRoutine);schoolActivityTick();holidayTick();
- if(!skipRoutine){worldTick();npcInitiative();applyNeedConsequences(true);if(S.stall?.active&&chance(35))runStall(false)}
-}
 function ageSync(){const derived=ageFromDate(S.dob,currentDate());if(derived>S.age){for(let a=S.age+1;a<=derived;a++)birthday(a)}}
 function annualLifeTransition(){
  const ds=S.development.skills;if(S.age<=7){ds.communication=clamp(ds.communication+(S.age<=2?18:S.age<=4?14:10));if(S.age>=4)ds.reading=clamp(ds.reading+(S.age<=5?9:14))}
@@ -273,8 +233,7 @@ function annualLifeTransition(){
  if(chance(20)){const text=rand(['A relative changes jobs.','A family member starts a new hobby.','Someone in the extended family moves.','Family routines shift as everyone gets older.']);S.familyEvents.unshift({dateISO:currentDate(),text})}
  if(S.career.job&&chance(18)){S.career.reputation=clamp(S.career.reputation+2);S.career.skills=safeNum(S.career.skills,0)+1}
 }
-function birthday(newAge){S.age=newAge;S.energy=clamp(Math.max(S.energy,75));S.stress=clamp(S.stress-5);S.people.forEach(p=>p.age=(p.age||S.age)+1);addStagePeople();resolveFutureGifts('Birthday');const cashGift=S.age>=5&&chance(45)?Math.round(10+Math.random()*Math.min(140,S.age*5)):0;if(cashGift){S.money+=cashGift;S.giftHistory.unshift({id:uid('gift'),dateISO:currentDate(),age:S.age,item:money(cashGift)+' birthday cash',occasion:'Birthday',reaction:null})}progressSchoolForAge();annualLifeTransition();S.current={title:`Happy ${S.age}${S.age===1?'st':S.age===2?'nd':S.age===3?'rd':'th'} birthday`,text:'A new year of life begins. People, permissions, school, health and opportunities may all change.'};log('🎂 Birthday',`You turn ${S.age}.${cashGift?` You also receive ${money(cashGift)} in birthday money.`:''}`,true);setEmotion('Excited','It is your birthday.',65);if(S.age>=3&&chance(S.age<=18?68:35))queueEvent({type:'birthdayParty',title:'How do you want to celebrate?',text:S.age<13?'Your family asks what kind of birthday celebration sounds good.':'People close to you are making birthday plans.',choices:[{id:'big',label:'Celebrate with people'},{id:'small',label:'Keep it small'},{id:'skip',label:'No party'}]})}
-function ageUp(){if(!S)return;const target=nextBirthday(),days=daysBetween(currentDate(),target);advanceTime(days*1440,{skipNeeds:true,silent:true,skipRoutine:true});S.clock.minute=600;processCalendar({skipRoutine:true});render();save();toast(`Age ${S.age}!`)}
+function birthday(newAge){S.age=newAge;S.energy=clamp(Math.max(S.energy,75));S.stress=clamp(S.stress-5);S.people.forEach(p=>p.age=(p.age||S.age)+1);addStagePeople();resolveFutureGifts('Birthday');const cashGift=S.age>=5&&chance(45)?Math.round(10+Math.random()*Math.min(140,S.age*5)):0;if(cashGift){S.money+=cashGift;S.giftHistory.unshift({id:uid('gift'),dateISO:currentDate(),age:S.age,item:money(cashGift)+' birthday cash',occasion:'Birthday',reaction:null})}progressSchoolForAge();annualLifeTransition();setCurrentContext({sourceType:'birthday',priority:2,title:`Happy ${S.age}${S.age===1?'st':S.age===2?'nd':S.age===3?'rd':'th'} birthday`,text:'A new year of life begins. People, permissions, school, health and opportunities may all change.'});log('🎂 Birthday',`You turn ${S.age}.${cashGift?` You also receive ${money(cashGift)} in birthday money.`:''}`,true);setEmotion('Excited','It is your birthday.',65);if(S.age>=3&&chance(S.age<=18?68:35))queueEvent({type:'birthdayParty',title:'How do you want to celebrate?',text:S.age<13?'Your family asks what kind of birthday celebration sounds good.':'People close to you are making birthday plans.',choices:[{id:'big',label:'Celebrate with people'},{id:'small',label:'Keep it small'},{id:'skip',label:'No party'}]});reconcileState('birthday')}
 
 // ---------- Weather / needs ----------
 function setWeather(){const old=S.weather?.type;let type=rand(D.weatherTypes);if(old&&chance(38))type=old;const mon=parseISO(currentDate()).getUTCMonth()+1,cold=[12,1,2].includes(mon),hot=[6,7,8].includes(mon);const ranges={Sunny:hot?[28,38]:cold?[18,29]:[23,34],Cloudy:[18,30],Rainy:[18,29],Stormy:[18,28],Cool:cold?[10,22]:[15,25],Hot:[31,40],Windy:[17,30]},r=ranges[type];S.weather={type,temp:r[0]+Math.floor(Math.random()*(r[1]-r[0]+1)),humidity:40+Math.floor(Math.random()*55),forecast:Array.from({length:5},(_,i)=>{const t=rand(D.weatherTypes),rr=ranges[t]||[20,30];return {dateISO:addDays(currentDate(),i+1),type:t,temp:rr[0]+Math.floor(Math.random()*(rr[1]-rr[0]+1))}})}}
@@ -284,7 +243,7 @@ function needUrgency(k,v){return ['hunger','toilet'].includes(k)?v:100-v}
 function needLabel(k,v){const u=needUrgency(k,v);return u>=86?'Critical':u>=68?'Needs attention':u>=42?'Okay':'Comfortable'}
 function needsDeltaText(before){const parts=[];for(const k of Object.keys(S.needs)){const d=Math.round(S.needs[k]-(before[k]??S.needs[k]));if(Math.abs(d)>=3)parts.push(`${k} ${d>0?'+':''}${d}`)}return parts.slice(0,3).join(' • ')}
 function applyNeedConsequences(daily=false){const once=(key)=>{const k=`need-${key}-${currentDate()}`;if(S.flags[k])return false;S.flags[k]=true;return true};if(S.needs.hunger>=88&&once('hunger')){S.energy=clamp(S.energy-8);S.happiness=clamp(S.happiness-4);S.stress=clamp(S.stress+3);notify('Very hungry','Food should be a priority.')}if(S.needs.toilet>=92&&once('toilet')){if(S.age<=7&&chance(45)){S.needs.toilet=35;S.needs.hygiene=clamp(S.needs.hygiene-28);S.happiness=clamp(S.happiness-6);setEmotion('Embarrassed','You had a bathroom accident.',70);log('Bathroom accident','You could not hold it. It is recoverable, but uncomfortable and embarrassing.')}else notify('Bathroom needed','Your bladder is making it hard to focus.')}if(S.needs.hygiene<=20&&once('hygiene')){S.happiness=clamp(S.happiness-2);if(S.age<18)log('Hygiene reminder',`${primaryCaregiver()} notices you need to wash up.`);else notify('Hygiene','You feel overdue for a shower or wash.')}if(S.needs.sleep<=16&&once('sleep')){S.energy=clamp(S.energy-12);S.stress=clamp(S.stress+5);notify('Exhausted','Performance and mood are starting to suffer.')}if(S.needs.social<=12&&once('social')){S.happiness=clamp(S.happiness-4);setEmotion('Lonely','You have been socially disconnected.',55)}if(daily&&S.health<35&&once('health'))notify('Health','You are not feeling well. Consider rest or care.')}
-function basicAction(type){if(!S)return;const before={...S.needs};if(type==='eat'){const mins=S.age<=1?30:S.age<=4?35:40;if(S.age<=1){S.needs.hunger=clamp(S.needs.hunger-58);S.development.skills.selfFeeding=clamp(S.development.skills.selfFeeding+5);advanceTime(mins);feedback('Fed by caregiver',`${primaryCaregiver()} feeds you safely. ${needsDeltaText(before)}`,mins)}else if(S.age<=4&&S.development.skills.selfFeeding<65){S.needs.hunger=clamp(S.needs.hunger-52);S.development.skills.selfFeeding=clamp(S.development.skills.selfFeeding+9);advanceTime(mins);feedback('Practiced self-feeding',`${primaryCaregiver()} helps while you eat. Self-feeding ${Math.round(S.development.skills.selfFeeding)}%.`,mins)}else{S.needs.hunger=clamp(S.needs.hunger-56);S.energy=clamp(S.energy+7);advanceTime(mins);feedback('Ate a meal',`${needsDeltaText(before)}${S.age<13?' • family food available':''}`,mins)}return}if(type==='snack'){S.needs.hunger=clamp(S.needs.hunger-24);advanceTime(12);feedback('Had a snack',needsDeltaText(before),12);return}if(type==='drink'){S.needs.comfort=clamp(S.needs.comfort+9);S.needs.toilet=clamp(S.needs.toilet+4);advanceTime(5);feedback('Drank water','Comfort +9',5);return}if(type==='toilet'){if(S.age<=1){S.needs.toilet=20;S.needs.hygiene=clamp(S.needs.hygiene+3);advanceTime(10);feedback('Caregiver toileting',`${primaryCaregiver()} takes care of your diaper/toileting needs.`,10)}else if(S.age<=4&&S.development.skills.potty<70){S.needs.toilet=15;S.development.skills.potty=clamp(S.development.skills.potty+10);advanceTime(12);feedback('Potty practice',`Potty skill ${Math.round(S.development.skills.potty)}%.`,12)}else{S.needs.toilet=10;advanceTime(8);feedback('Used the bathroom','Bladder relieved.',8)}return}if(type==='shower'||type==='bath'){const mins=type==='bath'?30:20;if(S.age<=3){S.needs.hygiene=95;S.development.skills.bathing=clamp(S.development.skills.bathing+5);advanceTime(mins);feedback('Bath with caregiver',`${primaryCaregiver()} handles safety and washing.`,mins)}else if(S.age<=7&&S.development.skills.bathing<65){S.needs.hygiene=92;S.development.skills.bathing=clamp(S.development.skills.bathing+8);advanceTime(mins);feedback('Washed with supervision',`Bathing skill ${Math.round(S.development.skills.bathing)}%.`,mins)}else{S.needs.hygiene=96;advanceTime(mins);feedback(type==='bath'?'Took a bath':'Took a shower','Hygiene restored.',mins)}return}if(type==='brush'){S.needs.hygiene=clamp(S.needs.hygiene+8);advanceTime(7);feedback('Brushed teeth','Hygiene +8',7);return}if(type==='washHands'){S.needs.hygiene=clamp(S.needs.hygiene+4);advanceTime(3);feedback('Washed hands','Hygiene +4',3);return}if(type==='washFace'){S.needs.hygiene=clamp(S.needs.hygiene+6);advanceTime(5);feedback('Washed face','Hygiene +6',5);return}if(type==='dress'){if(S.age<=3){S.development.skills.dressing=clamp(S.development.skills.dressing+6);advanceTime(12);feedback('Dressed by caregiver',`${primaryCaregiver()} helps you get dressed.`,12)}else if(S.age<=7&&S.development.skills.dressing<65){S.development.skills.dressing=clamp(S.development.skills.dressing+9);advanceTime(12);feedback('Practiced dressing',`Dressing skill ${Math.round(S.development.skills.dressing)}%.`,12)}else{advanceTime(10);feedback('Got dressed','You choose and put on your clothes.',10)}return}if(type==='sleep'){const hours=S.age<=1?11:S.age<=4?10:S.age<=12?9:S.age<=17?8:7.5;const mins=Math.round(hours*60);advanceTime(mins,{silent:true});S.needs.sleep=96;S.energy=94;S.stress=clamp(S.stress-14);S.healthState.sleep=clamp(S.healthState.sleep+5);feedback('Slept',`${hours} hours • Energy restored`,mins);return}if(type==='nap'){const mins=S.age<=4?120:S.age<=12?75:45;advanceTime(mins,{silent:true});S.needs.sleep=clamp(S.needs.sleep+32);S.energy=clamp(S.energy+26);S.stress=clamp(S.stress-5);feedback('Took a nap','Energy +26',mins);return}if(type==='rest'){advanceTime(30,{silent:true});S.energy=clamp(S.energy+12);S.stress=clamp(S.stress-4);feedback('Rested','Energy +12 • Stress -4',30)}}
+function basicAction(type){if(!S)return;const before={...S.needs};if(type==='eat'){const mins=S.age<=1?30:S.age<=4?35:40;if(S.age<=1){S.needs.hunger=clamp(S.needs.hunger-58);S.development.skills.selfFeeding=clamp(S.development.skills.selfFeeding+5);advanceTime(mins);feedback('Fed by caregiver',`${primaryCaregiver()} feeds you safely. ${needsDeltaText(before)}`,mins)}else if(S.age<=4&&S.development.skills.selfFeeding<65){S.needs.hunger=clamp(S.needs.hunger-52);S.development.skills.selfFeeding=clamp(S.development.skills.selfFeeding+9);advanceTime(mins);feedback('Practiced self-feeding',`${primaryCaregiver()} helps while you eat. Self-feeding ${Math.round(S.development.skills.selfFeeding)}%.`,mins)}else{S.needs.hunger=clamp(S.needs.hunger-56);S.energy=clamp(S.energy+7);advanceTime(mins);feedback('Ate a meal',`${needsDeltaText(before)}${S.age<13?' • family food available':''}`,mins)}return}if(type==='snack'){S.needs.hunger=clamp(S.needs.hunger-24);advanceTime(12);feedback('Had a snack',needsDeltaText(before),12);return}if(type==='drink'){S.needs.comfort=clamp(S.needs.comfort+9);S.needs.toilet=clamp(S.needs.toilet+4);advanceTime(5);feedback('Drank water','Comfort +9',5);return}if(type==='toilet'){if(S.age<=1){S.needs.toilet=20;S.needs.hygiene=clamp(S.needs.hygiene+3);advanceTime(10);feedback('Caregiver toileting',`${primaryCaregiver()} takes care of your diaper/toileting needs.`,10)}else if(S.age<=4&&S.development.skills.potty<70){S.needs.toilet=15;S.development.skills.potty=clamp(S.development.skills.potty+10);advanceTime(12);feedback('Potty practice',`Potty skill ${Math.round(S.development.skills.potty)}%.`,12)}else{S.needs.toilet=10;advanceTime(8);feedback('Used the bathroom','Bladder relieved.',8)}return}if(type==='shower'||type==='bath'){const mins=type==='bath'?30:20;if(S.age<=3){S.needs.hygiene=95;S.development.skills.bathing=clamp(S.development.skills.bathing+5);advanceTime(mins);feedback('Bath with caregiver',`${primaryCaregiver()} handles safety and washing.`,mins)}else if(S.age<=7&&S.development.skills.bathing<65){S.needs.hygiene=92;S.development.skills.bathing=clamp(S.development.skills.bathing+8);advanceTime(mins);feedback('Washed with supervision',`Bathing skill ${Math.round(S.development.skills.bathing)}%.`,mins)}else{S.needs.hygiene=96;advanceTime(mins);feedback(type==='bath'?'Took a bath':'Took a shower','Hygiene restored.',mins)}return}if(type==='brush'){S.needs.hygiene=clamp(S.needs.hygiene+8);advanceTime(7);feedback('Brushed teeth','Hygiene +8',7);return}if(type==='washHands'){S.needs.hygiene=clamp(S.needs.hygiene+4);advanceTime(3);feedback('Washed hands','Hygiene +4',3);return}if(type==='washFace'){S.needs.hygiene=clamp(S.needs.hygiene+6);advanceTime(5);feedback('Washed face','Hygiene +6',5);return}if(type==='dress'){if(S.age<=3){S.development.skills.dressing=clamp(S.development.skills.dressing+6);advanceTime(12);feedback('Dressed by caregiver',`${primaryCaregiver()} helps you get dressed.`,12)}else if(S.age<=7&&S.development.skills.dressing<65){S.development.skills.dressing=clamp(S.development.skills.dressing+9);advanceTime(12);feedback('Practiced dressing',`Dressing skill ${Math.round(S.development.skills.dressing)}%.`,12)}else{advanceTime(10);feedback('Got dressed','You choose and put on your clothes.',10)}return}if(type==='sleep'){sleepAction();return}if(type==='nap'){const mins=S.age<=4?120:S.age<=12?75:45;advanceTime(mins,{silent:true});S.needs.sleep=clamp(S.needs.sleep+32);S.energy=clamp(S.energy+26);S.stress=clamp(S.stress-5);feedback('Took a nap','Energy +26',mins);return}if(type==='rest'){advanceTime(30,{silent:true});S.energy=clamp(S.energy+12);S.stress=clamp(S.stress-4);feedback('Rested','Energy +12 • Stress -4',30)}}
 
 // ---------- School / education ----------
 function schoolAverage(){if(!S.school?.subjects?.length)return 0;return S.school.subjects.reduce((a,s)=>a+safeNum(s.score,0),0)/S.school.subjects.length}
@@ -293,65 +252,21 @@ function subjectNames(age){const base=['Mathematics','English / Language','Scien
 function teacherName(subject){return `${rand(['Ms.','Mr.','Mx.'])} ${rand(['Morgan','Lee','Nguyen','Kim','Patel','Garcia','Smith','Tan','Brown'])}`}
 function makeSubject(name,i){return {name,score:68+Math.floor(Math.random()*22),skill:50+Math.floor(Math.random()*20),prep:0,trend:i%3===0?'↑':'→',teacher:{name:teacherName(name),rel:50+Math.floor(Math.random()*20)},homework:{status:'None',progress:0,dueDate:null},lastStudyDate:null}}
 function buildSchool(age,carry=null){if(age>=3&&age<=5&&S.development.kindergarten.enrolled)return {name:carry?.name||rand(['Little Steps Kindergarten','Sunflower Early Learning','Neighborhood Kindergarten']),grade:'Kindergarten',className:rand(['Sun','Moon','Rainbow','Bears']),attendance:96,behavior:72,gpa:null,rank:null,subjects:[makeSubject('Language & stories',0),makeSubject('Numbers & patterns',1),makeSubject('Movement',2),makeSubject('Social skills',3)],clubs:[],activityOffers:[],contests:[],friends:[],rivals:[],yearStarted:currentDate()};if(age>=6&&age<=18){const same=carry&&carry.grade!=='Kindergarten';return {name:same?carry.name:rand(['Riverside Academy','Central International School','Westside School','Sunrise Secondary School']),grade:gradeLabel(age),className:`${Math.max(1,age-5)}-${String.fromCharCode(65+Math.floor(Math.random()*4))}`,attendance:carry?.attendance??96,behavior:carry?.behavior??70,gpa:age>=12?(carry?.gpa??3.1):null,rank:age>=12?(carry?.rank??Math.floor(8+Math.random()*22)):null,subjects:subjectNames(age).map((n,i)=>{const old=carry?.subjects?.find(s=>s.name===n);return old?Object.assign(makeSubject(n,i),old,{prep:0,homework:{status:'None',progress:0,dueDate:null}}):makeSubject(n,i)}),clubs:(carry?.clubs||[]).filter(c=>c.status==='Active'),activityOffers:[],contests:[],friends:carry?.friends||[],rivals:carry?.rivals||[],yearStarted:currentDate()}}return null}
-function normalizeSchool(){
- if(!S.school)return;
- S.school.attendance=clamp(S.school.attendance??96);S.school.behavior=clamp(S.school.behavior??70);
- S.school.subjects=(S.school.subjects||[]).map((sub,i)=>Object.assign(makeSubject(sub.name||`Subject ${i+1}`,i),sub,{teacher:Object.assign({name:teacherName(sub.name),rel:55},sub.teacher||{}),homework:Object.assign({status:'None',progress:0,dueDate:null},sub.homework||{})}));
- S.school.clubs=(S.school.clubs||[]).map(c=>typeof c==='string'?{id:uid('club'),name:c,status:'Active',joinedDate:currentDate(),skill:15,sessions:0,nextSessionDate:addDays(currentDate(),7),members:[]}:Object.assign({id:c.id||uid('club'),status:'Active',joinedDate:currentDate(),skill:15,sessions:0,nextSessionDate:addDays(currentDate(),7),members:[]},c));
- S.school.activityOffers=S.school.activityOffers||[];
- const seen=new Set();
- S.school.contests=(S.school.contests||[]).filter(c=>c&&c.name&&!seen.has(c.name)&&seen.add(c.name)).map(c=>{
-  const decisionDate=c.decisionDate||(Number.isFinite(Number(c.decisionBy))?addDays(currentDate(),Math.max(0,Number(c.decisionBy)-safeNum(S.day,1))):addDays(currentDate(),4));
-  const eventDate=c.eventDate||(Number.isFinite(Number(c.eventDay))?addDays(currentDate(),Math.max(1,Number(c.eventDay)-safeNum(S.day,1))):addDays(currentDate(),14));
-  return Object.assign({id:c.id||uid('contest'),status:c.status==='Considering'?'Open':c.status||'Open',prep:0,result:null},c,{decisionDate,eventDate});
- });
- if(S.school.grade==='Kindergarten'){S.exams=[];return}
- S.exams=S.exams||[];
- for(const x of S.exams){x.id=x.id||uid('exam');x.type=x.type||'Assessment';if(!x.dateISO)x.dateISO=addDays(currentDate(),Math.max(1,safeNum(x.days,10)));x.status=x.score==null?'Scheduled':'Completed';x.prep=safeNum(x.prep,0,0,100)}
- syncExamCalendar()
-}
-function progressSchoolForAge(){const carry=S.school;if(S.age===3&&!S.development.kindergarten.asked){S.development.kindergarten.asked=true;createPending({type:'kindergarten',title:'Kindergarten decision',resolveDate:null,status:'Waiting for your preference',payload:{preference:null},detail:'Your caregivers want to hear whether you want to attend before they decide.'});log('Kindergarten becomes a question','Your family starts discussing preschool/kindergarten, childcare, money, schedules and your preferences.')}if(S.age>=3&&S.age<=5){if(S.development.kindergarten.decision)S.school=buildSchool(S.age,carry);else S.school=null;return}if(S.age>=6&&S.age<=18){S.school=buildSchool(S.age,carry);scheduleExams();generateHomework(true)}else S.school=null}
-function scheduleExams(){if(!S.school||S.school.grade==='Kindergarten')return;S.exams=[];const offsets=[8,15,24,34,48,62];S.school.subjects.slice(0,6).forEach((sub,i)=>{const dateISO=addDays(currentDate(),offsets[i]||20+i*7),exam={id:uid('exam'),subject:sub.name,dateISO,minute:540,type:S.age<=11?'Class assessment':i%3===0?'Midterm':i%3===1?'Quiz':'Project / final',score:null,status:'Scheduled',prep:0};S.exams.push(exam);createCalendarEvent({id:'cal-'+exam.id,type:'exam',title:`${sub.name} • ${exam.type}`,dateISO,minute:540,payload:{examId:exam.id},source:'school'})});syncExamCalendar()}
-function syncExamCalendar(){if(!S.school)return;for(const exam of S.exams||[]){exam.id=exam.id||uid('exam');exam.dateISO=exam.dateISO||addDays(currentDate(),Math.max(1,safeNum(exam.days,10)));exam.days=daysBetween(currentDate(),exam.dateISO);if(!S.calendar.some(e=>e.type==='exam'&&e.payload?.examId===exam.id))createCalendarEvent({id:'cal-'+exam.id,type:'exam',title:`${exam.subject} • ${exam.type||'Exam'}`,dateISO:exam.dateISO,minute:540,payload:{examId:exam.id},source:'school'})}}
-function generateHomework(force=false){if(!S.school||S.school.grade==='Kindergarten')return;for(const sub of S.school.subjects){if(force||sub.homework.status==='None'){if(chance(55)){sub.homework={status:'Assigned',progress:0,dueDate:addDays(currentDate(),2+Math.floor(Math.random()*4))}}}}}
-function schoolDailyTick(skipRoutine=false){
- if(!S.school)return;normalizeSchool();let autoResolved=0;
- for(const exam of S.exams){
-  exam.days=daysBetween(currentDate(),exam.dateISO);
-  if(exam.score==null&&exam.dateISO<currentDate()){
-   if(skipRoutine){const sub=S.school.subjects.find(x=>x.name===exam.subject);exam.score=Math.round(clamp((sub?.skill||60)*.42+(sub?.score||70)*.38+(exam.prep||0)*.12+S.luck*.08+(Math.random()*14-7),30,100));exam.status='Completed';if(sub)sub.score=clamp(sub.score+(exam.score-sub.score)*.12);autoResolved++}
-   else{exam.status='Missed';exam.score=0;S.school.attendance=clamp(S.school.attendance-1);log('Missed exam',`You missed ${exam.subject}. The zero hurts your academic record.`)}
-  }
- }
- for(const sub of S.school.subjects){if(sub.homework?.status==='Assigned'&&sub.homework.dueDate<currentDate()){if(skipRoutine)sub.homework.status='Archived';else{sub.homework.status='Late';sub.score=clamp(sub.score-2);S.school.behavior=clamp(S.school.behavior-2);log('Late homework',`${sub.name} homework passed its deadline.`)}}}
- if(skipRoutine){if(autoResolved&&currentDate().slice(5)==='01-02')log('School year catch-up',`${autoResolved} scheduled assessment${autoResolved===1?'':'s'} were simulated while you skipped ahead.`);return}
- if(chance(25))generateHomework(false);
- if(S.age>=6&&S.age<=18&&['Monday','Tuesday','Wednesday','Thursday','Friday'].includes(weekday())&&currentMinute()===0&&chance(18))npcSchoolInitiative()
-}
-function attendSchool(){if(!S.school){toast('You are not currently enrolled in school.');return}if(S.school.grade==='Kindergarten'){advanceTime(240);S.school.attendance=clamp(S.school.attendance+.05);S.needs.fun=clamp(S.needs.fun+10);S.needs.social=clamp(S.needs.social+12);feedback('Kindergarten day','Stories, play, movement and social learning.',240);return}if(!['Monday','Tuesday','Wednesday','Thursday','Friday'].includes(weekday())){toast('There is no regular school day today.');return}const mins=360;advanceTime(mins);S.school.attendance=clamp(S.school.attendance+.05);S.energy=clamp(S.energy-10);S.needs.social=clamp(S.needs.social+7);feedback('School day','Attendance recorded • classes and social life moved forward',mins);if(chance(28))maybeRandomEvent(true)}
 function studySubject(name,minutes=60,mode='solo'){const sub=S.school?.subjects?.find(x=>x.name===name);if(!sub){toast('Subject not found.');return}minutes=[30,60,180].includes(Number(minutes))?Number(minutes):60;let gain=minutes===30?4:minutes===60?7:13;if(mode==='friend'){const p=bestNonFamily();if(p){p.rel=clamp(p.rel+2);p.trust=clamp(p.trust+1);rememberPerson(p,`You studied ${sub.name} together.`)}gain+=2;S.needs.social=clamp(S.needs.social+7)}if(mode==='teacher'){sub.teacher.rel=clamp(sub.teacher.rel+3);gain+=3}sub.prep=clamp(sub.prep+gain);sub.skill=clamp(sub.skill+Math.ceil(gain*.55));sub.score=clamp(sub.score+Math.max(1,Math.floor(gain*.18)));sub.lastStudyDate=currentDate();S.energy=clamp(S.energy-(minutes/30)*3);S.stress=clamp(S.stress+(minutes===180?6:2));advanceTime(minutes);feedback(`Studied ${sub.name}`,`Preparation +${gain} • Skill ${Math.round(sub.skill)}%${mode==='friend'?' • studied with a friend':''}`,minutes)}
-function doHomework(name){const sub=S.school?.subjects?.find(x=>x.name===name);if(!sub||!sub.homework||!['Assigned','Late'].includes(sub.homework.status)){toast('There is no active homework for that subject.');return}const remain=100-sub.homework.progress,gain=Math.min(remain,50);sub.homework.progress+=gain;advanceTime(60);S.energy=clamp(S.energy-5);if(sub.homework.progress>=100){sub.homework.status='Done';sub.score=clamp(sub.score+2);sub.teacher.rel=clamp(sub.teacher.rel+2);feedback(`${sub.name} homework finished`,'Score +2 • Teacher relationship +2',60)}else feedback(`${sub.name} homework`,`Progress ${sub.homework.progress}%`,60)}
 function hireTutor(name){const sub=S.school?.subjects?.find(x=>x.name===name);if(!sub)return;const cost=35;if(['Struggling','Modest'].includes(S.wealth)&&S.age<18&&!caregiverApproval(-10)){toast('Your household cannot justify a tutor right now.');return}if(S.age>=18&&!spendOwn(cost)){toast('Not enough money.');return}sub.prep=clamp(sub.prep+15);sub.skill=clamp(sub.skill+9);advanceTime(90);feedback('Tutor session',`${sub.name} preparation +15${S.age>=18?` • ${money(cost)}`:' • household paid'}`,90)}
-function takeExam(examId,cheat=false){const exam=S.exams.find(e=>e.id===examId||e.subject===examId);if(!exam||exam.score!=null)return;if(exam.dateISO>currentDate()){toast(`${exam.subject} is in ${daysBetween(currentDate(),exam.dateISO)} days.`);return}const sub=S.school.subjects.find(x=>x.name===exam.subject);if(!sub)return;if(cheat){const caught=chance(28+(S.stress/5)-(S.luck-50)*.1);if(caught){exam.score=0;exam.status='Completed';S.school.behavior=clamp(S.school.behavior-18);sub.teacher.rel=clamp(sub.teacher.rel-20);S.family.tension=clamp(S.family.tension+8);setEmotion('Embarrassed','You were caught cheating.',75);advanceTime(60);feedback('Caught cheating',`${exam.subject}: 0% • behavior and trust dropped`,60);return}}
- const sleepBonus=(S.needs.sleep-50)*.08,stressPenalty=Math.max(0,S.stress-45)*.12,luck=(S.luck-50)*.08,base=sub.skill*.42+sub.prep*.35+sub.score*.23+sleepBonus-stressPenalty+luck+(Math.random()*14-7)+(cheat?10:0);exam.score=clamp(Math.round(base));exam.status='Completed';sub.score=clamp(sub.score+(exam.score-sub.score)*.16);sub.prep=clamp(sub.prep*.35);S.stress=clamp(S.stress+5);S.happiness=clamp(S.happiness+(exam.score>=75?5:exam.score<55?-5:0));advanceTime(75);feedback(`${exam.subject} ${exam.type}`,`${exam.score}% • ${exam.score>=75?'You felt prepared.':exam.score>=55?'You got through it.':'It was a difficult result.'}`,75)}
 function activityOptions(){return S.age<10?['Art Club','Reading Club','Music Group','Sports Club','Nature Club','Chess Club']:S.age<15?['Art Club','Science Club','Football','Drama','Coding Club','Music','Chess Club']:['Art Club','Debate','Science Club','Football','Drama','Coding Club','Music','Photography']}
 function eventOptions(){return S.age<10?D.schoolEvents.young:S.age<15?D.schoolEvents.middle:D.schoolEvents.high}
 function exploreSchoolActivity(){if(!S.school||S.age<6){toast('Formal clubs are not part of this life stage.');return}const blocked=new Set([...(S.school.clubs||[]).filter(c=>c.status==='Active').map(c=>c.name),...(S.school.activityOffers||[]).filter(o=>o.status==='Offered').map(o=>o.name)]),choices=activityOptions().filter(n=>!blocked.has(n));if(!choices.length){toast('No new activities are available right now.');return}const name=rand(choices),offer={id:uid('offer'),name,status:'Offered',createdDate:currentDate(),decisionDate:addDays(currentDate(),4)};S.school.activityOffers.unshift(offer);log('Activity opportunity',`${name} has space. Decide by ${formatDate(offer.decisionDate)}${S.age<13?'; caregiver approval is required':''}.`)}
 function decideActivity(id,join){const o=S.school?.activityOffers?.find(x=>x.id===id);if(!o||o.status!=='Offered')return;if(o.decisionDate<currentDate()){o.status='Expired';toast('The signup window closed.');return}if(!join){o.status='Declined';log('Activity declined',`You decide not to join ${o.name}.`);return}if(S.age<13){o.status='Waiting';createPending({type:'clubApproval',title:`Join ${o.name}`,resolveDate:addDays(currentDate(),1),payload:{offerId:o.id},status:'Waiting for caregiver',detail:'Your caregiver will decide tomorrow.'});log('Asked to join',`You ask to join ${o.name}. A caregiver decision is scheduled for tomorrow.`);return}activateClub(o)}
-function activateClub(o){o.status='Joined';const club={id:uid('club'),name:o.name,status:'Active',joinedDate:currentDate(),skill:12,sessions:0,members:[rand(D.names),rand(D.names)],nextSessionDate:addDays(currentDate(),3)};S.school.clubs.push(club);createCalendarEvent({type:'clubSession',title:`${club.name} session`,dateISO:club.nextSessionDate,minute:960,payload:{clubId:club.id},source:'club'});log('Joined '+club.name,'It is now a real commitment with sessions, specific activities and people.',true)}
 function resolveClubApproval(p){const o=S.school?.activityOffers?.find(x=>x.id===p.payload?.offerId);if(!o){p.resolved=true;p.status='Cancelled';return}if(caregiverApproval(8)){activateClub(o);p.status='Approved'}else{o.status='Denied';p.status='Denied';log('Club permission denied',`Your caregiver says no to ${o.name} this time.`)}p.resolved=true}
 function clubAction(clubId,kind){const c=S.school?.clubs?.find(x=>x.id===clubId);if(!c||c.status!=='Active')return;const def=D.clubDefs[c.name]||{actions:[['practice','Practice',60],['special','Special activity',90],['social','Talk with members',45]]},action=def.actions.find(x=>x[0]===kind)||def.actions[0],minutes=action[2];if(kind==='leave'){c.status='Left';log('Left '+c.name,'You leave the club; the memories and skills remain.');return}if(kind==='social'){const p=bestNonFamily();if(p){p.rel=clamp(p.rel+4);p.trust=clamp(p.trust+2);rememberPerson(p,`You spent time together through ${c.name}.`)}S.needs.social=clamp(S.needs.social+12);S.needs.fun=clamp(S.needs.fun+5)}if(kind==='practice'){c.skill=clamp(c.skill+7);S.energy=clamp(S.energy-6)}if(kind==='special'){const result=clamp(c.skill*.65+S.luck*.2+Math.random()*20);c.skill=clamp(c.skill+4);S.happiness=clamp(S.happiness+(result>=70?7:2));log(`${c.name} • ${action[1]}`,result>=70?'It goes well and people notice your effort.':'It is imperfect, but it becomes experience.')}c.sessions++;advanceTime(minutes);feedback(`${c.name} • ${action[1]}`,`Club skill ${Math.round(c.skill)}% • ${c.sessions} sessions`,minutes)}
 function exploreSchoolEvent(){if(!S.school||S.age<6){toast('Formal school events are not part of this life stage.');return}const active=new Set((S.school.contests||[]).filter(c=>['Open','Registered'].includes(c.status)).map(c=>c.name)),choices=eventOptions().filter(n=>!active.has(n));if(!choices.length){toast('No new school events are available.');return}const name=rand(choices),c={id:uid('contest'),name,status:'Open',createdDate:currentDate(),decisionDate:addDays(currentDate(),4),eventDate:addDays(currentDate(),12+Math.floor(Math.random()*10)),prep:0,result:null};S.school.contests.unshift(c);log('School event opportunity',`${name}: register by ${formatDate(c.decisionDate)} • event ${formatDate(c.eventDate)}.`)}
 function contestAction(id,kind){const c=S.school?.contests?.find(x=>x.id===id);if(!c)return;if(kind==='decline'&&c.status==='Open'){c.status='Declined';log('Event declined',`You decide not to enter ${c.name}.`);return}if(kind==='enter'&&c.status==='Open'){if(c.decisionDate<currentDate()){c.status='Missed';toast('Registration closed.');return}if(S.age<13){c.status='Waiting';createPending({type:'contestApproval',title:`Enter ${c.name}`,resolveDate:addDays(currentDate(),1),payload:{contestId:c.id},status:'Waiting for caregiver',detail:'Decision tomorrow.'});log('Asked to enter',`You ask to enter ${c.name}.`);return}registerContest(c);return}if(kind==='practice'&&c.status==='Registered'){c.prep=clamp(c.prep+10);S.energy=clamp(S.energy-7);S.stress=clamp(S.stress+2);advanceTime(75);feedback(`Prepared for ${c.name}`,`Preparation ${c.prep}%`,75)}}
-function registerContest(c){c.status='Registered';createCalendarEvent({type:'schoolEvent',title:c.name,dateISO:c.eventDate,minute:600,payload:{contestId:c.id},source:'school'});log('Registered • '+c.name,`The event is ${formatDate(c.eventDate)}. Preparation now matters.`)}
 function resolveContestApproval(p){const c=S.school?.contests?.find(x=>x.id===p.payload?.contestId);if(!c){p.resolved=true;p.status='Cancelled';return}if(caregiverApproval(5)){registerContest(c);p.status='Approved'}else{c.status='Denied';p.status='Denied';log('Event permission denied',`Your caregiver says no to ${c.name}.`)}p.resolved=true}
-function resolveContest(c){const avg=schoolAverage(),club=Math.max(0,...(S.school?.clubs||[]).filter(x=>x.status==='Active').map(x=>x.skill||0)),score=clamp(avg*.38+c.prep*.35+club*.1+S.luck*.12+(Math.random()*18-9));c.status='Completed';c.result=score>=82?'Winner / top result':score>=68?'Strong result / finalist':'Participated';S.happiness=clamp(S.happiness+(score>=82?10:score>=68?6:2));log(score>=82?'🏆 '+c.name:score>=68?'⭐ '+c.name:'🎖️ '+c.name,`${c.result}. Preparation, academics, activity experience and luck all contributed.`,score>=82)}
 function schoolActivityTick(){if(!S.school)return;for(const o of S.school.activityOffers||[]){if(o.status==='Offered'&&o.decisionDate<currentDate()){o.status='Expired';log('Activity signup closed',`${o.name} closed before you decided.`)}}for(const c of S.school.contests||[]){if(c.status==='Open'&&c.decisionDate<currentDate()){c.status='Missed';log('Registration closed',`${c.name} closed before you registered.`)}}}
 
 // ---------- Family, requests, chores ----------
 function caregiverApproval(extra=0){const r=familyRules(),wealth={Struggling:-10,Modest:-4,'Middle class':2,Comfortable:8,Wealthy:12,'Extremely wealthy':15}[S.wealth]||0;return chance(clamp(62-r.strictness*.28+r.respect*.25+(S.family.closeness-50)*.25+(S.family.responsibility||0)*.2+wealth+extra))}
-function resolveKindergartenDecision(p){const pref=p.payload?.preference;const r=familyRules(),careNeed=(S.home==='Busy but loving'||['Struggling','Modest'].includes(S.wealth))?15:0,score=(pref===true?r.respect*.35:pref===false?-r.respect*.18:0)+careNeed+(55-r.strictness)*.18+50;const enrolled=score>=50||(pref===false&&r.strictness>75);S.development.kindergarten.enrolled=enrolled;S.development.kindergarten.preference=pref;S.development.kindergarten.decision=enrolled?'Enrolled':'Alternative care / home';p.status=enrolled?'Enrolled':'Alternative care';p.resolved=true;S.school=buildSchool(S.age,S.school);log('Kindergarten decision',enrolled?'Your caregivers decide you will attend. Your preference mattered, but schedules, money and parenting style mattered too.':'Your family chooses home, relative care or another arrangement for now.',true)}
-function setKindergartenPreference(pref){let p=S.pendingDecisions.find(x=>!x.resolved&&x.type==='kindergarten');if(!p){p=createPending({type:'kindergarten',title:'Kindergarten decision',resolveDate:null,status:'Waiting for your preference',payload:{preference:null},detail:'Your family is discussing early education.'})}p.payload.preference=!!pref;p.status='Family discussing';p.resolveDate=addDays(currentDate(),2);p.detail=`Your caregivers will decide by ${formatDate(p.resolveDate)}.`;log('Your kindergarten preference',pref?'You say you want to go.':'You say you would rather not go.');toast('Your caregivers will decide in 2 days')}
 function doChore(id){const c=D.chores.find(x=>x.id===id);if(!c||S.age<c.minAge){toast('That chore is not appropriate for your age yet.');return}const payMin=c.pay[0],payMax=c.pay[1],householdPays=chance(42+familyRules().generosity*.35);const pay=householdPays?payMin+Math.floor(Math.random()*(payMax-payMin+1)):0;S.choresDone=(S.choresDone||0)+1;S.family.responsibility=clamp((S.family.responsibility||0)+c.responsibility);S.family.closeness=clamp(S.family.closeness+1);if(pay)S.money+=pay;advanceTime(c.minutes);feedback(c.name,pay?`Responsibility +${c.responsibility} • earned ${money(pay)}`:`Responsibility +${c.responsibility} • no allowance this time`,c.minutes);checkConditionalRequests()}
 function askAgainPending(id){const p=S.pendingDecisions.find(x=>x.id===id&&!x.resolved);if(!p)return;p.askCount=(p.askCount||0)+1;if(p.askCount>=2)S.family.tension=clamp(S.family.tension+2);if(p.resolveDate){const days=daysBetween(currentDate(),p.resolveDate);log('Asked again',`${p.title} is still pending${days>=0?` for ${days} more day${days===1?'':'s'}`:''}. Repeated asking can affect patience.`)}else log('Asked again',`${p.title} still depends on its condition.`)}
 function familyTalk(){const before=S.family.closeness;S.family.closeness=clamp(S.family.closeness+4);S.family.tension=clamp(S.family.tension-2);S.needs.social=clamp(S.needs.social+8);advanceTime(S.age<5?20:35);feedback(S.age<3?'Caregiver connection':'Family conversation',`Closeness +${Math.round(S.family.closeness-before)} • tension eased`,S.age<5?20:35)}
@@ -369,11 +284,12 @@ function npcSchoolInitiative(){const p=rand(S.people.filter(x=>x.role==='friend'
 function eligibleEventDefs(){return D.eventDefs.filter(e=>S.age>=e.minAge&&S.age<=e.maxAge&&(!e.school||S.school)&&(!e.weather||e.weather.includes(S.weather.type))&&(!S.eventCooldowns[e.id]||daysBetween(S.eventCooldowns[e.id],currentDate())>=e.cooldown))}
 function weightedPick(items){const total=items.reduce((a,x)=>a+(x.weight||1),0);let r=Math.random()*total;for(const x of items){r-=x.weight||1;if(r<=0)return x}return items[0]}
 function maybeRandomEvent(force=false){if(!force&&!chance(16))return;if(S.events.filter(e=>e.status==='Open').length>=2)return;const defs=eligibleEventDefs();if(!defs.length)return;const d=weightedPick(defs);S.eventCooldowns[d.id]=currentDate();queueEvent({type:d.id,title:d.title,text:d.text,choices:d.choices.map((x,i)=>({id:String(i),label:x}))})}
-function queueEvent(ev){const e=Object.assign({id:uid('event'),dateISO:currentDate(),minute:currentMinute(),status:'Open',participants:[],choices:[]},ev);S.events.unshift(e);if(S.events.length>30)S.events.length=30;S.current={title:e.title,text:e.text};return e}
 function resolveEventChoice(eventId,choiceId){
- const e=S.events.find(x=>x.id===eventId);if(!e||e.status!=='Open')return;
+ const e=S.events.find(x=>x.id===eventId);if(!e||e.status!=='Open'){toast('That moment has already passed.');render();return}
+ if(eventExpired(e)){expireEvent(e);toast('Too late — that moment has passed.');save();render();return}
  const choice=e.choices.find(x=>String(x.id)===String(choiceId)),label=choice?.label||String(choiceId);
- e.status='Resolved';e.choice=label;
+ e.status='Resolved';e.choice=label;e.resolvedAt={dateISO:currentDate(),minute:currentMinute()};resolveNotificationsFor(e.id);
+ if(handleLifecycleEventChoice(e,String(choice?.id??choiceId),label)){clearCurrentContextIfSourceResolved();save();render();return}
  if(e.type==='findCoins'){
   if(/Pick/i.test(label)){const amt=1+Math.floor(Math.random()*12);S.money+=amt;log('Found money',`You pick up ${money(amt)}.`)}else log('Left it there','You decide the money might belong to someone else.');
  }else if(['friendInvite','party','birthdayInvite'].includes(e.type)){
@@ -413,7 +329,7 @@ function resolveEventChoice(eventId,choiceId){
  }else if(e.type==='neighborMoves'){
   if(/Pay attention/i.test(label)){const p=makePerson(`${rand(D.names)} • neighbor`,'friend',Math.max(S.age,S.age+Math.floor(Math.random()*5)-2),S.age);S.people.push(p);log('New neighbor',`${p.name} moves nearby. You may or may not become close.`)}else log('New neighbor','Someone new moves nearby, but you do not get involved yet.');
  }else log('Event choice',`${e.title}: ${label}.`);
- setEmotion('Thoughtful',`You chose: ${label}.`,35);save();render()
+ setEmotion('Thoughtful',`You chose: ${label}.`,35);clearCurrentContextIfSourceResolved();save();render()
 }
 
 // ---------- Phone ecosystem ----------
@@ -445,8 +361,8 @@ function negotiateYardSale(strategy='counter'){const st=S.stall;if(!st?.active||
 // ---------- Travel / outside ----------
 function travelMode(){if(S.age<3)return {kind:'caregiver',label:'Caregiver outing',note:'A caregiver chooses and handles everything.'};if(S.age<8)return {kind:'family',label:'Family outing',note:'A caregiver decides destination, transport and timing.'};if(S.age<13)return {kind:'ask',label:'Ask about a trip',note:'You suggest it; caregivers control permission and logistics.'};if(S.age<16)return {kind:'permission',label:'Ask permission for a trip',note:'Trips require an adult-approved plan.'};if(S.age<18)return {kind:'supervised',label:'Plan a trip with permission',note:'You can help plan and contribute money, but caregiver approval is required.'};return {kind:'independent',label:'Plan a trip',note:'You control destination, budget and transport.'}}
 function localTransport(){if(S.age<8)return 'caregiver drives / walks with you';if(S.age<13)return ownsItem('bicycle')?'bike or caregiver':'school bus / caregiver';if(S.age<16)return 'bus, bike, caregiver or walking';if(S.age<18)return 'bus, train, ride with permission';return 'walk, bike, transit, taxi/ride-share or car where available'}
-function visitPlace(placeId){const p=D.placesOutside.find(x=>x.id===placeId);if(!p)return;if(S.age<p.minAge||p.maxAge&&S.age>p.maxAge){toast('That place is not relevant at this age.');return}if(S.age<13&&!caregiverApproval(p.id==='friend'?5:12)){log('Outing denied',`A caregiver says no to ${p.name} right now.`);return}if(S.age<18&&S.age>=13&&!caregiverApproval(10)){log('Permission denied',`Household rules or timing prevent the ${p.name} plan.`);return}let cost=p.cost;if(S.age<13)cost=0;else if(S.age<18&&chance(55))cost=Math.round(cost*.5);if(S.money<cost&&cost>0){toast(`You need ${money(cost)} for this outing.`);return}S.money-=cost;S.location=p.name;let mins=p.minutes;if(p.weatherSensitive&&['Rainy','Stormy'].includes(S.weather.type)&&!ownsItem('umbrella')&&!ownsItem('raincoat')){mins=Math.round(mins*.65);S.needs.comfort=clamp(S.needs.comfort-15);log('Weather cuts the outing short','You are not well prepared for the rain.')}S.needs.fun=clamp(S.needs.fun+8);S.needs.social=clamp(S.needs.social+(p.id==='friend'?15:3));advanceTime(mins);feedback(`Went to ${p.name}`,`${localTransport()}${cost?` • spent ${money(cost)}`:''}`,mins);S.location='Home';if(chance(22))maybeRandomEvent(true)}
-function takeTrip(){const m=travelMode();if(['caregiver','family','ask','permission','supervised'].includes(m.kind)&&!caregiverApproval(m.kind==='caregiver'?15:0)){log('Trip does not happen','Your caregivers decide against the trip because of time, cost, safety or other obligations.');return}const adult=S.age>=18,cost=adult?80+Math.floor(Math.random()*180):S.age>=16?30+Math.floor(Math.random()*80):0;if(adult&&S.money<cost){toast(`The trip costs about ${money(cost)}.`);return}if(S.age>=16&&S.age<18&&S.money<Math.round(cost*.4)&&!['Wealthy','Extremely wealthy'].includes(S.wealth)){toast('The trip is approved, but your contribution is not ready yet.');return}if(adult)S.money-=cost;else if(S.age>=16){const share=Math.min(S.money,Math.round(cost*.4));S.money-=share}S.travel.trips++;S.travel.lastTrip=currentDate();const days=adult?1+Math.floor(Math.random()*3):1;advanceTime(days*1440,{skipNeeds:true,silent:true});S.needs.fun=clamp(S.needs.fun+25);S.happiness=clamp(S.happiness+8);log(m.kind==='independent'?'Independent trip':'Family / approved trip',`${m.note} ${cost?`Approximate cost ${money(cost)}.`:''}`,true);if(chance(28))maybeRandomEvent(true)}
+function visitPlace(placeId){const p=D.placesOutside.find(x=>x.id===placeId);if(!p)return;if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(S.age<p.minAge||p.maxAge&&S.age>p.maxAge){toast('That place is not relevant at this age.');return}if(S.age<13&&!caregiverApproval(p.id==='friend'?5:12)){log('Outing denied',`A caregiver says no to ${p.name} right now.`);return}if(S.age<18&&S.age>=13&&!caregiverApproval(10)){log('Permission denied',`Household rules or timing prevent the ${p.name} plan.`);return}let cost=p.cost;if(S.age<13)cost=0;else if(S.age<18&&chance(55))cost=Math.round(cost*.5);if(S.money<cost&&cost>0){toast(`You need ${money(cost)} for this outing.`);return}S.money-=cost;S.location=p.name;let mins=p.minutes;if(p.weatherSensitive&&['Rainy','Stormy'].includes(S.weather.type)&&!ownsItem('umbrella')&&!ownsItem('raincoat')){mins=Math.round(mins*.65);S.needs.comfort=clamp(S.needs.comfort-15);log('Weather cuts the outing short','You are not well prepared for the rain.')}S.needs.fun=clamp(S.needs.fun+8);S.needs.social=clamp(S.needs.social+(p.id==='friend'?15:3));advanceTime(mins);feedback(`Went to ${p.name}`,`${localTransport()}${cost?` • spent ${money(cost)}`:''}`,mins);S.location='Home';if(chance(22))maybeRandomEvent(true)}
+function takeTrip(){const m=travelMode();if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(['caregiver','family','ask','permission','supervised'].includes(m.kind)&&!caregiverApproval(m.kind==='caregiver'?15:0)){log('Trip does not happen','Your caregivers decide against the trip because of time, cost, safety or other obligations.');return}const adult=S.age>=18,cost=adult?80+Math.floor(Math.random()*180):S.age>=16?30+Math.floor(Math.random()*80):0;if(adult&&S.money<cost){toast(`The trip costs about ${money(cost)}.`);return}if(S.age>=16&&S.age<18&&S.money<Math.round(cost*.4)&&!['Wealthy','Extremely wealthy'].includes(S.wealth)){toast('The trip is approved, but your contribution is not ready yet.');return}if(adult)S.money-=cost;else if(S.age>=16){const share=Math.min(S.money,Math.round(cost*.4));S.money-=share}S.travel.trips++;S.travel.lastTrip=currentDate();const days=adult?1+Math.floor(Math.random()*3):1;SIM.excuse=S.age<18?'Away on a family-approved trip':null;try{advanceTime(days*1440,{skipNeeds:true,silent:true})}finally{SIM.excuse=null}S.needs.fun=clamp(S.needs.fun+25);S.happiness=clamp(S.happiness+8);log(m.kind==='independent'?'Independent trip':'Family / approved trip',`${m.note} ${cost?`Approximate cost ${money(cost)}.`:''}`,true);if(chance(28))maybeRandomEvent(true)}
 
 // ---------- Daily-life actions / validation ----------
 function canAction(id){if(!S)return {ok:false,reason:'No active life.'};
@@ -478,22 +394,931 @@ function invest(){if(S.age<18){toast('Investing is an adult action.');return}con
 function healthAction(kind){if(kind==='checkup'){const cost=S.age<18?0:25;if(cost&&S.money<cost){toast('You cannot cover the checkup cost.');return}S.money-=cost;S.health=clamp(S.health+6);S.healthState.illness=null;advanceTime(90);feedback('Health checkup',`${S.age<18?'Caregiver/household handled the cost':money(cost)+' spent'} • Health +6`,90)}else if(kind==='mental'){const cost=S.age<18?0:30;if(cost&&S.money<cost){toast('You cannot cover the cost.');return}S.money-=cost;S.stress=clamp(S.stress-16);S.happiness=clamp(S.happiness+5);advanceTime(60);feedback('Mental wellbeing','Stress -16 • Mood improved',60)}}
 
 // ---------- Pending resolver override ----------
-function processPendingDecisions(){for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.resolveDate&&x.resolveDate<=currentDate())){if(p.type==='purchaseConsideration')resolvePurchaseDecision(p);else if(p.type==='jobApplication')resolveJobDecision(p);else if(p.type==='kindergarten')resolveKindergartenDecision(p);else if(p.type==='clubApproval')resolveClubApproval(p);else if(p.type==='contestApproval')resolveContestApproval(p);else{p.resolved=true;p.status='Resolved';log('Decision resolved',p.title)}}}
 
 // ---------- Action router ----------
 function act(id,arg){if(!S)return;const gate=canAction(id);if(!gate.ok){toast(gate.reason);return}try{
  if(id==='eat')basicAction('eat');else if(id==='snack')basicAction('snack');else if(id==='drink')basicAction('drink');else if(id==='toilet')basicAction('toilet');else if(id==='shower')basicAction('shower');else if(id==='bath')basicAction('bath');else if(id==='brush')basicAction('brush');else if(id==='washHands')basicAction('washHands');else if(id==='washFace')basicAction('washFace');else if(id==='dress')basicAction('dress');else if(id==='sleep')basicAction('sleep');else if(id==='nap')basicAction('nap');else if(id==='rest')basicAction('rest');
  else if(id==='familyMeal')familyMeal();else if(id==='cook')cook();else if(id==='familyTalk')familyTalk();else if(id==='babyPlay')hobbyAction('babyPlay');else if(id==='toyPlay')hobbyAction('toyPlay');else if(id==='story')hobbyAction('story');else if(id==='babble')hobbyAction('babble');else if(id==='play')hobbyAction(S.age<5?'toyPlay':'game');else if(id==='read')hobbyAction('read');else if(id==='radioMusic'||id==='music')hobbyAction('radioMusic');else if(id==='radioNews')hobbyAction('radioNews');else if(id==='draw')hobbyAction('draw');else if(id==='journal')hobbyAction('journal');else if(id==='tv')hobbyAction('tv');else if(id==='computer')hobbyAction('computer');else if(id==='game')hobbyAction('game');else if(id==='exercise')hobbyAction('exercise');
- else if(id==='school')attendSchool();else if(id==='exploreClub')exploreSchoolActivity();else if(id==='exploreContest')exploreSchoolEvent();else if(id==='saveMoney')saveMoney(arg||25);else if(id==='invest')invest();else if(id==='workShift')workShift();else if(id==='careerSkill')buildCareerSkill();else if(id==='quitJob')quitJob();else if(id==='retire')retire();else if(id==='trip')takeTrip();else if(id==='socialPost')socialPost();else if(id==='healthCheck')healthAction('checkup');else if(id==='mentalCare')healthAction('mental');else if(id==='comfort')homeComfort(arg);else if(id==='kindergartenYes')setKindergartenPreference(true);else if(id==='kindergartenNo')setKindergartenPreference(false);else if(id==='giftThank')giftReaction('thank');else if(id==='giftExcited')giftReaction('excited');else if(id==='giftHide')giftReaction('hide');else if(id==='giftComplain')giftReaction('complain');else if(id==='giftHug')giftReaction('hug');else if(id==='ageUp')ageUp();
+ else if(id==='school')attendSchool();else if(id==='exploreClub')exploreSchoolActivity();else if(id==='exploreContest')exploreSchoolEvent();else if(id==='saveMoney')saveMoney(arg||25);else if(id==='invest')invest();else if(id==='workShift')workShift();else if(id==='careerSkill')buildCareerSkill();else if(id==='quitJob')quitJob();else if(id==='retire')retire();else if(id==='trip')takeTrip();else if(id==='socialPost')socialPost();else if(id==='healthCheck')healthAction('checkup');else if(id==='mentalCare')healthAction('mental');else if(id==='comfort')homeComfort(arg);else if(id==='kindergartenYes')setKindergartenPreference(true);else if(id==='kindergartenNo')setKindergartenPreference(false);else if(id==='giftThank')giftReaction('thank');else if(id==='giftExcited')giftReaction('excited');else if(id==='giftHide')giftReaction('hide');else if(id==='giftComplain')giftReaction('complain');else if(id==='giftHug')giftReaction('hug');else if(id==='ageUp')ageUp();else if(id==='nextDay')nextDay();
  save();render();
  }catch(err){console.error('Action failed',id,arg,err);toast('That action could not finish. The save was kept safe.')}}
+
+
+// =====================================================================
+// v7.2 LIFECYCLE CORE
+// Central rule: nothing important stays pending forever, and one
+// transition updates every related record (exam ↔ calendar ↔ context ↔
+// notifications ↔ log ↔ consequences).
+// =====================================================================
+const TERMINAL_STATUSES=['Completed','Attended','Missed','Excused','Cancelled','Expired','Resolved','Superseded','No-show','Withdrew'];
+function isTerminal(status){return TERMINAL_STATUSES.includes(status)}
+const SIM={skipping:false,sleeping:false,summary:null,excuse:null};
+function pad4(n){return String(Math.max(0,Math.min(1439,Math.round(Number(n)||0)))).padStart(4,'0')}
+function stamp(dateISO,minute){return `${dateISO}T${pad4(minute)}`}
+function nowStamp(){return stamp(currentDate(),currentMinute())}
+function endOfDay(dateISO=currentDate()){return {dateISO,minute:1439}}
+function stampOf(x){return x&&x.dateISO?stamp(x.dateISO,x.minute??1439):null}
+function ordinal(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+function firstName(p){return String(p?.name||'').split(' • ')[0]}
+function ensureLifecycleContainers(){
+ S.archive=Object.assign({pending:[],calendar:[],events:[],exams:[],homework:[]},S.archive||{});
+ for(const k of Object.keys(S.archive))if(!Array.isArray(S.archive[k]))S.archive[k]=[];
+ S.followUps=Array.isArray(S.followUps)?S.followUps:[];
+ S.family.restrictions=Object.assign({groundedUntil:null,reason:null},S.family.restrictions||{});
+ S.schoolHistory=Array.isArray(S.schoolHistory)?S.schoolHistory:[];
+ S.healthState=S.healthState||{fitness:50,sleep:80,illness:null};
+}
+
+// ---------- School calendar ----------
+const SCHOOL_DAY={start:480,tardyAfter:495,cutoff:660,end:900};
+function isWeekend(dateISO){const d=parseISO(dateISO).getUTCDay();return d===0||d===6}
+function inSchoolBreak(dateISO){const md=dateISO.slice(5);return md>='12-23'||md<='01-02'||(md>='06-12'&&md<='08-24')}
+function isSchoolDay(dateISO=currentDate()){return !isWeekend(dateISO)&&!inSchoolBreak(dateISO)}
+function nextSchoolDay(dateISO){let d=dateISO;for(let i=0;i<140&&!isSchoolDay(d);i++)d=addDays(d,1);return d}
+function needsFormalSchool(){return !!S.school&&S.school.grade!=='Kindergarten'&&S.age>=6&&S.age<=18}
+function freshSchoolRecord(){return {daysAttended:0,absences:0,excused:0,tardies:0,examsCompleted:0,examsMissed:0,examsExcused:0,submittedHomework:0,lateHomework:0,missingHomework:0,meetingHeld:false}}
+function ensureSchoolRecord(){if(!S.school)return null;S.school.record=Object.assign(freshSchoolRecord(),S.school.record||{});return S.school.record}
+function isGrounded(){const g=S.family?.restrictions?.groundedUntil;return S.age<18&&!!g&&g>=currentDate()}
+function ground(days,reason){if(S.age>=18)return;const until=addDays(currentDate(),days);const cur=S.family.restrictions.groundedUntil;if(!cur||until>cur)S.family.restrictions.groundedUntil=until;S.family.restrictions.reason=reason;notify('Grounded',`No outings or social plans until ${formatDate(until)}.`,{sourceType:'restriction',sourceId:'grounded-'+until,tab:'family'})}
+
+// ---------- Obligation registry (calendar events ARE obligations) ----------
+const OBLIGATION_DEFS={
+ schoolDay:{category:'School',icon:'🏫',start:480,end:900,grace:660,required:true,importance:2,location:'School'},
+ exam:{category:'Exam',icon:'📝',start:540,end:615,grace:660,required:true,importance:3,location:'School'},
+ clubSession:{category:'Club',icon:'🎨',start:930,end:1020,grace:960,required:false,importance:1,location:'School'},
+ schoolEvent:{category:'Competition',icon:'🏆',start:600,end:780,grace:690,required:true,importance:2,location:'School hall'},
+ party:{category:'Social',icon:'🎉',start:1020,end:1200,grace:1080,required:false,importance:1,location:''},
+ generic:{category:'Other',icon:'🗓️',start:0,end:60,grace:60,required:false,importance:0,location:''}
+};
+function obDef(type){return OBLIGATION_DEFS[type]||OBLIGATION_DEFS.generic}
+function normalizeCalendarEvent(ev){
+ const d=obDef(ev.type);ev.id=ev.id||uid('cal');ev.type=ev.type||'generic';ev.payload=ev.payload||{};ev.status=ev.status||'Scheduled';
+ const start=Number.isFinite(Number(ev.startMinute))?Number(ev.startMinute):Number.isFinite(Number(ev.minute))?Number(ev.minute):d.start;
+ ev.startMinute=start;ev.minute=start;
+ if(!Number.isFinite(Number(ev.endMinute)))ev.endMinute=Math.min(1439,start+(d.end-d.start));
+ if(!Number.isFinite(Number(ev.graceMinute)))ev.graceMinute=Math.min(1439,start+(d.grace-d.start));
+ ev.category=ev.category||d.category;ev.required=ev.required??d.required;ev.importance=ev.importance??d.importance;ev.location=ev.location??d.location;
+ ev.participants=Array.isArray(ev.participants)?ev.participants:[];ev.sourceId=ev.sourceId||ev.payload.examId||ev.payload.clubId||ev.payload.contestId||null;
+ ev.attendanceStatus=ev.attendanceStatus||null;ev.history=Array.isArray(ev.history)?ev.history:[];
+ return ev
+}
+function createCalendarEvent(ev){
+ const e=normalizeCalendarEvent(Object.assign({id:uid('cal'),type:'generic',title:'Scheduled event',dateISO:currentDate(),status:'Scheduled',payload:{},source:'system',createdDate:currentDate()},ev||{}));
+ const existing=S.calendar.find(x=>x.id===e.id);if(existing)return existing;S.calendar.push(e);return e
+}
+function setCalendarStatus(ev,status,reason=''){
+ if(!ev||ev.status===status)return;ev.history=ev.history||[];ev.history.push({from:ev.status,to:status,dateISO:currentDate(),minute:currentMinute(),reason});if(ev.history.length>8)ev.history.shift();ev.status=status;
+ if(isTerminal(status)){ev.resolvedAt={dateISO:currentDate(),minute:currentMinute()};ev.resolutionReason=reason;resolveNotificationsFor(ev.id)}
+}
+function completeCalendarEvent(ev,status='Completed',reason=''){setCalendarStatus(ev,status,reason);clearCurrentContextIfSourceResolved()}
+function expireCalendarEvent(ev,reason='Window passed'){setCalendarStatus(ev,'Expired',reason)}
+
+// ---------- Central obligation processing ----------
+function processCalendar(){
+ ensureLifecycleContainers();const now=nowStamp();
+ for(const ev of [...S.calendar]){
+  if(isTerminal(ev.status))continue;normalizeCalendarEvent(ev);
+  if(now<stamp(ev.dateISO,ev.startMinute))continue;
+  if(SIM.skipping){simulateObligation(ev);continue}
+  if(ev.status==='Attending')continue;
+  if(now>stamp(ev.dateISO,ev.graceMinute)){missObligation(ev);continue}
+  if(ev.status==='Scheduled'){setCalendarStatus(ev,'Due','Window opened');onObligationDue(ev)}
+ }
+ processPendingDecisions();checkConditionalRequests();expireEvents();processFollowUps();
+}
+function onObligationDue(ev){
+ if(SIM.skipping)return;
+ if(ev.type==='exam'){const exam=S.exams.find(x=>x.id===ev.payload?.examId);if(!examIsOpen(exam)){setCalendarStatus(ev,calStatusForExam(exam)||'Cancelled','Reconciled');return}exam.status='Due';notify('Assessment today',`${exam.subject} ${exam.type.toLowerCase()} • ${timeLabel(exam.minute)}. Late sitting closes at ${timeLabel(exam.graceMinute)}.`,{sourceType:'exam',sourceId:exam.id,tab:'school'});offerContext(examContext(exam));return}
+ if(ev.type==='clubSession'){const c=clubById(ev.payload?.clubId);if(!c||c.status!=='Active'){setCalendarStatus(ev,'Cancelled','Club inactive');return}notify('Club session now',`${c.name} started at ${timeLabel(ev.startMinute)}.`,{sourceType:'club',sourceId:ev.id,tab:'school'});offerContext(calendarContext(ev));return}
+ if(ev.type==='schoolEvent'){const c=contestById(ev.payload?.contestId);if(!c||c.status!=='Registered'){setCalendarStatus(ev,'Cancelled','Not registered');return}notify('Event today',`${c.name} • arrive by ${timeLabel(ev.graceMinute)}.`,{sourceType:'contest',sourceId:ev.id,tab:'school'});offerContext(calendarContext(ev));return}
+ if(ev.type==='party'){queueEvent({type:'party',title:ev.title,text:ev.text||'A social event you were expecting has arrived.',choices:[{id:'go',label:'Go'},{id:'skip',label:'Skip'}]});setCalendarStatus(ev,'Resolved','Converted to invitation');return}
+ if(ev.type!=='schoolDay')setCalendarStatus(ev,'Resolved','Reached')
+}
+function missObligation(ev){
+ const sick=!!S.healthState?.illness,excuse=SIM.excuse||(sick?'Illness':null);
+ if(ev.type==='exam'){const exam=S.exams.find(x=>x.id===ev.payload?.examId);if(!examIsOpen(exam)){setCalendarStatus(ev,calStatusForExam(exam)||'Cancelled','Reconciled');return}finalizeExam(exam.id,{status:excuse?'Excused':'Missed',reason:excuse||'Did not attend the assessment window'});return}
+ if(ev.type==='schoolDay'){markSchoolAbsence(ev,{excused:!!excuse,reason:excuse||''});return}
+ if(ev.type==='clubSession'){resolveClubSession(ev,excuse?'Excused':'Missed',excuse||'No-show');return}
+ if(ev.type==='schoolEvent'){resolveContestAttendance(ev,excuse?'Withdrew':'No-show');return}
+ setCalendarStatus(ev,'Expired','Time passed')
+}
+function attendTendency(type){
+ const base={schoolDay:96,exam:95,clubSession:80,schoolEvent:90}[type]??85;
+ const resp=(S.family?.responsibility||0)*.06,stress=Math.max(0,S.stress-50)*.15,health=S.health<50?8:0;
+ const pers=(S.personality.includes('Responsible')?3:0)-(S.personality.includes('Stubborn')||S.personality.includes('Bold')?2:0);
+ return clamp(base+resp-stress-health+pers-(S.age>=15&&S.age<=17?2:0),50,99.5)
+}
+function simulateObligation(ev){
+ const attend=chance(attendTendency(ev.type)),sick=chance(ev.type==='schoolDay'?2.5:1.5);
+ if(ev.type==='exam'){const exam=S.exams.find(x=>x.id===ev.payload?.examId);if(!examIsOpen(exam)){setCalendarStatus(ev,calStatusForExam(exam)||'Cancelled','Reconciled');return}if(attend&&!sick)performExam(exam,{simulated:true});else finalizeExam(exam.id,{status:sick?'Excused':'Missed',reason:sick?'Illness':'Skipped',simulated:true});return}
+ if(ev.type==='schoolDay'){if(SIM.excuse)markSchoolAbsence(ev,{excused:true,reason:SIM.excuse,simulated:true});else if(sick)markSchoolAbsence(ev,{excused:true,reason:'Sick day',simulated:true});else if(attend)markSchoolAttendance(ev,{tardy:chance(4),simulated:true});else markSchoolAbsence(ev,{simulated:true});return}
+ if(ev.type==='clubSession'){const c=clubById(ev.payload?.clubId);if(!c||c.status!=='Active'){setCalendarStatus(ev,'Cancelled','Club inactive');return}if(attend&&!sick)clubSessionAttended(ev,{simulated:true});else resolveClubSession(ev,sick?'Excused':'Missed',sick?'Sick':'Skipped',{simulated:true});return}
+ if(ev.type==='schoolEvent'){const c=contestById(ev.payload?.contestId);if(!c||c.status!=='Registered'){setCalendarStatus(ev,'Cancelled','Not registered');return}if(attend&&!sick){resolveContest(c,{simulated:true});setCalendarStatus(ev,'Attended','Simulated attendance')}else resolveContestAttendance(ev,sick?'Withdrew':'No-show',{simulated:true});return}
+ setCalendarStatus(ev,'Expired','Skipped ahead')
+}
+
+// ---------- Notifications ----------
+function notify(title,text,opts={}){
+ S.notifications=S.notifications||[];
+ if(opts.sourceId&&S.notifications.some(x=>x.sourceId===opts.sourceId&&x.title===title&&['Unread','Read'].includes(x.status)))return null;
+ const n={id:uid('note'),dateISO:currentDate(),minute:currentMinute(),title,text,read:false,status:'Unread',sourceType:opts.sourceType||null,sourceId:opts.sourceId||null,tab:opts.tab||null};
+ S.notifications.unshift(n);if(S.notifications.length>60)S.notifications.length=60;return n
+}
+function resolveNotificationsFor(sourceId,status='Resolved'){if(!sourceId)return;for(const n of S.notifications||[])if(n.sourceId===sourceId&&['Unread','Read'].includes(n.status)){n.status=status;n.read=true;n.resolvedDate=currentDate()}}
+function activeNotifications(){return (S.notifications||[]).filter(n=>['Unread','Read'].includes(n.status))}
+
+// ---------- Exams ----------
+function examIsOpen(e){return !!e&&['Scheduled','Due','In progress'].includes(e.status)}
+function examSubject(exam){return S.school?.subjects?.find(x=>x.name===exam?.subject)||null}
+function ensureTeacher(sub){if(!sub)return null;sub.teacher=sub.teacher||{name:teacherName(sub.name),rel:55};sub.teacher.style=sub.teacher.style||rand(['Strict','Fair','Fair','Warm']);return sub.teacher}
+function normalizeExam(x){
+ x.id=x.id||uid('exam');x.type=x.type||'Assessment';if(!x.dateISO)x.dateISO=addDays(currentDate(),Math.max(1,safeNum(x.days,10)));
+ if(!x.status)x.status=x.score==null?'Scheduled':'Completed';if(x.score!=null&&['Scheduled','Due','In progress'].includes(x.status))x.status='Completed';
+ x.minute=safeNum(x.minute,540,0,1439);x.endMinute=safeNum(x.endMinute,Math.min(1439,x.minute+75),0,1439);x.graceMinute=safeNum(x.graceMinute,x.minute>=SCHOOL_DAY.end?Math.min(1439,x.minute+60):SCHOOL_DAY.cutoff,0,1439);x.prep=safeNum(x.prep,0,0,100);return x
+}
+function calStatusForExam(exam){if(!exam)return null;if(exam.status==='Completed'||exam.status==='Replaced by make-up')return 'Completed';if(exam.status==='Excused')return 'Excused';if(exam.status==='Make-up scheduled')return exam.excused?'Excused':'Missed';if(exam.status==='Missed')return 'Missed';if(exam.status==='Cancelled')return 'Cancelled';return null}
+function examCalendarEvents(exam){return S.calendar.filter(e=>e.type==='exam'&&e.payload?.examId===exam.id)}
+function addExamRecord(exam){normalizeExam(exam);S.exams.push(exam);createCalendarEvent({id:'cal-'+exam.id,type:'exam',title:`${exam.subject} • ${exam.type}`,dateISO:exam.dateISO,startMinute:exam.minute,endMinute:exam.endMinute,graceMinute:exam.graceMinute,payload:{examId:exam.id},source:'school'});return exam}
+function scheduleExams(){
+ if(!needsFormalSchool())return;const offsets=[8,15,24,34,48,62];
+ S.school.subjects.slice(0,6).forEach((sub,i)=>{const dateISO=nextSchoolDay(addDays(currentDate(),offsets[i]||20+i*7));addExamRecord({id:uid('exam'),subject:sub.name,dateISO,minute:540,type:S.age<=11?'Class assessment':i%3===0?'Midterm':i%3===1?'Quiz':'Project / final',score:null,status:'Scheduled',prep:0})});
+ syncExamCalendar()
+}
+function ensureRollingAssessments(){
+ if(!needsFormalSchool())return;if(S.exams.filter(examIsOpen).length>=2)return;
+ const subs=S.school.subjects.slice(0,6);if(!subs.length)return;
+ const last=n=>S.exams.filter(e=>e.subject===n).map(e=>e.dateISO).sort().pop()||'0000';
+ const sub=[...subs].sort((a,b)=>last(a.name).localeCompare(last(b.name))||Math.random()-.5)[0];
+ const types=S.age<=11?['Class assessment','Quiz']:['Quiz','Unit test','Project / final'];
+ addExamRecord({id:uid('exam'),subject:sub.name,dateISO:nextSchoolDay(addDays(currentDate(),7+Math.floor(Math.random()*12))),minute:540,type:rand(types),score:null,status:'Scheduled',prep:0})
+}
+function syncExamCalendar(){
+ if(!S.school)return;
+ for(const exam of S.exams||[]){
+  normalizeExam(exam);exam.days=daysBetween(currentDate(),exam.dateISO);
+  let evs=examCalendarEvents(exam);
+  if(evs.length>1){const keep=evs.find(e=>e.id==='cal-'+exam.id)||evs[0];S.calendar=S.calendar.filter(e=>!(e.type==='exam'&&e.payload?.examId===exam.id&&e!==keep));evs=[keep]}
+  if(!evs.length&&examIsOpen(exam))evs=[createCalendarEvent({id:'cal-'+exam.id,type:'exam',title:`${exam.subject} • ${exam.type}`,dateISO:exam.dateISO,startMinute:exam.minute,endMinute:exam.endMinute,graceMinute:exam.graceMinute,payload:{examId:exam.id},source:'school'})];
+  for(const ev of evs){
+   const target=calStatusForExam(exam);
+   if(target){if(!isTerminal(ev.status)||ev.status!==target)setCalendarStatus(ev,target,'Synced with assessment record')}
+   else{if(examIsOpen(exam)){ev.dateISO=exam.dateISO;ev.startMinute=ev.minute=exam.minute;ev.endMinute=exam.endMinute;ev.graceMinute=exam.graceMinute;if(isTerminal(ev.status))ev.status='Scheduled';if(ev.status==='Due'&&stamp(exam.dateISO,exam.minute)>nowStamp())ev.status='Scheduled'}}
+  }
+ }
+}
+function examScore(exam,{late=0,cheat=false,simulated=false}={}){
+ const sub=examSubject(exam);if(!sub)return 60;
+ if(simulated){const prep=clamp(Math.max(sub.prep,45+(S.family?.responsibility||0)*.3+Math.random()*20-Math.max(0,S.stress-55)*.3));return clamp(Math.round(sub.skill*.4+sub.score*.45+prep*.15+(S.luck-50)*.08+(Math.random()*14-7)))}
+ const prep=sub.prep;
+ const sleep=simulated?0:(S.needs.sleep-50)*.08,stress=simulated?0:Math.max(0,S.stress-45)*.12,luck=(S.luck-50)*.08,latePenalty=late>0?Math.min(18,late/4):0;
+ return clamp(Math.round(sub.skill*.42+prep*.35+sub.score*.23+sleep-stress+luck+(Math.random()*14-7)+(cheat?10:0)-latePenalty))
+}
+function examStory(exam,score,late){
+ const sub=examSubject(exam),t=ensureTeacher(sub)?.name||'The teacher',prep=sub?.prep||0,tired=S.needs.sleep<40,nervous=S.stress>60;
+ const lateLine=late>0?rand([`You slipped in ${late} minutes late and had to start while everyone else was already writing.`,`${t} let you sit down late, but the clock did not wait for you.`]):'';
+ let core;
+ if(score>=85)core=rand([`The questions felt familiar from the first page${prep>=60?' — the preparation paid off':''}. You finished with time to check your work.`,`You worked steadily and only hesitated on one question. Walking out, you already suspect it went well.`,`${exam.subject} clicked today. Even the last section felt manageable.`]);
+ else if(score>=70)core=rand([`Most of it went smoothly. One section slowed you down, but you worked through it.`,`You knew more than you expected, though a couple of questions caught you off guard.`,`It was solid work. Not perfect, but you were not guessing much.`]);
+ else if(score>=55)core=rand([`You recognized some questions and guessed on others. ${tired?'Being tired made it harder to focus.':nervous?'Nerves kept getting in the way.':'More preparation would have helped.'}`,`Half of it made sense. The other half you had to reason out on the spot.`]);
+ else core=rand([`The questions blurred together. ${tired?'You could barely keep your eyes open.':prep<30?'You had not prepared enough for this one.':'Your mind went blank on the hardest section.'}`,`You stared at the second page longer than you would like to admit. It was a hard day.`]);
+ return [lateLine,core].filter(Boolean).join(' ')
+}
+function performExam(exam,{cheat=false,simulated=false,lateMinutes=0}={}){
+ if(!examIsOpen(exam))return null;const sub=examSubject(exam);
+ exam.status='In progress';examCalendarEvents(exam).forEach(ev=>setCalendarStatus(ev,'Attending','Sitting the assessment'));
+ if(cheat&&!simulated){
+  const caught=chance(28+(S.stress/5)-(S.luck-50)*.1);
+  if(caught){const t=ensureTeacher(sub);if(t)t.rel=clamp(t.rel-20);S.school.behavior=clamp(S.school.behavior-18);S.family.tension=clamp(S.family.tension+8);setEmotion('Embarrassed','You were caught cheating.',75);advanceTime(60,{silent:true});finalizeExam(exam.id,{status:'Completed',score:0,reason:'Caught cheating',narrative:`${t?.name||'The teacher'} quietly takes your paper halfway through. The score is a zero, and a note goes home.`});if(S.age<18)scheduleFollowUp('cheatingParent',{examId:exam.id},{minute:1080});return exam}
+ }
+ const score=examScore(exam,{late:lateMinutes,cheat,simulated});
+ if(!simulated){S.stress=clamp(S.stress+5);S.happiness=clamp(S.happiness+(score>=75?5:score<55?-5:0));advanceTime(Math.max(30,(exam.endMinute-exam.minute)-lateMinutes),{silent:true})}
+ finalizeExam(exam.id,{status:'Completed',score,reason:lateMinutes?'Completed late':'Completed',narrative:simulated?'':examStory(exam,score,lateMinutes),simulated});
+ return exam
+}
+function finalizeExam(examId,{status='Completed',score=null,reason='',narrative='',simulated=false}={}){
+ const exam=S.exams.find(x=>x.id===examId);if(!exam)return null;if(!examIsOpen(exam))return exam;
+ const sub=examSubject(exam),t=ensureTeacher(sub),rec=ensureSchoolRecord()||freshSchoolRecord(),sum=SIM.summary?.school;
+ exam.status=status;exam.resolvedAt={dateISO:currentDate(),minute:currentMinute()};exam.reason=reason;
+ if(status==='Completed'){
+  exam.score=clamp(Math.round(score??0));
+  if(sub){const before=sub.score;sub.score=clamp(sub.score+(exam.score-sub.score)*.16);exam.subjectDelta=sub.score-before;sub.prep=clamp(sub.prep*.35)}
+  if(exam.makeupOf){const orig=S.exams.find(x=>x.id===exam.makeupOf)||S.archive.exams.find(x=>x.id===exam.makeupOf);if(orig){orig.status='Replaced by make-up';orig.replacedBy=exam.id}}
+  rec.examsCompleted++;if(sum){sum.examsCompleted++;sum.scores.push(exam.score)}
+  if(!simulated){log(`${exam.subject} ${exam.type} • ${exam.score}%`,narrative||'You completed the assessment.',exam.score>=95);toast(`${exam.subject}: ${exam.score}%`)}
+ }else if(status==='Missed'){
+  exam.score=0;exam.incomplete=true;
+  if(!exam.consequencesApplied){if(sub){const before=sub.score;sub.score=clamp(sub.score-Math.max(3,sub.score*.1));exam.subjectDelta=sub.score-before}if(t)t.rel=clamp(t.rel-(t.style==='Strict'?7:4));S.school.attendance=clamp(S.school.attendance-1);S.stress=clamp(S.stress+4);rec.examsMissed++;if(sum)sum.examsMissed++}
+  if(!simulated){log(`Missed ${exam.subject}`,`The ${exam.type.toLowerCase()} happened without you. For now it counts as a zero and an incomplete.`);queueMissedExamEvent(exam)}
+  else if(chance(35+(t?.rel||50)*.3)){scheduleMakeupExam(exam);if(sum)sum.makeups++}
+ }else if(status==='Excused'){
+  exam.excused=true;exam.score=null;rec.examsExcused++;if(sum)sum.examsExcused++;
+  const mk=scheduleMakeupExam(exam);if(!simulated)log(`${exam.subject} excused`,`Because of ${String(reason||'a recorded absence').toLowerCase()}, ${t?.name||'your teacher'} excuses the ${exam.type.toLowerCase()}.${mk?` A make-up is set for ${formatDate(mk.dateISO)}.`:''}`)
+ }
+ exam.consequencesApplied=true;
+ for(const ev of examCalendarEvents(exam))setCalendarStatus(ev,calStatusForExam(exam)||'Resolved',reason||status);
+ resolveNotificationsFor(exam.id);clearCurrentContextIfSourceResolved();
+ return exam
+}
+function scheduleMakeupExam(exam){
+ if(!exam||exam.makeupOf||exam.makeupId)return null;
+ const sub=examSubject(exam),dateISO=nextSchoolDay(addDays(currentDate(),2+Math.floor(Math.random()*3)));
+ const mk=addExamRecord({id:uid('exam'),subject:exam.subject,type:`${exam.type} (make-up)`,dateISO,minute:930,endMinute:1005,graceMinute:990,score:null,status:'Scheduled',prep:0,makeupOf:exam.id});
+ exam.makeupId=mk.id;exam.status='Make-up scheduled';
+ if(sub&&exam.subjectDelta<0&&!exam.penaltyReverted){sub.score=clamp(sub.score-exam.subjectDelta);exam.penaltyReverted=true}
+ for(const ev of examCalendarEvents(exam))if(!isTerminal(ev.status))setCalendarStatus(ev,calStatusForExam(exam),'Make-up scheduled');
+ return mk
+}
+function queueMissedExamEvent(exam){
+ const sub=examSubject(exam),t=ensureTeacher(sub)?.name||'your teacher';
+ queueEvent({type:'missedExam',title:`You missed ${exam.subject}`,text:`${t} noticed your empty seat during the ${exam.type.toLowerCase()}. ${S.age<10?'Your caregiver will probably hear about it too.':'What you say next matters.'}`,payload:{examId:exam.id},priority:4,expiresDays:3,choices:[{id:'honest',label:'Explain honestly'},{id:'sick',label:'Claim you were sick'},{id:'makeup',label:'Ask for a make-up'},{id:'ignore',label:'Ignore it'}]})
+}
+function takeExam(examId,cheat=false){
+ const exam=S.exams.find(e=>e.id===examId)||S.exams.find(e=>e.subject===examId&&examIsOpen(e));
+ if(!exam){toast('Assessment not found.');return}
+ if(!examIsOpen(exam)){toast(exam.status==='Completed'?`Already completed • ${exam.score}%`:`This assessment is ${String(exam.status).toLowerCase()}.`);return}
+ if(exam.dateISO>currentDate()){toast(`${exam.subject} is in ${daysBetween(currentDate(),exam.dateISO)} days.`);return}
+ if(exam.dateISO<currentDate()||currentMinute()>exam.graceMinute){processCalendar();toast('The assessment window has closed.');return}
+ const sd=schoolDayEvent();
+ if(exam.minute<SCHOOL_DAY.end&&sd&&!isTerminal(sd.status)&&sd.status!=='Attending'){attendSchool({cheatExamId:cheat?exam.id:null});return}
+ if(currentMinute()<exam.minute){if(exam.minute-currentMinute()>240){toast(`It starts at ${timeLabel(exam.minute)}.`);return}advanceTime(exam.minute-currentMinute(),{silent:true})}
+ performExam(exam,{cheat,lateMinutes:Math.max(0,currentMinute()-exam.minute)})
+}
+function nextExam(){return [...(S.exams||[])].filter(examIsOpen).sort((a,b)=>a.dateISO.localeCompare(b.dateISO)||a.minute-b.minute)[0]}
+
+// ---------- School days ----------
+function schoolDayEvent(dateISO=currentDate()){return S.calendar.find(e=>e.type==='schoolDay'&&e.dateISO===dateISO)}
+function ensureSchoolDayObligation(dateISO=currentDate()){
+ if(!needsFormalSchool()||!isSchoolDay(dateISO))return null;
+ return schoolDayEvent(dateISO)||createCalendarEvent({id:`school-${dateISO}`,type:'schoolDay',title:`School • ${S.school.name}`,dateISO,startMinute:480,endMinute:900,graceMinute:660,payload:{school:S.school.name},source:'school'})
+}
+function schoolDayStatus(){
+ if(!S.school)return 'Not enrolled';if(S.school.grade==='Kindergarten')return isSchoolDay()?'Kindergarten day':'Kindergarten closed';
+ if(!isSchoolDay())return isWeekend(currentDate())?'Weekend':'School break';
+ const ev=schoolDayEvent(),m=currentMinute();
+ if(ev&&ev.status==='Attended')return ev.attendanceStatus==='Tardy'?'Attended (late)':'Attended';
+ if(ev&&ev.status==='Excused')return 'Excused absence';if(ev&&ev.status==='Missed')return 'Absent';
+ return m<SCHOOL_DAY.start?'Before school':m<=SCHOOL_DAY.tardyAfter?'School starting':m<=SCHOOL_DAY.cutoff?'Late — tardy if you go now':m<SCHOOL_DAY.end?'Attendance cutoff passed':'School finished'
+}
+function markSchoolAttendance(ev,{tardy=false,simulated=false}={}){
+ const rec=ensureSchoolRecord();ev.attendanceStatus=tardy?'Tardy':'Present';setCalendarStatus(ev,'Attended',tardy?'Arrived late':'On time');rec.daysAttended++;
+ if(tardy){rec.tardies++;S.school.attendance=clamp(S.school.attendance-.3)}else S.school.attendance=clamp(S.school.attendance+.05);
+ if(simulated)for(const sub of [...S.school.subjects].sort(()=>Math.random()-.5).slice(0,2))sub.skill=clamp(sub.skill+.16);
+ if(SIM.summary){SIM.summary.school.days++;SIM.summary.school.attended++;if(tardy)SIM.summary.school.tardies++}
+}
+function markSchoolAbsence(ev,{excused=false,reason='',simulated=false}={}){
+ const rec=ensureSchoolRecord();ev.attendanceStatus=excused?'Excused absence':'Absent';setCalendarStatus(ev,excused?'Excused':'Missed',reason||(excused?'Excused':'Did not arrive by the attendance cutoff'));
+ if(SIM.summary){SIM.summary.school.days++;SIM.summary.school[excused?'excused':'absences']++}
+ if(excused){rec.excused++;S.school.attendance=clamp(S.school.attendance-.2);if(!simulated)log('Absence excused',`School records ${formatDate(ev.dateISO)} as an excused absence (${String(reason||'excused').toLowerCase()}).`);return}
+ rec.absences++;S.school.attendance=clamp(S.school.attendance-1.2);if(S.age>=10)S.school.behavior=clamp(S.school.behavior-1);
+ const n=rec.absences;
+ if(simulated){if(n%4===0)S.family.tension=clamp(S.family.tension+2);return}
+ log('Marked absent',S.age<10?`You never made it to school by ${timeLabel(SCHOOL_DAY.cutoff)}. The school records an unexplained absence, and your family will be asked about it.`:`School started without you. By ${timeLabel(SCHOOL_DAY.cutoff)} your homeroom teacher marks you absent${n>1?` — the ${ordinal(n)} time this year`:''}.`);
+ if(S.age<18)scheduleFollowUp('absenceNotice',{dateISO:ev.dateISO,count:n},ev.dateISO>=currentDate()?{dateISO:ev.dateISO,minute:1050}:{minute:Math.min(1439,currentMinute()+30)})
+}
+function schoolDayStory(tardy,examLines){
+ const subs=S.school.subjects,s1=rand(subs)?.name||'class',s2=rand(subs)?.name||'class',t=ensureTeacher(rand(subs))?.name||'your teacher',friend=bestNonFamily(),fn=firstName(friend);
+ const opening=tardy?rand([`You slip into class after the bell, and ${t} gives you a look before carrying on.`,`You arrive late and have to sign in at the front office first.`,`The hallway is already empty when you get there. You walk in mid-sentence.`]):rand([`The day opens with ${s1}.`,`You make it in a few minutes before the bell.`,`Morning announcements run long, as usual.`]);
+ const middle=rand([`${s2} drags a little, but one explanation finally clicks.`,`There is a surprise question in ${s2}; you get it ${chance(55)?'right':'half right'}.`,`${t} goes off on a tangent that turns out to be the most interesting part of the day.`,`Group work in ${s2} is chaotic, but your group finishes.`]);
+ const social=friend?rand([`At lunch, ${fn} saves you a seat.`,`${fn} spends lunch telling you about ${rand(['a strange dream','their weekend','a new game','a rumor about a teacher'])}.`,`You and ${fn} trade snacks at lunch.`]):rand(['Lunch is quiet.','You spend lunch people-watching.']);
+ return [opening,...examLines,middle,social].filter(Boolean).join(' ')
+}
+function attendSchool(opts={}){
+ if(!S.school){toast('You are not currently enrolled in school.');return}
+ if(S.school.grade==='Kindergarten'){
+  if(!isSchoolDay()){toast(isWeekend(currentDate())?'Kindergarten is closed on weekends.':'Kindergarten is on break.');return}
+  const m=currentMinute();if(m<420||m>=900){toast(m<420?'Kindergarten opens at 8:00 AM.':'Kindergarten has finished for today.');return}
+  if(m<480)advanceTime(480-m,{silent:true});const mins=Math.max(60,Math.min(240,900-currentMinute()));advanceTime(mins,{silent:true});S.school.attendance=clamp(S.school.attendance+.05);S.needs.fun=clamp(S.needs.fun+10);S.needs.social=clamp(S.needs.social+12);
+  feedback('Kindergarten day',rand(['Circle time, a story about a lost bear, and a long turn on the slide.','You paint something that is mostly blue and very proud of it.','A classmate shares their blocks with you after some negotiation.']),mins);return
+ }
+ if(!isSchoolDay()){toast(isWeekend(currentDate())?'There is no school on weekends.':'School is on break today.');return}
+ const ev=ensureSchoolDayObligation();if(!ev){toast('No school day is scheduled.');return}
+ if(ev.status==='Attended'){toast('You already went to school today.');return}
+ if(isTerminal(ev.status)){toast(ev.status==='Excused'?'You are marked as staying home today.':`You were marked absent after ${timeLabel(SCHOOL_DAY.cutoff)}.`);return}
+ let m=currentMinute();
+ if(m<300){toast('It is the middle of the night. School starts at 8:00 AM — sleep first.');return}
+ if(m>SCHOOL_DAY.cutoff){processCalendar();toast(m>=SCHOOL_DAY.end?'School is finished for today — you were marked absent.':`The attendance cutoff (${timeLabel(SCHOOL_DAY.cutoff)}) has passed.`);return}
+ setCalendarStatus(ev,'Attending','Leaving for school');
+ if(m<SCHOOL_DAY.start)advanceTime(SCHOOL_DAY.start-m,{silent:true});
+ m=currentMinute();const tardy=m>SCHOOL_DAY.tardyAfter;S.location='School';
+ const examLines=[];
+ for(const exam of S.exams.filter(e=>examIsOpen(e)&&e.dateISO===currentDate()&&e.minute<SCHOOL_DAY.end).sort((a,b)=>a.minute-b.minute)){
+  if(currentMinute()>exam.graceMinute)continue;if(currentMinute()<exam.minute)advanceTime(exam.minute-currentMinute(),{silent:true});
+  const late=Math.max(0,currentMinute()-exam.minute);performExam(exam,{lateMinutes:late,cheat:opts.cheatExamId===exam.id});
+  if(exam.status==='Completed')examLines.push(`You sit the ${exam.subject} ${exam.type.toLowerCase()} (${exam.score}%).`);
+ }
+ for(const sub of [...S.school.subjects].sort(()=>Math.random()-.5).slice(0,2)){sub.skill=clamp(sub.skill+1+Math.random());sub.prep=clamp(sub.prep+1)}
+ if(currentMinute()<SCHOOL_DAY.end)advanceTime(SCHOOL_DAY.end-currentMinute(),{silent:true});
+ markSchoolAttendance(ev,{tardy});S.location='Home';
+ S.energy=clamp(S.energy-10);S.needs.social=clamp(S.needs.social+7);if(chance(40))generateHomework(false);
+ const story=schoolDayStory(tardy,examLines);log(tardy?'School day (late)':'School day',story);toast(tardy?'School • marked tardy':'School day complete');
+ if(chance(22))maybeRandomEvent(true)
+}
+
+// ---------- Homework ----------
+const HW_OPEN=['Assigned','Late'];
+function homeworkLabel(hw){
+ if(!hw||hw.status==='None')return 'No homework';
+ if(hw.status==='Assigned'){const d=daysBetween(currentDate(),hw.dueDate);return d<0?'Late':d===0?'Due today':d===1?'Due tomorrow':`Due in ${d} days`}
+ if(hw.status==='Late'){const d=daysBetween(hw.dueDate,currentDate());return `Late • ${d} day${d===1?'':'s'}`}
+ return hw.status
+}
+function archiveHomework(sub){const hw=sub.homework;if(hw&&hw.status&&hw.status!=='None'){sub.homeworkHistory=sub.homeworkHistory||[];sub.homeworkHistory.unshift({...hw,subject:sub.name});if(sub.homeworkHistory.length>8)sub.homeworkHistory.length=8}}
+function generateHomework(force=false){
+ if(!needsFormalSchool())return;let active=S.school.subjects.filter(s=>HW_OPEN.includes(s.homework?.status)).length;
+ for(const sub of [...S.school.subjects].sort(()=>Math.random()-.5)){
+  if(active>=3)break;const hw=sub.homework||{status:'None'};
+  const free=hw.status==='None'||(!HW_OPEN.includes(hw.status)&&(hw.resolvedDate||'0000')<currentDate());
+  if(!free)continue;if(force?chance(45):chance(28)){archiveHomework(sub);sub.homework={id:uid('hw'),status:'Assigned',progress:0,assignedDate:currentDate(),dueDate:nextSchoolDay(addDays(currentDate(),2+Math.floor(Math.random()*3)))};active++}
+ }
+}
+function simulateHomework(sub){
+ const hw=sub.homework,p=clamp(72+(S.family?.responsibility||0)*.15-Math.max(0,S.stress-40)*.2,35,96),r=Math.random()*100,sum=SIM.summary?.school,rec=ensureSchoolRecord();
+ if(r<p){hw.status='Submitted';hw.progress=100;sub.score=clamp(sub.score+1);rec.submittedHomework++;if(sum)sum.hwOnTime++}
+ else if(r<p+(100-p)*.6){hw.status='Submitted late';hw.progress=100;rec.lateHomework++;if(sum)sum.hwLate++}
+ else{hw.status='Missing';sub.score=clamp(sub.score-3);ensureTeacher(sub).rel=clamp(sub.teacher.rel-3);rec.missingHomework++;if(sum)sum.hwMissing++}
+ hw.resolvedDate=currentDate()
+}
+function processHomeworkDeadlines(){
+ if(!needsFormalSchool())return;const rec=ensureSchoolRecord();
+ for(const sub of S.school.subjects){
+  const hw=sub.homework;if(!hw||!HW_OPEN.includes(hw.status)||!hw.dueDate)continue;
+  if(hw.status==='Assigned'&&hw.dueDate<currentDate()){if(SIM.skipping){simulateHomework(sub);continue}hw.status='Late';rec.lateHomework++;sub.score=clamp(sub.score-1);log('Homework late',`${sub.name} homework was due ${formatDate(hw.dueDate)}. ${ensureTeacher(sub).name} will still take it for a few days, for reduced credit.`)}
+  else if(hw.status==='Late'&&daysBetween(hw.dueDate,currentDate())>3){hw.status='Missing';hw.resolvedDate=currentDate();rec.missingHomework++;sub.score=clamp(sub.score-3);ensureTeacher(sub).rel=clamp(sub.teacher.rel-3);if(SIM.summary)SIM.summary.school.hwMissing++;if(!SIM.skipping){log('Homework missing',`${sub.name} homework is now recorded as missing.${rec.missingHomework===1?' One missed assignment is not a disaster, but it is noted.':''}`);escalateHomework()}}
+ }
+}
+function escalateHomework(){
+ const rec=ensureSchoolRecord(),n=rec.missingHomework;if(S.age>=18)return;
+ if(n===3)scheduleFollowUp('homeworkNote',{count:n},{minute:Math.max(currentMinute()+60,1050)});
+ if(n>=6&&!rec.meetingHeld){rec.meetingHeld=true;scheduleFollowUp('parentTeacherMeeting',{count:n},{days:1,minute:960})}
+}
+function doHomework(name){
+ const sub=S.school?.subjects?.find(x=>x.name===name),hw=sub?.homework;
+ if(!sub||!hw||!HW_OPEN.includes(hw.status)){toast('There is no active homework for that subject.');return}
+ const gain=Math.min(100-(hw.progress||0),50);hw.progress=(hw.progress||0)+gain;advanceTime(60);S.energy=clamp(S.energy-5);
+ const t=ensureTeacher(sub),rec=ensureSchoolRecord();
+ if(hw.progress>=100){
+  const late=hw.status==='Late';hw.status=late?'Submitted late':'Submitted';hw.submittedDate=currentDate();hw.resolvedDate=currentDate();
+  if(late){sub.score=clamp(sub.score+.5);rec.lateHomework=rec.lateHomework;feedback(`${sub.name} homework submitted late`,rand([`${t.name} accepts it with a short note about deadlines. Partial credit.`,`It is late, but it is done. ${t.name} takes it without much comment.`]),60)}
+  else{sub.score=clamp(sub.score+2);t.rel=clamp(t.rel+2);rec.submittedHomework++;feedback(`${sub.name} homework submitted`,rand([`You finish the last question and put it in your bag. One less thing to worry about.`,`It took longer than expected, but the work is solid.`,`Done before the deadline — ${t.name} will notice.`]),60)}
+ }else feedback(`${sub.name} homework`,`Progress ${hw.progress}% • ${homeworkLabel(hw)}`,60)
+}
+
+// ---------- Clubs as commitments ----------
+function clubById(id){return S.school?.clubs?.find(x=>x.id===id)||null}
+function ensureClub(c){return Object.assign(c,Object.assign({attended:0,missedSessions:0,excusedSessions:0,consecutiveMissed:0,leaderRel:60,warnings:0,recent:[],position:'New member',leader:teacherName(c.name)},c))}
+function nextClubDate(fromISO){let d=addDays(fromISO,7);for(let i=0;i<20&&!isSchoolDay(d);i++)d=addDays(d,7);return isSchoolDay(d)?d:nextSchoolDay(d)}
+function scheduleClubSession(c,dateISO){c.nextSessionDate=dateISO;return createCalendarEvent({id:`club-${c.id}-${dateISO}`,type:'clubSession',title:`${c.name} session`,dateISO,startMinute:930,endMinute:1020,graceMinute:960,payload:{clubId:c.id},source:'club',participants:c.members||[]})}
+function clubSessionEvent(c){return S.calendar.filter(e=>e.type==='clubSession'&&e.payload?.clubId===c.id&&!isTerminal(e.status)).sort((a,b)=>a.dateISO.localeCompare(b.dateISO))[0]||null}
+function clubAttendanceRate(c){const t=(c.attended||0)+(c.missedSessions||0);return t?Math.round(100*(c.attended||0)/t):100}
+function activateClub(o){
+ o.status='Joined';const club=ensureClub({id:uid('club'),name:o.name,status:'Active',joinedDate:currentDate(),skill:12,sessions:0,members:[rand(D.names),rand(D.names)]});
+ S.school.clubs.push(club);scheduleClubSession(club,nextSchoolDay(addDays(currentDate(),2)));
+ log('Joined '+club.name,`It is a real commitment now: sessions every week at ${timeLabel(930)}, led by ${club.leader}. Showing up matters.`,true)
+}
+function attendClubSession(clubId){
+ const c=clubById(clubId);if(!c||c.status!=='Active')return;ensureClub(c);const ev=clubSessionEvent(c);
+ if(!ev){toast('No session is scheduled.');return}
+ if(ev.dateISO>currentDate()){toast(`Next session ${formatDate(ev.dateISO)} at ${timeLabel(ev.startMinute)}.`);return}
+ if(currentMinute()>ev.graceMinute){processCalendar();toast('The session already started without you.');return}
+ const sd=schoolDayEvent();if(sd&&sd.status==='Scheduled'||sd&&sd.status==='Due'){toast('School comes first — club starts after classes.');return}
+ if(currentMinute()<ev.startMinute){if(ev.startMinute-currentMinute()>180){toast(`The session starts at ${timeLabel(ev.startMinute)}.`);return}advanceTime(ev.startMinute-currentMinute(),{silent:true})}
+ if(isTerminal(ev.status))return;setCalendarStatus(ev,'Attending','Arrived');const late=Math.max(0,currentMinute()-ev.startMinute);
+ advanceTime(Math.max(30,ev.endMinute-currentMinute()),{silent:true});clubSessionAttended(ev,{late})
+}
+function clubSessionStory(c,late){
+ const m=rand(c.members||[])||'another member',L=c.leader;
+ const lines={'Art Club':[`${L} sets up a still life and challenges everyone to draw it in ten minutes. Yours is lopsided but lively.`,`You and ${m} share a jar of paint water and accidentally invent a new color.`],'Chess Club':[`${m} beats you in a game you thought you were winning. You replay the final moves twice.`,`${L} shows a trap that you immediately want to try on someone.`],'Football':[`Drills, then a scrimmage. You make one good pass that ${L} actually notices.`,`It rains halfway through practice; nobody stops.`],'Drama':[`You run lines with ${m} until the scene finally lands.`,`An improv game goes wildly off the rails, in the best way.`]};
+ const pool=lines[c.name]||[`${L} runs a focused session and you pick up something new.`,`You spend part of the session working alongside ${m}, which turns out to be fun.`,`It is a slow session, but you get real practice in.`];
+ return `${late>5?'You arrive a few minutes late. ':''}${rand(pool)}`
+}
+function clubSessionAttended(ev,{simulated=false,late=0}={}){
+ const c=clubById(ev.payload?.clubId);if(!c){setCalendarStatus(ev,'Cancelled','Club missing');return}ensureClub(c);
+ const dim=c.skill>80?.5:c.skill>60?.75:1;c.sessions=(c.sessions||0)+1;c.attended++;c.consecutiveMissed=0;c.recent=[...c.recent,'A'].slice(-8);c.skill=clamp(c.skill+(late>15?3:5)*dim);c.leaderRel=clamp(c.leaderRel+1);
+ if(c.attended>=10&&c.position==='New member')c.position='Member';if(c.attended>=30&&c.position==='Member')c.position='Experienced member';
+ setCalendarStatus(ev,'Attended',late?'Arrived late':'Attended');
+ if(SIM.summary){const s=SIM.summary.clubs[c.id]=SIM.summary.clubs[c.id]||{name:c.name,attended:0,missed:0,excused:0};s.attended++}
+ if(!simulated){S.needs.social=clamp(S.needs.social+10);S.needs.fun=clamp(S.needs.fun+8);S.energy=clamp(S.energy-6);log(`${c.name} session`,clubSessionStory(c,late));toast(`${c.name} • skill ${Math.round(c.skill)}%`)}
+ if(c.status==='Active')scheduleClubSession(c,nextClubDate(ev.dateISO))
+}
+function resolveClubSession(ev,status,reason,{simulated=false}={}){
+ const c=clubById(ev.payload?.clubId);if(!c){setCalendarStatus(ev,'Cancelled','Club missing');return}ensureClub(c);
+ if(status==='Excused'){c.excusedSessions++;c.recent=[...c.recent,'E'].slice(-8);if(c.recent.filter(x=>x==='E').length>=4)c.leaderRel=clamp(c.leaderRel-2)}
+ else{c.missedSessions++;c.consecutiveMissed++;c.recent=[...c.recent,'M'].slice(-8);c.leaderRel=clamp(c.leaderRel-(reason==='Skipped'?2:4))}
+ setCalendarStatus(ev,status,reason);
+ if(SIM.summary){const s=SIM.summary.clubs[c.id]=SIM.summary.clubs[c.id]||{name:c.name,attended:0,missed:0,excused:0};s[status==='Excused'?'excused':'missed']++}
+ if(!simulated)log(status==='Excused'?`${c.name}: excused`:`${c.name}: missed`,status==='Excused'?`You let ${c.leader} know ahead of time. "Thanks for telling me," they say.`:reason==='Skipped'?`You decide not to go to ${c.name} today.`:`${c.name} met without you. Nobody heard from you.`);
+ if(status==='Missed')checkClubDiscipline(c,{simulated});
+ if(c.status==='Active')scheduleClubSession(c,nextClubDate(ev.dateISO));
+ if(!simulated&&status==='Missed'&&c.status==='Active'&&chance(45))scheduleFollowUp('teammateComment',{clubId:c.id},{days:1,minute:720})
+}
+function checkClubDiscipline(c,{simulated=false}={}){
+ const missedRecent=c.recent.filter(x=>x==='M').length;
+ if(c.consecutiveMissed>=4||(c.warnings>=2&&missedRecent>=4)||(c.warnings>=1&&missedRecent>=5)){
+  c.status='Removed';c.removedDate=currentDate();for(const e of S.calendar)if(e.type==='clubSession'&&e.payload?.clubId===c.id&&!isTerminal(e.status))setCalendarStatus(e,'Cancelled','Removed from club');
+  if(SIM.summary)SIM.summary.notable.push(`Removed from ${c.name} after repeated absences`);
+  log('Removed from '+c.name,`After ${c.consecutiveMissed>=4?`${c.consecutiveMissed} missed sessions in a row`:'repeated absences despite a warning'}, ${c.leader} takes you off the roster. You could try joining again next term.`,true);return
+ }
+ if(missedRecent>=3&&c.warnings===0){
+  c.warnings=1;if(simulated){c.leaderRel=clamp(c.leaderRel-3);if(SIM.summary)SIM.summary.notable.push(`${c.leader} warned you about missing ${c.name}`);return}
+  queueEvent({type:'clubWarning',title:`${c.leader} wants a word`,text:`"You've missed ${missedRecent} of the last ${c.recent.length} ${c.name} sessions. The others are noticing. Can I count on you?"`,payload:{clubId:c.id},priority:3,expiresDays:2,choices:[{id:'commit',label:'Apologize and commit'},{id:'explain',label:"Explain what's going on"},{id:'shrug',label:'Shrug it off'}]})
+ }
+}
+function skipClubSession(clubId){const c=clubById(clubId),ev=c&&clubSessionEvent(c);if(!ev||ev.dateISO!==currentDate()||currentMinute()<ev.startMinute-120){toast('There is no session to skip right now.');return}resolveClubSession(ev,'Missed','Skipped')}
+function excuseClubSession(clubId){const c=clubById(clubId),ev=c&&clubSessionEvent(c);if(!ev){toast('No session scheduled.');return}if(ev.dateISO===currentDate()&&currentMinute()>=ev.startMinute){toast('It already started — telling them now is not "beforehand".');return}resolveClubSession(ev,'Excused','Told the leader beforehand')}
+
+// ---------- Contests require attendance ----------
+function contestById(id){return S.school?.contests?.find(x=>x.id===id)||null}
+function registerContest(c){c.status='Registered';createCalendarEvent({id:`contest-${c.id}`,type:'schoolEvent',title:c.name,dateISO:c.eventDate,startMinute:600,endMinute:780,graceMinute:690,payload:{contestId:c.id},source:'school'});log('Registered • '+c.name,`The event is ${formatDate(c.eventDate)} at ${timeLabel(600)}. You need to actually show up — preparation now matters.`)}
+function contestEvent(c){return S.calendar.find(e=>e.type==='schoolEvent'&&e.payload?.contestId===c.id&&!isTerminal(e.status))||null}
+function attendContest(contestId){
+ const c=contestById(contestId);if(!c||c.status!=='Registered')return;const ev=contestEvent(c)||createCalendarEvent({id:`contest-${c.id}`,type:'schoolEvent',title:c.name,dateISO:c.eventDate,startMinute:600,endMinute:780,graceMinute:690,payload:{contestId:c.id},source:'school'});
+ if(ev.dateISO>currentDate()){toast(`${c.name} is on ${formatDate(ev.dateISO)}.`);return}
+ if(currentMinute()>ev.graceMinute){processCalendar();toast('Check-in has closed.');return}
+ if(currentMinute()<ev.startMinute){if(ev.startMinute-currentMinute()>180){toast(`Check-in opens at ${timeLabel(ev.startMinute)}.`);return}advanceTime(ev.startMinute-currentMinute(),{silent:true})}
+ if(S.age<13&&!caregiverApproval(30)){log('No ride',`${primaryCaregiver()} cannot get you to ${c.name} in time.`);resolveContestAttendance(ev,'Withdrew');return}
+ setCalendarStatus(ev,'Attending','Checked in');const late=Math.max(0,currentMinute()-ev.startMinute);advanceTime(Math.max(45,ev.endMinute-currentMinute()),{silent:true});resolveContest(c,{late});setCalendarStatus(ev,'Attended',late?'Arrived late':'Attended')
+}
+function resolveContest(c,{late=0,simulated=false}={}){
+ if(c.status==='Completed')return;
+ const avg=schoolAverage(),club=Math.max(0,...(S.school?.clubs||[]).filter(x=>x.status==='Active').map(x=>x.skill||0)),score=clamp(avg*.38+c.prep*.35+club*.1+S.luck*.12+(Math.random()*18-9)-Math.min(10,late/4));
+ c.status='Completed';c.result=score>=82?'Winner / top result':score>=68?'Strong result / finalist':'Participated';S.happiness=clamp(S.happiness+(score>=82?10:score>=68?6:2));
+ if(SIM.summary)SIM.summary.contests.push({name:c.name,result:c.result});
+ if(simulated)return;
+ const story=score>=82?rand([`When they read the results, your name comes first. For a second you think you misheard.`,`Your entry draws a small crowd. By the end of the day, you have a certificate and a story.`]):score>=68?rand([`You make the final round and hold your own against people who clearly practiced for weeks.`,`A judge stops to ask about your work. You do not win, but you place well.`]):rand([`It is not your day — others were more prepared — but you saw what the top entries looked like.`,`You get through it. The experience is worth more than the ribbon you do not get.`]);
+ log(score>=82?'🏆 '+c.name:score>=68?'⭐ '+c.name:'🎖️ '+c.name,`${late>5?'You arrive late and rush to set up. ':''}${story} (${c.result})`,score>=82)
+}
+function resolveContestAttendance(ev,status,{simulated=false}={}){
+ const c=contestById(ev.payload?.contestId);setCalendarStatus(ev,status,status==='No-show'?'Did not check in':'Withdrew');if(!c)return;
+ c.status=status;c.result=status==='No-show'?'Did not attend':'Withdrew';
+ if(SIM.summary)SIM.summary.contests.push({name:c.name,result:c.result});
+ if(status==='No-show'){S.social.reputation=clamp(S.social.reputation-2);S.stress=clamp(S.stress+3);if(S.age<13)S.family.tension=clamp(S.family.tension+2);if(!simulated)log(`No-show • ${c.name}`,`Your name is called at check-in and nobody answers. The organizers move on, and ${S.age<13?'your caregiver, who signed the form, is not thrilled':'a teacher mentions it the next day'}.`)}
+ else if(!simulated)log(`Withdrew • ${c.name}`,'You could not take part this time.')
+}
+
+// ---------- Pending decisions lifecycle ----------
+const PENDING_RULES={
+ kindergarten:{minAge:3,maxAge:5,expireStatus:'Superseded',expireReason:'Primary school age reached',autoDays:14},
+ clubApproval:{maxDays:10,needsSchool:true},contestApproval:{maxDays:10,needsSchool:true},
+ purchaseConsideration:{maxDays:21},jobApplication:{maxDays:21},
+ conditionalPurchase:{maxDays:180,expireStatus:'Expired',expireReason:'The offer quietly lapsed'}
+};
+function sixthBirthday(){const b=parseISO(S.dob);b.setUTCFullYear(b.getUTCFullYear()+6);return isoDate(b)}
+function normalizePending(x){
+ const rule=PENDING_RULES[x.type]||{};
+ Object.assign(x,Object.assign({id:uid('pending'),createdDate:currentDate(),status:'Pending',detail:'',resolved:false,resolveDate:null,expiresDate:null,minAge:rule.minAge??null,maxAge:rule.maxAge??null,resolvedDate:null,resolutionReason:null,supersededBy:null},x));
+ if(x.type==='purchaseConsideration'&&x.status==='Conditional'&&!x.resolveDate){x.type='conditionalPurchase';x.expiresDate=addDays(currentDate(),180)}
+ if(!x.expiresDate&&!x.resolved){if(x.type==='kindergarten')x.expiresDate=sixthBirthday();else if(rule.maxDays)x.expiresDate=addDays(x.createdDate||currentDate(),rule.maxDays)}
+ if(x.type==='kindergarten'&&!x.resolved&&!x.resolveDate&&!x.autoDecideDate)x.autoDecideDate=addDays(currentDate(),x.createdDate&&daysBetween(x.createdDate,currentDate())>14?3:rule.autoDays||14);
+ return x
+}
+function createPending(p){const x=normalizePending(Object.assign({createdDate:currentDate()},p));S.pendingDecisions.push(x);return x}
+function normalizeRequests(){S.pendingDecisions=(S.pendingDecisions||[]).map(x=>normalizePending(x));S.giftRequests=(S.giftRequests||[]).map(x=>Object.assign({id:uid('giftreq'),begging:1,chancePenalty:0,resolved:false,status:`Waiting for ${x.occasion||'occasion'}`},x))}
+function resolvePendingDecision(p,status,reason,{title=null,text=null,important=false,supersededBy=null}={}){
+ if(!p)return null;if(p.resolved&&p.resolvedDate)return p;p.status=status;p.resolved=true;p.resolvedDate=currentDate();p.resolutionReason=reason;if(supersededBy)p.supersededBy=supersededBy;resolveNotificationsFor(p.id);if(text)log(title||p.title,text,important);return p
+}
+function pendingLifecycleCheck(p){
+ if(p.resolved)return;const rule=PENDING_RULES[p.type]||{};
+ if(p.maxAge!=null&&S.age>p.maxAge){
+  if(p.type==='kindergarten'){const k=S.development.kindergarten;if(!k.decision)k.decision='Not needed — primary school began';resolvePendingDecision(p,'Superseded','Primary school age reached',{title:'Kindergarten question closed',text:`The kindergarten decision was never settled before primary school began, so it is closed. You started ${S.school?.grade||'primary school'} instead.`,supersededBy:S.school?.grade||'Primary school'});return}
+  resolvePendingDecision(p,rule.expireStatus||'Expired',rule.expireReason||'No longer relevant at this age',{text:`${p.title} is no longer relevant at your age.`});return
+ }
+ if(rule.needsSchool&&!S.school){resolvePendingDecision(p,'Cancelled','No longer enrolled');return}
+ if(p.expiresDate&&p.expiresDate<currentDate()&&!(p.resolveDate&&p.resolveDate>=currentDate()))resolvePendingDecision(p,rule.expireStatus||'Expired',rule.expireReason||'Expired',{text:`${p.title}: ${rule.expireReason||'this request expired without a final answer'}.`})
+}
+function processPendingDecisions(){
+ for(const p of S.pendingDecisions){
+  if(p.resolved)continue;normalizePending(p);pendingLifecycleCheck(p);if(p.resolved)continue;
+  if(p.type==='kindergarten'&&!p.resolveDate&&p.autoDecideDate&&p.autoDecideDate<=currentDate()){p.status='Family discussing';p.resolveDate=addDays(currentDate(),2);p.detail=`You never gave a clear answer, so your caregivers are deciding on their own by ${formatDate(p.resolveDate)}.`;if(!SIM.skipping)log('Family discussing kindergarten','A three-year-old cannot be asked forever. Your caregivers start weighing schedules, money and childcare without waiting for your answer.');continue}
+  if(!p.resolveDate||p.resolveDate>currentDate())continue;
+  if(p.type==='purchaseConsideration')resolvePurchaseDecision(p);else if(p.type==='jobApplication')resolveJobDecision(p);else if(p.type==='kindergarten')resolveKindergartenDecision(p);else if(p.type==='clubApproval')resolveClubApproval(p);else if(p.type==='contestApproval')resolveContestApproval(p);else resolvePendingDecision(p,'Resolved','Reached decision date',{title:'Decision resolved',text:p.title});
+  if(p.resolved&&!p.resolvedDate){p.resolvedDate=currentDate();p.resolutionReason=p.resolutionReason||p.status;resolveNotificationsFor(p.id)}
+ }
+}
+function resolveKindergartenDecision(p){
+ if(S.age>5){pendingLifecycleCheck(p);return}
+ const pref=p.payload?.preference;const r=familyRules(),careNeed=(S.home==='Busy but loving'||['Struggling','Modest'].includes(S.wealth))?15:0,score=(pref===true?r.respect*.35:pref===false?-r.respect*.18:0)+careNeed+(55-r.strictness)*.18+50;
+ const enrolled=score>=50||(pref===false&&r.strictness>75);S.development.kindergarten.enrolled=enrolled;S.development.kindergarten.preference=pref??null;S.development.kindergarten.decision=enrolled?'Enrolled':'Alternative care / home';
+ resolvePendingDecision(p,enrolled?'Enrolled':'Alternative care',pref==null?'Family decided without a preference':'Family decided',{title:'Kindergarten decision',important:true,text:enrolled?`Your caregivers decide you will attend.${pref==null?' You never really answered, so they went with what worked for the family.':' Your preference mattered, but schedules, money and parenting style mattered too.'}`:'Your family chooses home, relative care or another arrangement for now.'});
+ S.school=buildSchool(S.age,S.school)
+}
+function setKindergartenPreference(pref){
+ if(S.age>5){toast('Primary school has already begun.');return}
+ let p=S.pendingDecisions.find(x=>!x.resolved&&x.type==='kindergarten');
+ if(!p){if(S.development.kindergarten.decision){toast('Your family already decided.');return}p=createPending({type:'kindergarten',title:'Kindergarten decision',status:'Waiting for your preference',payload:{preference:null},detail:'Your family is discussing early education.'})}
+ if(p.status!=='Waiting for your preference'){toast('Your caregivers are already deciding.');return}
+ p.payload.preference=!!pref;p.status='Family discussing';p.resolveDate=addDays(currentDate(),2);p.detail=`Your caregivers will decide by ${formatDate(p.resolveDate)}.`;log('Your kindergarten preference',pref?'You say you want to go.':'You say you would rather not go.');toast('Your caregivers will decide in 2 days')
+}
+
+// ---------- Events: response windows & expiry ----------
+const INVITE_TYPES=['friendInvite','party','birthdayInvite','invitation'];
+function defaultEventExpiry(e){
+ const m=currentMinute();if(e.expiresDays)return {dateISO:addDays(currentDate(),e.expiresDays),minute:1260};
+ if(INVITE_TYPES.includes(e.type)){if(m<1020)return {dateISO:currentDate(),minute:1080};return {dateISO:addDays(currentDate(),1),minute:720}}
+ return {dateISO:addDays(currentDate(),1),minute:1260}
+}
+function eventExpired(e){return !!e?.expiresAt&&nowStamp()>stampOf(e.expiresAt)}
+function queueEvent(ev){
+ ensureLifecycleContainers();
+ const e=Object.assign({id:uid('event'),dateISO:currentDate(),minute:currentMinute(),status:'Open',participants:[],choices:[],priority:3},ev);if(!e.expiresAt)e.expiresAt=defaultEventExpiry(e);
+ S.events.unshift(e);
+ if(S.events.length>30){const open=S.events.filter(x=>x.status==='Open'),closed=S.events.filter(x=>x.status!=='Open');S.archive.events.unshift(...closed.slice(Math.max(0,30-open.length)));if(S.archive.events.length>120)S.archive.events.length=120;S.events=[...open,...closed.slice(0,Math.max(0,30-open.length))]}
+ if(!SIM.skipping)offerContext({sourceType:'event',sourceId:e.id,priority:e.priority,title:e.title,text:e.text,expiresAt:e.expiresAt});
+ return e
+}
+function expireEvent(e){
+ if(!e||e.status!=='Open')return;e.status='Expired';e.resolvedAt={dateISO:currentDate(),minute:currentMinute()};resolveNotificationsFor(e.id,'Expired');
+ if(SIM.skipping){if(e.type==='missedExam'){const exam=S.exams.find(x=>x.id===e.payload?.examId);const t=ensureTeacher(examSubject(exam));if(t)t.rel=clamp(t.rel-2)}return}
+ const p=personById(e.participants?.[0]);
+ if(INVITE_TYPES.includes(e.type)){if(p){p.rel=clamp(p.rel-1);rememberPerson(p,'You never answered their invitation.')}log('Invitation expired',p?`${firstName(p)} stopped waiting for an answer and made other plans.`:'Nobody heard back from you, so the plan moved on without you.')}
+ else if(e.type==='missedExam'){const exam=S.exams.find(x=>x.id===e.payload?.examId),t=ensureTeacher(examSubject(exam));if(t)t.rel=clamp(t.rel-3);log('Silence about the missed assessment',`${t?.name||'Your teacher'} waited for you to say something. You never did, and the zero stays.`);if(S.age<18&&chance(55))scheduleFollowUp('missedExamParent',{examId:e.payload?.examId},{minute:Math.min(1439,currentMinute()+120)})}
+ else if(e.type==='birthdayParty'){S.family.closeness=clamp(S.family.closeness+1);log('A quiet birthday','Nobody heard a plan from you, so your family does something small and simple instead.')}
+ else if(['absenceTalk','examTalk','homeworkTalk','ptMeeting','parentSchool','parentGrades','cheatTalk'].includes(e.type)){S.family.tension=clamp(S.family.tension+2);log('The conversation moved on','You avoided the talk. It did not go away — it just got a little colder.')}
+ else if(e.type==='clubWarning'){const c=clubById(e.payload?.clubId);if(c){c.leaderRel=clamp(c.leaderRel-3);c.warnings=Math.max(c.warnings,2)}log('No reply',`${c?.leader||'The club leader'} takes your silence as an answer.`)}
+ else log('The moment passed',`${e.title} — you did not respond in time.`)
+}
+function expireEvents(){for(const e of S.events||[])if(e.status==='Open'){if(!e.expiresAt)e.expiresAt={dateISO:addDays(e.dateISO||currentDate(),1),minute:1260};if(eventExpired(e))expireEvent(e)}}
+
+// ---------- Delayed consequences (follow-ups) ----------
+function scheduleFollowUp(type,payload={},{dateISO=null,days=0,minute=null}={}){S.followUps=S.followUps||[];const d=dateISO||addDays(currentDate(),days);S.followUps.push({id:uid('fu'),type,payload,dateISO:d,minute:minute??Math.min(1439,currentMinute()+60),status:'Scheduled',createdDate:currentDate()})}
+function processFollowUps(){
+ const now=nowStamp();
+ for(const f of S.followUps||[]){if(f.status!=='Scheduled'||now<stamp(f.dateISO,f.minute))continue;f.status='Triggered';f.triggeredDate=currentDate();try{runFollowUp(f)}catch(err){console.error('Follow-up failed',f,err)}}
+ S.followUps=(S.followUps||[]).filter(f=>f.status==='Scheduled'||f.dateISO>=addDays(currentDate(),-14))
+}
+function caregiverPerson(){return S.people.find(p=>p.role==='parent')||S.people.find(p=>['grandparent','aunt','uncle','older sibling'].includes(p.role))||null}
+function runFollowUp(f){
+ const cg=caregiverPerson(),name=cg?firstName(cg):'Your caregiver',quiet=SIM.skipping||S.age>=18;
+ if(f.type==='absenceNotice'){const n=f.payload.count||1;if(quiet){if(S.age<18)S.family.tension=clamp(S.family.tension+(n>=3?3:1));return}if(n<=1){S.family.tension=clamp(S.family.tension+1);log('Absence notice',`The school sends home a routine note about ${formatDate(f.payload.dateISO)}. ${name} frowns at it, but lets it go — this time.`);return}queueEvent({type:'absenceTalk',title:`${name} heard from school`,text:n>=5?`This is your ${ordinal(n)} unexplained absence this year. ${name} is not asking casually anymore.`:`The school called about your absence on ${formatDate(f.payload.dateISO)}. ${name} wants to know what happened.`,payload:{count:n},participants:cg?[cg.id]:[],priority:4,expiresDays:1,choices:[{id:'apologize',label:'Apologize'},{id:'lie',label:'Make up an excuse'},{id:'argue',label:'Argue'},{id:'explain',label:'Explain what really happened'}]});return}
+ if(f.type==='missedExamParent'||f.type==='cheatingParent'){if(quiet){S.family.tension=clamp(S.family.tension+2);return}const exam=S.exams.find(x=>x.id===f.payload.examId);queueEvent({type:f.type==='cheatingParent'?'cheatTalk':'examTalk',title:f.type==='cheatingParent'?`${name} got a note from school`:`${name} found out about ${exam?.subject||'the assessment'}`,text:f.type==='cheatingParent'?'The note says you were caught cheating. The kitchen goes very quiet.':`A message from school says you missed the ${exam?.subject||''} ${String(exam?.type||'assessment').toLowerCase()}.`,participants:cg?[cg.id]:[],priority:4,expiresDays:1,choices:[{id:'apologize',label:'Apologize'},{id:'lie',label:'Make up an excuse'},{id:'argue',label:'Argue'},{id:'explain',label:'Explain what really happened'}]});return}
+ if(f.type==='teammateComment'){const c=clubById(f.payload.clubId);if(!c||c.status!=='Active'||quiet)return;const m=rand(c.members||[])||'A teammate';log(`${m} noticed`,rand([`"Where were you yesterday? ${c.leader} asked about you."`,`${m} mentions ${c.name} felt short-handed without you.`,`"We could have used you at ${c.name}," ${m} says — half joking.`]));return}
+ if(f.type==='homeworkNote'){if(quiet){S.family.tension=clamp(S.family.tension+2);return}queueEvent({type:'homeworkTalk',title:`A note about missing homework`,text:`Three assignments are now recorded as missing. ${name} has the teacher's email open on their phone.`,participants:cg?[cg.id]:[],priority:3,expiresDays:1,choices:[{id:'apologize',label:'Apologize and catch up'},{id:'lie',label:'Say it was a mistake'},{id:'argue',label:'Argue'},{id:'explain',label:'Explain what is going on'}]});return}
+ if(f.type==='parentTeacherMeeting'){if(quiet){S.family.tension=clamp(S.family.tension+5);if(SIM.summary)SIM.summary.notable.push('Parent–teacher meeting about missing homework');return}queueEvent({type:'ptMeeting',title:'Parent–teacher meeting',text:`Six missing assignments. ${name} and your teachers sit across the table from you. Everyone is waiting for you to say something.`,participants:cg?[cg.id]:[],priority:5,expiresDays:1,choices:[{id:'plan',label:'Commit to a homework plan'},{id:'promise',label:'Promise to do better'},{id:'blame',label:'Blame the teachers'},{id:'silent',label:'Stay quiet'}]});return}
+}
+
+// ---------- Lifecycle event choices ----------
+function handleLifecycleEventChoice(e,id,label){
+ const cg=personById(e.participants?.[0])||caregiverPerson(),name=cg?firstName(cg):'Your caregiver',strict=familyRules().strictness;
+ if(INVITE_TYPES.includes(e.type)&&/Accept|Go/i.test(label)&&isGrounded()){const p=personById(e.participants?.[0]);if(p){p.rel=clamp(p.rel-1);rememberPerson(p,'You had to cancel because you were grounded.')}log('Grounded',`You want to go, but you are grounded until ${formatDate(S.family.restrictions.groundedUntil)}. You tell ${p?firstName(p):'them'} you cannot make it.`);return true}
+ if(e.type==='missedExam'){
+  const exam=S.exams.find(x=>x.id===e.payload?.examId),sub=examSubject(exam),t=ensureTeacher(sub);if(!exam||!t){log('Missed assessment','The moment passes.');return true}
+  const mod=t.style==='Warm'?15:t.style==='Strict'?-15:0,rep=(S.school?.record?.examsMissed||1)-1,rel=t.rel;let story;
+  if(id==='honest'){t.rel=clamp(t.rel+2);if(chance(clamp(30+rel*.45+mod-rep*8,5,92))){const mk=scheduleMakeupExam(exam);story=`You tell ${t.name} what actually happened. They are quiet for a moment, then nod. "Thank you for being straight with me. Make-up is ${formatDate(mk?.dateISO||currentDate())} after school."`}else story=`${t.name} appreciates the honesty, but the zero stands. "Next time, tell me before — not after."`}
+  else if(id==='sick'){const real=!!S.healthState?.illness;if(real||chance(clamp(55+rel*.2+mod-rep*12,5,85))){const mk=scheduleMakeupExam(exam);if(!real)S.flags.examLies=(S.flags.examLies||0)+1;story=`${t.name} believes you${real?'':', though you feel a small twist of guilt'}. A make-up is set for ${formatDate(mk?.dateISO||currentDate())}.`}else{t.rel=clamp(t.rel-10);S.school.behavior=clamp(S.school.behavior-6);if(S.age<18)scheduleFollowUp('missedExamParent',{examId:exam.id},{minute:Math.min(1439,currentMinute()+180)});story=`${t.name} checks the attendance office. There is no sick note. "I would rather you had just told me the truth." The zero stays, and they will be contacting home.`}}
+  else if(id==='makeup'){if(chance(clamp(20+rel*.5+mod-rep*10,5,85))){const mk=scheduleMakeupExam(exam);story=`${t.name} sighs, then opens their planner. "One chance. ${formatDate(mk?.dateISO||currentDate())}, after school."`}else{t.rel=clamp(t.rel-1);story=`${t.name} says no. "The date was on the board for weeks." You leave with the zero still on your record.`}}
+  else{t.rel=clamp(t.rel-3);if(S.age<18&&chance(60))scheduleFollowUp('missedExamParent',{examId:exam.id},{days:1,minute:1080});story=`You say nothing. ${t.name} notices you avoiding eye contact for the rest of the week.`}
+  log(`${exam.subject}: ${label}`,story);return true
+ }
+ if(['absenceTalk','examTalk','homeworkTalk','cheatTalk'].includes(e.type)){
+  const n=e.payload?.count||S.school?.record?.absences||1,heavy=e.type==='cheatTalk'||n>=5;let story;
+  if(id==='apologize'){S.family.tension=clamp(S.family.tension+(heavy?3:1));if(cg){cg.trust=clamp(cg.trust+1)}if(heavy){ground(3,'School problems');story=`You apologize. ${name} accepts it, but you are grounded for three days anyway. "Actions, not words."`}else story=`You apologize. ${name} lets out a breath. "Okay. Don't make me hear about this again."`}
+  else if(id==='lie'){if(chance(clamp(55-n*8-(strict-50)*.3,5,80))){S.flags.liesToParents=(S.flags.liesToParents||0)+1;story=`${name} seems to believe you. It worked — this time.`}else{S.family.tension=clamp(S.family.tension+8);S.family.closeness=clamp(S.family.closeness-4);if(cg)cg.trust=clamp(cg.trust-8);ground(5,'Lying about school');story=`${name} already talked to the school. The lie makes everything worse: five days grounded, and a lot less trust.`}}
+  else if(id==='argue'){S.family.tension=clamp(S.family.tension+6);S.family.closeness=clamp(S.family.closeness-3);if(strict>65||heavy)ground(4,'Arguing about school');story=`It turns into a real argument. Doors are closed a little too hard.${strict>65||heavy?' You end up grounded.':''}`}
+  else{S.family.tension=clamp(S.family.tension+1);S.family.closeness=clamp(S.family.closeness+2);S.stress=clamp(S.stress-3);if(cg)cg.trust=clamp(cg.trust+3);story=`You tell ${name} what was really going on. It is uncomfortable, but they listen, and the conversation ends with a plan instead of a punishment.`}
+  if(cg)rememberPerson(cg,`A conversation about school: ${label.toLowerCase()}.`,2);log(e.title,story);return true
+ }
+ if(e.type==='ptMeeting'){
+  let story;const subs=(S.school?.subjects||[]).filter(s=>s.homework?.status==='Missing'||(s.homeworkHistory||[]).some(h=>h.status==='Missing'));
+  if(id==='plan'){S.family.tension=clamp(S.family.tension+1);S.family.responsibility=clamp((S.family.responsibility||0)+4);subs.forEach(s=>ensureTeacher(s).rel=clamp(s.teacher.rel+3));if(S.school)S.school.record.missingHomework=Math.max(0,S.school.record.missingHomework-2);story='You agree to a written homework plan: a set time every school day, checked weekly. The teachers seem genuinely relieved.'}
+  else if(id==='promise'){S.family.tension=clamp(S.family.tension+3);story='"I\'ll do better." Everyone has heard that before. They will be watching.'}
+  else if(id==='blame'){S.family.tension=clamp(S.family.tension+5);subs.forEach(s=>ensureTeacher(s).rel=clamp(s.teacher.rel-4));ground(5,'Parent–teacher meeting');story='You blame the teachers. The room goes cold. You leave grounded for five days.'}
+  else{S.family.tension=clamp(S.family.tension+4);story='You stay quiet while the adults talk about you as if you are not there. It is the longest half hour of the year.'}
+  log('Parent–teacher meeting',story,true);return true
+ }
+ if(e.type==='clubWarning'){
+  const c=clubById(e.payload?.clubId);if(!c)return true;let story;
+  if(id==='commit'){c.leaderRel=clamp(c.leaderRel+4);story=`${c.leader} nods. "Good. Show me."`}
+  else if(id==='explain'){c.leaderRel=clamp(c.leaderRel+2);story=S.stress>60?`You explain how much is going on. ${c.leader} softens: "Tell me ahead of time when you can't make it. That's all I ask."`:`${c.leader} listens. "Fair enough. Just keep me in the loop."`}
+  else{c.leaderRel=clamp(c.leaderRel-5);c.warnings=2;story=`${c.leader}'s expression flattens. "Then I'll plan without you." One more slip and you are off the roster.`}
+  log(`${c.name}: ${label}`,story);return true
+ }
+ return false
+}
+
+// ---------- Current context (hero) lifecycle ----------
+function setCurrentContext(ctx){S.current=Object.assign({id:uid('ctx'),sourceType:'general',sourceId:null,createdAt:{dateISO:currentDate(),minute:currentMinute()},expiresAt:endOfDay(),priority:1,title:'',text:'',actions:[]},ctx);return S.current}
+function offerContext(ctx){const cur=S.current;if(!contextIsActive(cur)||(ctx.priority??1)>=(cur.priority??0))setCurrentContext(ctx)}
+function contextIsActive(c){
+ if(!c||!c.title||!c.createdAt)return false;if(c.expiresAt&&nowStamp()>stampOf(c.expiresAt))return false;
+ if(c.sourceType==='exam'){const e=S.exams.find(x=>x.id===c.sourceId);return examIsOpen(e)&&e.dateISO===currentDate()&&currentMinute()<=e.graceMinute}
+ if(c.sourceType==='event'){const e=S.events.find(x=>x.id===c.sourceId);return !!e&&e.status==='Open'&&!eventExpired(e)}
+ if(c.sourceType==='calendar'){const e=S.calendar.find(x=>x.id===c.sourceId);return !!e&&!isTerminal(e.status)&&e.dateISO===currentDate()&&currentMinute()<=e.graceMinute}
+ if(c.sourceType==='schoolDay'){const e=schoolDayEvent();return !!e&&!isTerminal(e.status)&&e.status!=='Attending'&&currentMinute()<=SCHOOL_DAY.cutoff}
+ if(c.sourceType==='daily')return false;
+ return true
+}
+function examContext(exam){return {sourceType:'exam',sourceId:exam.id,priority:5,title:`${exam.subject.toUpperCase()} ${exam.type.toUpperCase()}`,text:currentMinute()<exam.minute?`Today at ${timeLabel(exam.minute)}. Preparation, sleep and stress will all matter.`:currentMinute()<=exam.endMinute?'The assessment is happening right now.':`It started at ${timeLabel(exam.minute)}. You can still sit it late until ${timeLabel(exam.graceMinute)}, with less time.`,expiresAt:{dateISO:exam.dateISO,minute:exam.graceMinute}}}
+function calendarContext(ev){const c=ev.type==='clubSession'?clubById(ev.payload?.clubId):contestById(ev.payload?.contestId);return {sourceType:'calendar',sourceId:ev.id,priority:ev.type==='schoolEvent'?4:3,title:ev.title,text:ev.type==='clubSession'?`${timeLabel(ev.startMinute)}–${timeLabel(ev.endMinute)} with ${ensureClub(c||{name:'the club'}).leader||'the club'}. You can still arrive until ${timeLabel(ev.graceMinute)}.`:`Check-in ${timeLabel(ev.startMinute)}–${timeLabel(ev.graceMinute)}. Preparation ${Math.round(c?.prep||0)}%.`,expiresAt:{dateISO:ev.dateISO,minute:ev.graceMinute}}}
+function partOfDay(m=currentMinute()){return m<300?'Late night':m<720?'Morning':m<1020?'Afternoon':m<1260?'Evening':'Night'}
+function computeNextContext(){
+ const today=currentDate(),m=currentMinute();
+ const exam=S.exams.filter(e=>examIsOpen(e)&&e.dateISO===today&&m<=e.graceMinute).sort((a,b)=>a.minute-b.minute)[0];if(exam)return examContext(exam);
+ const due=S.calendar.filter(ev=>!isTerminal(ev.status)&&ev.dateISO===today&&['clubSession','schoolEvent'].includes(ev.type)&&m>=ev.startMinute-90&&m<=ev.graceMinute).sort((a,b)=>b.importance-a.importance)[0];if(due)return calendarContext(due);
+ const e=(S.events||[]).filter(x=>x.status==='Open'&&!eventExpired(x)).sort((a,b)=>(b.priority||3)-(a.priority||3))[0];if(e)return {sourceType:'event',sourceId:e.id,priority:e.priority||3,title:e.title,text:e.text,expiresAt:e.expiresAt};
+ const sd=schoolDayEvent();if(sd&&!isTerminal(sd.status)&&sd.status!=='Attending'&&m<=SCHOOL_DAY.cutoff&&m>=300)return {sourceType:'schoolDay',sourceId:sd.id,priority:2,title:m<=SCHOOL_DAY.tardyAfter?'School day':'You are late for school',text:m<SCHOOL_DAY.start?`Classes start at ${timeLabel(SCHOOL_DAY.start)}. The attendance cutoff is ${timeLabel(SCHOOL_DAY.cutoff)}.`:m<=SCHOOL_DAY.tardyAfter?'The bell is about to ring.':`You can still go and be marked tardy until ${timeLabel(SCHOOL_DAY.cutoff)}.`,expiresAt:{dateISO:today,minute:SCHOOL_DAY.cutoff}};
+ const next=todayAgenda().find(a=>!a.done&&a.minute>=m);
+ const vacation=S.school&&!isSchoolDay(today)&&!isWeekend(today)?' • school break':'';
+ return {sourceType:'daily',sourceId:null,priority:0,title:`${weekday()} ${partOfDay(m).toLowerCase()}${vacation}`,text:next?`Nothing urgent right now. Next: ${next.title} at ${timeLabel(next.minute)}.`:m>=1200?'The day is winding down. Sleep will carry you into tomorrow.':'Nothing else is scheduled today. Your time is your own.',expiresAt:null}
+}
+function clearCurrentContextIfSourceResolved(){
+ if(!S)return;const cur=S.current,active=contextIsActive(cur),next=computeNextContext();
+ if(!active||cur.sourceType==='daily'||(next.priority>(cur.priority??0)&&!(next.sourceType===cur.sourceType&&next.sourceId===cur.sourceId)))setCurrentContext(next)
+}
+
+// ---------- Today agenda ----------
+function todayAgenda(dateISO=currentDate()){
+ const items=[];
+ for(const ev of S.calendar.filter(e=>e.dateISO===dateISO)){const d=obDef(ev.type);items.push({id:ev.id,type:ev.type,icon:d.icon,minute:ev.startMinute??ev.minute??0,title:ev.type==='schoolDay'?'School':ev.title,status:ev.status,done:isTerminal(ev.status),required:ev.required})}
+ if(needsFormalSchool())for(const s of S.school.subjects){const hw=s.homework;if(hw&&HW_OPEN.includes(hw.status)&&hw.dueDate===dateISO)items.push({id:hw.id,type:'homework',icon:'📒',minute:480,title:`${s.name} homework due`,status:`${hw.progress||0}% done`,done:false,required:true})}
+ for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.resolveDate===dateISO))items.push({id:p.id,type:'decision',icon:'⏳',minute:1080,title:p.title,status:p.status,done:false})
+ if(sameMonthDay(S.dob,dateISO))items.push({id:'bday',type:'birthday',icon:'🎂',minute:0,title:'Your birthday',status:'',done:false});
+ return items.sort((a,b)=>a.minute-b.minute)
+}
+
+// ---------- Reconciliation ----------
+function reconcileState(reason='tick'){
+ if(!S)return;ensureLifecycleContainers();
+ reconcileSchoolStage();
+ for(const p of S.pendingDecisions){normalizePending(p);pendingLifecycleCheck(p)}
+ if(needsFormalSchool()){ensureSchoolRecord();ensureSchoolDayObligation(currentDate())}
+ reconcileExams();reconcileCalendar();expireEvents();reconcileNotifications();reconcileOffers();archiveOldRecords();clearCurrentContextIfSourceResolved()
+}
+function compactExam(e){return {id:e.id,subject:e.subject,type:e.type,dateISO:e.dateISO,minute:e.minute,status:e.status,score:e.score,reason:e.reason||null,makeupOf:e.makeupOf||null,makeupId:e.makeupId||null,replacedBy:e.replacedBy||null}}
+function closeSchoolYear(old,{leaving=false}={}){
+ if(!old)return;const rec=old.record||null;
+ for(const exam of S.exams||[]){if(examIsOpen(exam)){exam.status='Cancelled';exam.reason=leaving?'Left school':'School year ended';for(const ev of examCalendarEvents(exam))setCalendarStatus(ev,'Cancelled',exam.reason)}}
+ S.archive.exams.unshift(...(S.exams||[]).map(compactExam));if(S.archive.exams.length>150)S.archive.exams.length=150;S.exams=[];
+ for(const ev of S.calendar)if(['schoolDay'].includes(ev.type)&&!isTerminal(ev.status)&&ev.dateISO>currentDate())setCalendarStatus(ev,'Cancelled','School year ended');
+ if(rec&&old.grade!=='Kindergarten')S.schoolHistory.unshift({grade:old.grade,school:old.name,endedDate:currentDate(),average:Math.round(old.subjects?.reduce((a,s)=>a+safeNum(s.score,0),0)/Math.max(1,old.subjects?.length||1)),attendance:Math.round(old.attendance||0),record:rec});
+ if(S.schoolHistory.length>20)S.schoolHistory.length=20
+}
+function progressSchoolForAge(){
+ ensureLifecycleContainers();const carry=S.school;
+ if(S.age===3&&!S.development.kindergarten.asked){S.development.kindergarten.asked=true;createPending({type:'kindergarten',title:'Kindergarten decision',resolveDate:null,status:'Waiting for your preference',payload:{preference:null},autoDecideDate:addDays(currentDate(),14),detail:'Your caregivers want to hear whether you want to attend before they decide. If you do not answer, they will decide within two weeks.'});log('Kindergarten becomes a question','Your family starts discussing preschool/kindergarten, childcare, money, schedules and your preferences.')}
+ if(S.age>=3&&S.age<=5){if(S.development.kindergarten.decision&&S.development.kindergarten.enrolled)S.school=buildSchool(S.age,carry);else S.school=null;return}
+ if(S.age>=6&&S.age<=18){closeSchoolYear(carry);S.school=buildSchool(S.age,carry);S.school.record=freshSchoolRecord();S.school.clubs.forEach(c=>{ensureClub(c);if(!clubSessionEvent(c))scheduleClubSession(c,nextSchoolDay(addDays(currentDate(),3)))});scheduleExams();generateHomework(true)}
+ else{if(carry)closeSchoolYear(carry,{leaving:true});S.school=null}
+}
+function reconcileSchoolStage(){
+ const k=S.development?.kindergarten;
+ if(S.age>=6&&S.age<=18&&(!S.school||S.school.grade==='Kindergarten'))progressSchoolForAge();
+ else if(S.age>18&&S.school){closeSchoolYear(S.school,{leaving:true});S.school=null}
+ else if(S.age<3&&S.school)S.school=null;
+ else if(S.age>=3&&S.age<=5&&S.school&&S.school.grade!=='Kindergarten')S.school=k?.enrolled?buildSchool(S.age,null):null;
+ if(S.school&&S.school.grade==='Kindergarten'&&!(k?.enrolled))S.school=null
+}
+function reconcileExams(){
+ S.exams=Array.isArray(S.exams)?S.exams:[];S.exams.forEach(normalizeExam);
+ if(!needsFormalSchool()){for(const exam of S.exams)if(examIsOpen(exam)){exam.status='Cancelled';exam.reason='Not enrolled in formal school'}}
+ for(const exam of S.exams){
+  if(!examIsOpen(exam))continue;
+  if(exam.dateISO<currentDate()||(exam.dateISO===currentDate()&&currentMinute()>exam.graceMinute)){
+   if(SIM.skipping)performExam(exam,{simulated:true});else finalizeExam(exam.id,{status:'Missed',reason:'Assessment window passed',simulated:true});continue
+  }
+  if(exam.status==='Due'&&stamp(exam.dateISO,exam.minute)>nowStamp())exam.status='Scheduled';
+  if(exam.status==='In progress'&&!examCalendarEvents(exam).some(e=>e.status==='Attending'))exam.status=exam.dateISO===currentDate()?'Due':'Scheduled';
+  if(!isSchoolDay(exam.dateISO)&&!exam.makeupOf){const d=nextSchoolDay(exam.dateISO);if(d!==exam.dateISO){exam.dateISO=d;exam.days=daysBetween(currentDate(),d)}}
+ }
+ if(S.school)syncExamCalendar();else for(const exam of S.exams)for(const ev of examCalendarEvents(exam)){const t=calStatusForExam(exam);if(t&&ev.status!==t)setCalendarStatus(ev,t,'Synced')}
+}
+function reconcileCalendar(){
+ const seen=new Set();S.calendar=(S.calendar||[]).filter(e=>{if(!e||!e.id||seen.has(e.id))return false;seen.add(e.id);return true});
+ const allExams=[...(S.exams||[]),...(S.archive?.exams||[])],seenClub=new Set();
+ for(const ev of [...S.calendar].sort((a,b)=>a.dateISO.localeCompare(b.dateISO))){
+  normalizeCalendarEvent(ev);if(isTerminal(ev.status))continue;
+  if(ev.type==='exam'){const exam=allExams.find(x=>x.id===ev.payload?.examId);if(!exam){setCalendarStatus(ev,'Cancelled','Assessment record no longer exists');continue}const t=calStatusForExam(exam);if(t){setCalendarStatus(ev,t,'Synced with assessment record');continue}}
+  if(ev.type==='clubSession'){const c=clubById(ev.payload?.clubId);if(!c||c.status!=='Active'){setCalendarStatus(ev,'Cancelled','Club is no longer active');continue}if(seenClub.has(c.id)){setCalendarStatus(ev,'Cancelled','Duplicate session');continue}seenClub.add(c.id)}
+  if(ev.type==='schoolEvent'){const c=contestById(ev.payload?.contestId);if(!c||c.status!=='Registered'){setCalendarStatus(ev,c?.status==='Completed'?'Completed':'Cancelled','Contest no longer registered');continue}}
+  if(ev.type==='schoolDay'&&!needsFormalSchool()){setCalendarStatus(ev,'Cancelled','Not enrolled');continue}
+  if(ev.dateISO<addDays(currentDate(),-1)&&!SIM.skipping){setCalendarStatus(ev,'Expired','Reconciled from an older save');continue}
+  if(ev.status==='Due'&&stamp(ev.dateISO,ev.startMinute)>nowStamp())ev.status='Scheduled';
+ }
+ if(S.school)for(const c of S.school.clubs||[]){if(c.status==='Active'){ensureClub(c);if(!clubSessionEvent(c))scheduleClubSession(c,nextSchoolDay(addDays(currentDate(),c.nextSessionDate&&c.nextSessionDate>currentDate()?daysBetween(currentDate(),c.nextSessionDate):1)))}}
+ if(S.school)for(const c of S.school.contests||[])if(c.status==='Registered'&&!contestEvent(c)&&!S.calendar.some(e=>e.type==='schoolEvent'&&e.payload?.contestId===c.id)){if(c.eventDate>=currentDate())createCalendarEvent({id:`contest-${c.id}`,type:'schoolEvent',title:c.name,dateISO:c.eventDate,startMinute:600,endMinute:780,graceMinute:690,payload:{contestId:c.id},source:'school'});else{c.status='No-show';c.result='Did not attend'}}
+}
+function reconcileNotifications(){
+ S.notifications=(S.notifications||[]).map(n=>Object.assign({id:uid('note'),status:n.read?'Read':'Unread',sourceType:null,sourceId:null,tab:null},n));
+ for(const n of S.notifications){
+  if(!['Unread','Read'].includes(n.status))continue;
+  if(n.dateISO&&daysBetween(n.dateISO,currentDate())>10){n.status='Expired';continue}
+  if(!n.sourceId&&/Exam today|Club session|Assessment today/.test(n.title)&&n.dateISO<currentDate()){n.status='Expired';continue}
+  if(n.sourceType==='exam'){const e=S.exams.find(x=>x.id===n.sourceId);if(!examIsOpen(e))n.status='Resolved'}
+  if(['club','contest'].includes(n.sourceType)){const e=S.calendar.find(x=>x.id===n.sourceId);if(!e||isTerminal(e.status))n.status='Resolved'}
+ }
+}
+function reconcileOffers(){
+ if(!S.school)return;
+ for(const o of S.school.activityOffers||[])if(o.status==='Waiting'&&!S.pendingDecisions.some(p=>!p.resolved&&p.type==='clubApproval'&&p.payload?.offerId===o.id)){const p=S.pendingDecisions.find(p=>p.type==='clubApproval'&&p.payload?.offerId===o.id);o.status=p?.status==='Approved'?'Joined':p?.status==='Denied'?'Denied':'Expired'}
+ for(const c of S.school.contests||[])if(c.status==='Waiting'&&!S.pendingDecisions.some(p=>!p.resolved&&p.type==='contestApproval'&&p.payload?.contestId===c.id)){const p=S.pendingDecisions.find(p=>p.type==='contestApproval'&&p.payload?.contestId===c.id);if(!p||!['Approved','Denied'].includes(p.status))c.status='Missed'}
+ for(const c of S.school.clubs||[])if(c.status==='Active')ensureClub(c)
+}
+function archiveOldRecords(){
+ const cutoff=addDays(currentDate(),-30),calCut=addDays(currentDate(),-21);
+ const old=S.pendingDecisions.filter(p=>p.resolved&&(p.resolvedDate||p.createdDate||'0')<cutoff);if(old.length){S.archive.pending.unshift(...old);S.pendingDecisions=S.pendingDecisions.filter(p=>!old.includes(p));if(S.archive.pending.length>150)S.archive.pending.length=150}
+ const oldCal=S.calendar.filter(e=>isTerminal(e.status)&&e.dateISO<calCut);if(oldCal.length){S.archive.calendar.unshift(...oldCal.filter(e=>e.type!=='schoolDay').map(e=>({id:e.id,type:e.type,title:e.title,dateISO:e.dateISO,status:e.status,attendanceStatus:e.attendanceStatus,resolutionReason:e.resolutionReason})));if(S.archive.calendar.length>300)S.archive.calendar.length=300;S.calendar=S.calendar.filter(e=>!oldCal.includes(e))}
+ if(S.exams.length>40){const done=S.exams.filter(e=>!examIsOpen(e)).sort((a,b)=>a.dateISO.localeCompare(b.dateISO));const move=done.slice(0,S.exams.length-40);S.archive.exams.unshift(...move.map(compactExam));S.exams=S.exams.filter(e=>!move.includes(e));if(S.archive.exams.length>150)S.archive.exams.length=150}
+ S.notifications=(S.notifications||[]).filter(n=>['Unread','Read'].includes(n.status)||daysBetween(n.resolvedDate||n.dateISO||currentDate(),currentDate())<=14)
+}
+
+// ---------- Sleep, bedtime and Next Day ----------
+function bedtimeMinute(){const a=S.age;return a<4?1170:a<6?1200:a<10?1230:a<13?1260:a<16?1320:a<18?1350:1380}
+function sleepNeedHours(){const a=S.age;return a<=1?13:a<=4?11.5:a<=12?10:a<=17?8.75:7.75}
+function wakeMinuteFor(dateISO){if(needsFormalSchool()&&isSchoolDay(dateISO))return 390;if(S.school?.grade==='Kindergarten'&&isSchoolDay(dateISO))return 420;if(S.career?.job&&!S.career.retired&&!isWeekend(dateISO))return 420;return null}
+function checkBedtime(){
+ if(S.age>=18||S.age<3)return;const m=currentMinute(),bed=bedtimeMinute(),late=m>=bed+30||m<300;if(!late)return;
+ const night=m<300?addDays(currentDate(),-1):currentDate(),key=`bedtime-${night}`;if(S.flags[key])return;S.flags[key]=true;
+ const strict=familyRules().strictness,p=clamp(30+strict*.5-(S.age-8)*3,10,88);if(!chance(p))return;
+ const cg=caregiverPerson(),name=cg?firstName(cg):'A caregiver';
+ if(S.age<13){S.family.tension=clamp(S.family.tension+1);log('Past bedtime',`${name} finds you still awake. "It's way past your bedtime." You get sent to bed${chance(40)?' with a sigh and a glass of water':''}.`)}
+ else if(strict>65&&chance(45)){S.family.tension=clamp(S.family.tension+3);log('Caught up late',`${name} sees the light under your door. It turns into an argument about sleep, school and screens.`)}
+ else{S.family.tension=clamp(S.family.tension+1);log('Past bedtime',`${name} knocks: "Lights out soon, okay?"`)}
+}
+function sleepThroughNight(){
+ SIM.sleeping=true;
+ try{
+  const m=currentMinute(),wakeDate=m<300?currentDate():addDays(currentDate(),1),need=sleepNeedHours()*60,alarm=wakeMinuteFor(wakeDate);
+  const start=m<300?m:m-1440;let wake=alarm!=null?alarm:Math.max(360,Math.min(600,Math.round(start+need+(Math.random()*50-25))));
+  let quality=1,note='slept well',overslept=false;const r=Math.random()*100;
+  if(S.stress>65&&r<35){quality=.72;note='restless night'}else if(r<5){quality=.85;note='bad dream'}else if(r<11){quality=.9;note='woke during the night'}
+  if(alarm!=null){if(chance((S.needs.sleep<25?14:5)+(S.age>=13&&S.age<18?6:0)+(S.stress>70?4:0))){wake=alarm+30+Math.floor(Math.random()*70);note='overslept';overslept=true}}
+  else if(chance(7)){wake=Math.max(330,wake-60-Math.floor(Math.random()*40));note='woke early'}
+  if(wake<start+90)wake=start+90;
+  const minutes=Math.round(wake-start),hours=minutes/60;
+  advanceTime(minutes,{skipNeeds:true,silent:true});
+  const ratio=clamp(hours/(need/60),.2,1.15)*quality;
+  S.needs.sleep=clamp(20+76*ratio,0,98);S.energy=clamp(15+80*ratio);S.stress=clamp(S.stress-12*ratio);S.healthState.sleep=clamp(S.healthState.sleep+(ratio>=.9?3:-4));
+  S.needs.hunger=clamp(S.needs.hunger+hours*1.2);S.needs.toilet=clamp(S.needs.toilet+hours*2.4);S.needs.hygiene=clamp(S.needs.hygiene-hours*.5);S.needs.comfort=clamp(S.needs.comfort+8);S.location='Home';
+  const story={'slept well':'You slept through the night.','restless night':'You tossed and turned, thoughts looping.','bad dream':'A strange dream left you uneasy for a few minutes after waking.','woke during the night':'You woke once in the dark and took a while to drift off again.','woke early':'You woke before you needed to and lay there listening to the house.','overslept':`You slept straight through the alarm and woke at ${timeLabel(wake)}.`}[note];
+  log('Slept',`${Math.floor(hours)}h ${Math.round((hours%1)*60)}m • ${story}`);
+  return {hours,minutes,note,overslept,story,wake}
+ }finally{SIM.sleeping=false;clearCurrentContextIfSourceResolved()}
+}
+function sleepAction(){
+ const m=currentMinute(),night=m>=Math.min(1200,bedtimeMinute()-60)||m<300;
+ if(!night){basicAction('nap');return}
+ const before=snapshotForSummary(),r=sleepThroughNight();showMorningSummary(before,r)
+}
+function todayWarnings(){
+ const w=[],today=currentDate(),m=currentMinute();
+ for(const e of S.exams.filter(x=>examIsOpen(x)&&x.dateISO===today&&m<=x.graceMinute))w.push({icon:'📝',text:`You still have a ${e.subject} ${e.type.toLowerCase()} due today (${timeLabel(e.minute)}).`,result:'It will be recorded as missed.'});
+ const sd=schoolDayEvent();if(sd&&!isTerminal(sd.status)&&sd.status!=='Attending'&&m<=SCHOOL_DAY.cutoff)w.push({icon:'🏫',text:'You have not gone to school today.',result:'You will be marked absent.'});
+ for(const ev of S.calendar.filter(e=>e.dateISO===today&&!isTerminal(e.status)&&['clubSession','schoolEvent'].includes(e.type)&&m<=e.graceMinute))w.push({icon:obDef(ev.type).icon,text:`${ev.title} at ${timeLabel(ev.startMinute)}.`,result:ev.type==='clubSession'?'It counts as a missed session.':'You will be a no-show.'});
+ if(needsFormalSchool())for(const s of S.school.subjects)if(s.homework?.status==='Assigned'&&s.homework.dueDate===today)w.push({icon:'📒',text:`${s.name} homework is due today (${s.homework.progress||0}% done).`,result:'It becomes late.'});
+ for(const e of S.events.filter(x=>x.status==='Open'&&x.expiresAt&&x.expiresAt.dateISO<=addDays(today,1)&&INVITE_TYPES.includes(x.type)))w.push({icon:'💬',text:`${e.title} — still waiting for your answer.`,result:'The invitation will expire.'});
+ return w
+}
+function snapshotForSummary(){return {energy:S.energy,stress:S.stress,happiness:S.happiness,sleep:S.needs.sleep,logId:S.log[0]?.id||null,unread:unreadMessages()}}
+function nextDay(force=false){
+ if(!S)return;const w=todayWarnings();
+ if(w.length&&!force){openModal('Before you move on',`<p class="muted-text">Moving to the next day now has consequences:</p><div class="warning-list">${w.map(x=>`<div class="warning-row"><span>${x.icon}</span><div><b>${esc(x.text)}</b><small>${esc(x.result)}</small></div></div>`).join('')}</div><div class="modal-action-grid"><button data-close-modal="1">Return</button><button class="primary" data-next-day-confirm="1">Advance anyway</button></div>`);return}
+ performNextDay()
+}
+function performNextDay(){
+ closeChoiceModal();const before=snapshotForSummary(),m=currentMinute(),bed=bedtimeMinute();
+ if(m>=300&&m<bed){const hrs=(bed-m)/60;advanceTime(bed-m,{silent:true,skipNeeds:true});S.needs.hunger=clamp(Math.min(S.needs.hunger+hrs*1.5,50));S.needs.hygiene=clamp(S.needs.hygiene-hrs*.8);S.needs.fun=clamp(S.needs.fun-hrs*.4);S.needs.toilet=clamp(Math.min(S.needs.toilet+hrs,40));S.needs.sleep=clamp(S.needs.sleep-hrs*1.4);S.energy=clamp(S.energy-hrs*1.6)}
+ const r=sleepThroughNight();showMorningSummary(before,r);save();render()
+}
+function showMorningSummary(before,r){
+ const agenda=todayAgenda().filter(a=>!a.done),delta=(k,a,b)=>{const d=Math.round(a-b);return d?`${k} ${d>0?'+':''}${d}`:''};
+ const newLogs=[];for(const l of S.log){if(l.id===before.logId)break;if(l.title!=='Slept')newLogs.push(l);if(newLogs.length>=4)break}
+ const unread=unreadMessages(),fromMsg=S.messages.find(x=>!x.read);
+ openModal(formatDate(currentDate()).toUpperCase(),`<div class="morning-summary"><p class="summary-lead">You slept <b>${Math.floor(r.hours)}h ${Math.round((r.hours%1)*60)}m</b>. ${esc(r.story)}</p><h4>Overnight</h4><p>${[delta('Energy',S.energy,before.energy),delta('Stress',S.stress,before.stress)].filter(Boolean).map(esc).join(' • ')||'No big changes.'}</p><h4>Today</h4>${agenda.length?agenda.map(a=>`<div class="agenda-row"><span>${a.icon}</span><b>${esc(a.title)}</b><small>${a.type==='homework'||a.type==='birthday'?esc(a.status||''):timeLabel(a.minute)}</small></div>`).join(''):'<p class="muted-text">Nothing scheduled. A free day.</p>'}${r.overslept&&needsFormalSchool()&&isSchoolDay()?'<p class="urgent-text">You overslept — school has already started.</p>':''}${unread?`<h4>Messages</h4><p>${esc(fromMsg?.from||'Someone')} sent you a message${unread>1?` (+${unread-1} more)`:''}.</p>`:''}${newLogs.length?`<h4>While you were busy</h4>${newLogs.map(l=>`<p><b>${esc(l.title)}</b> — ${esc(l.text)}</p>`).join('')}`:''}<div class="modal-action-grid single"><button class="primary" data-close-modal="1">Start the day</button></div></div>`)
+}
+
+// ---------- Age Up: simulate a year, then summarize ----------
+function freshSummary(){return {school:{days:0,attended:0,absences:0,excused:0,tardies:0,examsCompleted:0,examsMissed:0,examsExcused:0,makeups:0,scores:[],hwOnTime:0,hwLate:0,hwMissing:0},clubs:{},contests:[],notable:[]}}
+function yearSnapshot(){return {money:availableFunds(),rel:Object.fromEntries(S.people.map(p=>[p.id,p.rel])),avg:S.school?schoolAverage():null,items:S.inventoryItems.length,age:S.age,tension:S.family.tension}}
+function ageUp(){
+ if(!S)return;const target=nextBirthday(),days=daysBetween(currentDate(),target),snap=yearSnapshot();
+ SIM.skipping=true;SIM.summary=freshSummary();
+ try{advanceTime(days*1440-currentMinute()+420,{skipNeeds:true,silent:true,skipRoutine:true})}finally{SIM.skipping=false}
+ const summary=SIM.summary;SIM.summary=null;reconcileState('ageUp');processCalendar();render();save();showYearSummary(snap,summary);toast(`Age ${S.age}!`)
+}
+function showYearSummary(snap,sum){
+ const sc=sum.school,total=sc.attended+sc.absences+sc.excused,att=total?Math.round(100*sc.attended/total):null,avgScore=sc.scores.length?Math.round(sc.scores.reduce((a,b)=>a+b,0)/sc.scores.length):null;
+ const school=total||sc.examsCompleted||sc.examsMissed?[att!=null?`Attendance ${att}% (${sc.absences} unexcused absence${sc.absences===1?'':'s'}, ${sc.excused} excused, ${sc.tardies} late)`:'',`${sc.examsCompleted} assessment${sc.examsCompleted===1?'':'s'} completed${avgScore!=null?` • average ${avgScore}%`:''}`,sc.examsMissed?`${sc.examsMissed} assessment${sc.examsMissed===1?'':'s'} missed${sc.makeups?` (${sc.makeups} make-up${sc.makeups===1?'':'s'} granted)`:''}`:'',sc.examsExcused?`${sc.examsExcused} excused`:'',sc.hwOnTime+sc.hwLate+sc.hwMissing?`Homework: ${sc.hwOnTime} on time, ${sc.hwLate} late, ${sc.hwMissing} missing`:''].filter(Boolean):['No formal school this year.'];
+ const clubs=Object.values(sum.clubs).map(c=>{const t=c.attended+c.missed;return `${c.name} attendance ${t?Math.round(100*c.attended/t):100}% (${c.attended}/${t} sessions${c.excused?`, ${c.excused} excused`:''})`}).concat(sum.contests.map(c=>`${c.name}: ${c.result}`));
+ const changes=S.people.filter(p=>snap.rel[p.id]!=null).map(p=>({p,d:p.rel-snap.rel[p.id]})).filter(x=>Math.abs(x.d)>=3).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,4).map(x=>`${firstName(x.p)} ${x.d>0?'became closer':'drifted away'} (${x.d>0?'+':''}${Math.round(x.d)})`);
+ const newPeople=S.people.filter(p=>snap.rel[p.id]==null).map(p=>`Met ${firstName(p)}`);
+ const m=availableFunds()-snap.money,items=S.inventoryItems.length-snap.items;
+ const sec=(t,arr)=>`<section class="summary-section"><h4>${t}</h4>${arr.length?arr.map(x=>`<p>${esc(x)}</p>`).join(''):'<p class="muted-text">Nothing notable.</p>'}</section>`;
+ openModal(`Year summary • Age ${S.age}`,`<div class="summary-grid">${sec('School',school)}${sec('Activities',clubs)}${sec('Relationships',[...changes,...newPeople.slice(0,3)])}${sec('Money & items',[`${m>=0?'Saved / gained':'Spent'} ${money(Math.abs(m))}`,items?`${items>0?'+':''}${items} item${Math.abs(items)===1?'':'s'}`:''].filter(Boolean))}${sum.notable.length?sec('Notable',sum.notable.slice(0,6)):''}</div><div class="modal-action-grid single"><button class="primary" data-close-modal="1">Continue</button></div>`)
+}
+
+// ---------- v7.2 time advancement (end-of-day obligations resolve before the date changes) ----------
+function advanceTime(minutes,{skipNeeds=false,silent=false,skipRoutine=false}={}){
+ minutes=Math.max(0,Math.round(minutes)||0);if(!minutes)return;if(!skipNeeds)driftNeeds(minutes);
+ let remaining=minutes;
+ while(remaining>0){
+  const untilMidnight=1440-S.clock.minute;
+  if(remaining<untilMidnight){S.clock.minute+=remaining;remaining=0;processCalendar()}
+  else{remaining-=untilMidnight;S.clock.minute=1439;processCalendar();S.clock.minute=0;S.clock.dateISO=addDays(S.clock.dateISO,1);S.day++;dailyTick({skipRoutine});processCalendar()}
+ }
+ if(!skipNeeds)applyNeedConsequences();if(!silent&&!skipRoutine)maybeRandomEvent();checkConditionalRequests();
+ if(!SIM.skipping&&!SIM.sleeping)checkBedtime();
+ if(!SIM.skipping)clearCurrentContextIfSourceResolved()
+}
+function dailyTick({skipRoutine=false}={}){
+ setWeather();ageSync();schoolDailyTick(skipRoutine);schoolActivityTick();holidayTick();
+ if(!skipRoutine){worldTick();npcInitiative();applyNeedConsequences(true);if(S.stall?.active&&chance(35))runStall(false)}
+ reconcileState('daily')
+}
+function schoolDailyTick(skipRoutine=false){
+ if(!S.school)return;normalizeSchool();if(S.school.grade==='Kindergarten')return;
+ ensureSchoolRecord();ensureSchoolDayObligation(currentDate());processHomeworkDeadlines();ensureRollingAssessments();
+ if(isSchoolDay()&&chance(SIM.skipping?35:25))generateHomework(false);
+ if(!skipRoutine&&isSchoolDay()&&chance(18))npcSchoolInitiative()
+}
+function normalizeSchool(){
+ if(!S.school)return;ensureLifecycleContainers();
+ S.school.attendance=clamp(S.school.attendance??96);S.school.behavior=clamp(S.school.behavior??70);
+ S.school.subjects=(S.school.subjects||[]).map((sub,i)=>{const s=Object.assign(makeSubject(sub.name||`Subject ${i+1}`,i),sub,{teacher:Object.assign({name:teacherName(sub.name),rel:55},sub.teacher||{}),homework:Object.assign({status:'None',progress:0,dueDate:null},sub.homework||{})});if(s.homework.status==='Done'){s.homework.status='Submitted';s.homework.resolvedDate=s.homework.resolvedDate||currentDate()}if(s.homework.status==='Archived'){s.homework.status='None'}if(HW_OPEN.includes(s.homework.status)&&!s.homework.id)s.homework.id=uid('hw');ensureTeacher(s);return s});
+ S.school.clubs=(S.school.clubs||[]).map(c=>ensureClub(typeof c==='string'?{id:uid('club'),name:c,status:'Active',joinedDate:currentDate(),skill:15,sessions:0,members:[]}:Object.assign({id:c.id||uid('club'),status:'Active',joinedDate:currentDate(),skill:15,sessions:0,members:[]},c)));
+ S.school.activityOffers=S.school.activityOffers||[];
+ const seen=new Set();
+ S.school.contests=(S.school.contests||[]).filter(c=>c&&c.name&&!seen.has(c.id||c.name)&&seen.add(c.id||c.name)).map(c=>{
+  const decisionDate=c.decisionDate||(Number.isFinite(Number(c.decisionBy))?addDays(currentDate(),Math.max(0,Number(c.decisionBy)-safeNum(S.day,1))):addDays(currentDate(),4));
+  const eventDate=c.eventDate||(Number.isFinite(Number(c.eventDay))?addDays(currentDate(),Math.max(1,Number(c.eventDay)-safeNum(S.day,1))):addDays(currentDate(),14));
+  return Object.assign({id:c.id||uid('contest'),status:c.status==='Considering'?'Open':c.status||'Open',prep:0,result:null},c,{decisionDate,eventDate});
+ });
+ ensureSchoolRecord();
+ if(S.school.grade==='Kindergarten'){if(S.exams?.length){S.archive.exams.unshift(...S.exams);S.exams=[]}return}
+ S.exams=Array.isArray(S.exams)?S.exams:[];S.exams.forEach(normalizeExam);syncExamCalendar()
+}
+function initializeNewLife(){S=makeState();migrate();setWeather();ensureCalendarBasics();setCurrentContext({sourceType:'general',priority:1,title:'Welcome to the world.',text:'At first, almost everything happens through caregivers. Your independence will grow with age, skills, trust and circumstances.'});log('Life begins',S.current.text,true);enterGame()}
+function enterGame(){migrate();schoolActivityTick();processCalendar();reconcileState('enter');$('creator').classList.add('hidden');$('game').classList.remove('hidden');render();save()}
+
+// ---------- v7.2 UI: hero, upcoming, panels ----------
+function upcomingEvents(limit=7,{includeRoutine=false}={}){
+ const today=currentDate(),now=nowStamp(),arr=[];
+ arr.push({id:'birthday',title:`${S.name}'s birthday`,dateISO:nextBirthday(),type:'birthday'});
+ if(S.traditions.christmas)arr.push({id:'christmas',title:'Christmas',dateISO:nextOccurrence(12,25),type:'holiday'});
+ if(S.traditions.newYear)arr.push({id:'newyear',title:'New Year',dateISO:nextOccurrence(1,1),type:'holiday'});
+ if(S.traditions.lunarNewYear)arr.push({id:'lunar',title:'Lunar New Year period',dateISO:nextOccurrence(2,1),type:'holiday'});
+ for(const e of S.calendar){if(isTerminal(e.status))continue;if(!includeRoutine&&e.type==='schoolDay')continue;if(e.dateISO<today)continue;if(e.dateISO===today&&stamp(e.dateISO,e.graceMinute??e.minute??0)<now)continue;arr.push(e)}
+ if(needsFormalSchool())for(const s of S.school.subjects){const hw=s.homework;if(hw&&HW_OPEN.includes(hw.status)&&hw.dueDate>=today)arr.push({id:hw.id,title:`${s.name} homework`,dateISO:hw.dueDate,minute:480,type:'homework',status:homeworkLabel(hw)})}
+ for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.resolveDate&&x.resolveDate>=today))arr.push({id:p.id,title:p.title,dateISO:p.resolveDate,type:'decision'});
+ return arr.sort((a,b)=>a.dateISO.localeCompare(b.dateISO)||(a.minute||0)-(b.minute||0)).slice(0,limit)
+}
+function typeIcon(t){return ({decision:'⏳',birthday:'🎂',exam:'📝',homework:'📒',holiday:'🎉',schoolDay:'🏫',clubSession:'🎨',schoolEvent:'🏆',party:'🎉'})[t]||'🗓️'}
+function renderUpcomingCompact(){const host=$('upcoming-strip');if(!host)return;const list=upcomingEvents(6);host.innerHTML=list.length?list.map(e=>{const d=daysBetween(currentDate(),e.dateISO),now=e.status==='Due';return `<div class="upcoming-chip ${now?'is-now':d===0?'is-today':''}"><span>${typeIcon(e.type)}</span><b>${esc(e.title)}</b><small>${now?'Now':d===0?(e.minute!=null&&e.type!=='homework'?timeLabel(e.minute):'Today'):d===1?'Tomorrow':d+'d'}</small></div>`}).join(''):'<span class="muted-text">No upcoming deadlines.</span>'}
+function meter(label,value,inverse=false){const v=Math.round(clamp(value)),good=inverse?v<=35:v>=65,bad=inverse?v>=65:v<=35;return `<div class="hero-stat ${good?'good':bad?'bad':''}"><span>${esc(label)}</span><b>${v}%</b><i><em style="width:${v}%"></em></i></div>`}
+function heroParts(c){
+ const agenda=()=>{const a=todayAgenda().filter(x=>x.type!=='birthday').slice(0,4);return a.length?`<div class="hero-agenda">${a.map(x=>`<div class="${x.done?'done':''}"><span>${x.icon}</span><b>${esc(x.title)}</b><small>${x.done?esc(x.status):x.type==='homework'?esc(x.status):timeLabel(x.minute)}</small></div>`).join('')}</div>`:''};
+ if(c.sourceType==='exam'){const e=S.exams.find(x=>x.id===c.sourceId),sub=examSubject(e);if(!e)return {detail:'',actions:''};
+  const phase=currentMinute()<e.minute?`Today • ${timeLabel(e.minute)}`:currentMinute()<=e.endMinute?'In progress now':`Late sitting until ${timeLabel(e.graceMinute)}`;
+  return {detail:`<div class="hero-when urgent">${phase}</div><div class="hero-stats">${meter('Preparation',sub?.prep||0)}${meter('Skill',sub?.skill||0)}${meter('Sleep',S.needs.sleep)}${meter('Stress',S.stress,true)}</div>`,actions:`<button class="primary" data-exam-take="${e.id}">Take Assessment</button>${e.minute<SCHOOL_DAY.end&&schoolDayEvent()&&!isTerminal(schoolDayEvent().status)?'<small class="muted-text">Includes going to school for the day.</small>':''}`}}
+ if(c.sourceType==='event'){const e=S.events.find(x=>x.id===c.sourceId);if(!e)return {detail:'',actions:''};const by=e.expiresAt?`Respond by ${e.expiresAt.dateISO===currentDate()?'':formatDate(e.expiresAt.dateISO)+' '}${timeLabel(e.expiresAt.minute)}`:'';return {detail:by?`<div class="hero-when">${by}</div>`:'',actions:e.choices.map(ch=>`<button data-event-id="${e.id}" data-event-choice="${esc(ch.id)}">${esc(ch.label)}</button>`).join('')}}
+ if(c.sourceType==='calendar'){const ev=S.calendar.find(x=>x.id===c.sourceId);if(!ev)return {detail:'',actions:''};
+  if(ev.type==='clubSession'){const cl=clubById(ev.payload?.clubId);return {detail:`<div class="hero-when">${currentMinute()<ev.startMinute?`Starts ${timeLabel(ev.startMinute)}`:`Started ${timeLabel(ev.startMinute)} • arrive by ${timeLabel(ev.graceMinute)}`}</div><div class="hero-stats">${meter('Attendance',clubAttendanceRate(cl||{}))}${meter('Club skill',cl?.skill||0)}${meter('Energy',S.energy)}</div>`,actions:`<button class="primary" data-club-attend="${cl?.id}">Attend session</button><button class="ghost" data-club-skip="${cl?.id}">Skip</button>${currentMinute()<ev.startMinute?`<button class="ghost" data-club-excuse="${cl?.id}">Tell ${esc(cl?.leader||'the leader')} you can't come</button>`:''}`}}
+  const ct=contestById(ev.payload?.contestId);return {detail:`<div class="hero-when urgent">Check-in ${timeLabel(ev.startMinute)}–${timeLabel(ev.graceMinute)}</div><div class="hero-stats">${meter('Preparation',ct?.prep||0)}${meter('Energy',S.energy)}${meter('Stress',S.stress,true)}</div>`,actions:`<button class="primary" data-contest-attend="${ct?.id}">Go to the event</button>`}}
+ if(c.sourceType==='schoolDay')return {detail:`<div class="hero-when">${timeLabel(SCHOOL_DAY.start)}–${timeLabel(SCHOOL_DAY.end)} • attendance cutoff ${timeLabel(SCHOOL_DAY.cutoff)}</div>${agenda()}`,actions:`<button class="primary" data-act="school">Go to school</button>`};
+ const evening=currentMinute()>=Math.min(1200,bedtimeMinute()-60)||currentMinute()<300;
+ return {detail:agenda(),actions:evening?`<button data-act="sleep">Go to sleep</button>`:''}
+}
+function renderHero(){clearCurrentContextIfSourceResolved();const c=S.current,{detail,actions}=heroParts(c);$('event-title').textContent=c.title;$('event-text').textContent=c.text||'';const d=$('event-detail');if(d)d.innerHTML=detail;$('event-actions').innerHTML=actions;document.querySelector('.hud-story')?.setAttribute('data-kind',c.sourceType||'daily')}
+
+function statusTag(status){const cls=['Completed','Attended','Submitted','Enrolled','Approved'].includes(status)?'ok':['Missed','No-show','Missing','Absent','Late','Denied','Removed'].includes(status)?'bad':['Due','Due today','Attending','In progress','Make-up scheduled','Submitted late','Excused','Superseded','Expired'].includes(status)?'warn':'';return `<span class="tag ${cls}">${esc(status)}</span>`}
+function pendingHtml(){const p=pendingOpen();if(!p.length)return '<p class="muted-text">Nothing is waiting on a future decision.</p>';return p.slice(0,7).map(x=>`<div class="pending-row"><div><b>${esc(x.title)}</b><small>${esc(x.detail||x.status)}${x.resolveDate?` • decision ${formatDate(x.resolveDate)}`:x.autoDecideDate?` • family decides by ${formatDate(x.autoDecideDate)}`:x.expiresDate?` • expires ${formatDate(x.expiresDate)}`:''}</small></div><div class="inline-actions">${statusTag(x.status)}${['purchaseConsideration','conditionalPurchase'].includes(x.type)?`<button class="small ghost" data-pending-again="${x.id}">Ask again</button>`:''}${x.type==='kindergarten'&&x.status==='Waiting for your preference'?'<button class="small" data-act="kindergartenYes">I want to go</button><button class="small ghost" data-act="kindergartenNo">I don\'t want to</button>':''}</div></div>`).join('')}
+function eventHtml(){const shown=S.current?.sourceType==='event'?S.current.sourceId:null,list=S.events.filter(x=>x.status==='Open'&&x.id!==shown&&!eventExpired(x));if(!list.length)return `<p class="muted-text">${shown?'The current moment is shown at the top of the page.':'No major interruption right now. Ordinary life is still moving.'}</p>`;return list.slice(0,3).map(e=>`<div class="event-card"><div class="event-kicker">WAITING FOR YOU${e.expiresAt?` • RESPOND BY ${esc(timeLabel(e.expiresAt.minute))}${e.expiresAt.dateISO!==currentDate()?' '+esc(formatDate(e.expiresAt.dateISO)):''}`:''}</div><h3>${esc(e.title)}</h3><p>${esc(e.text)}</p><div class="event-actions">${e.choices.map(c=>`<button data-event-id="${e.id}" data-event-choice="${esc(c.id)}">${esc(c.label)}</button>`).join('')}</div></div>`).join('')}
+function notificationsHtml(){const n=activeNotifications().slice(0,6);if(!n.length)return '<p class="muted-text">No active notifications.</p>';return n.map(x=>`<button class="note-row ${x.status==='Unread'?'unread':''}" data-note-open="${x.id}"><b>${esc(x.title)}</b><small>${esc(x.text)} • ${formatDate(x.dateISO)}</small></button>`).join('')+`<div class="inline-actions"><button class="small ghost" data-notes-read="1">Mark all read</button></div>`}
+function agendaHtml(){const a=todayAgenda();if(!a.length)return '<p class="muted-text">Nothing scheduled today.</p>';return a.map(x=>`<div class="agenda-row ${x.done?'done':''}"><span>${x.icon}</span><b>${esc(x.title)}</b><small>${x.type==='homework'||x.type==='birthday'?esc(x.status||''):timeLabel(x.minute)}</small>${x.type!=='homework'&&x.type!=='birthday'&&x.status?statusTag(x.status):''}</div>`).join('')}
+function homePanel(){const q=quickContextActions(),gift=S.giftHistory.find(x=>!x.reaction);return `<div class="dashboard home-dashboard"><section class="card wide"><div class="section-heading"><div><h3>What needs your attention?</h3><p class="muted-text">The game surfaces context instead of making you hunt through menus.</p></div><span class="tag">${esc(S.emotion.current)}</span></div><div class="context-grid">${q.map(x=>`<button class="context-action" data-tab-jump="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join('')}</div></section><section class="card"><h3>Today • ${esc(weekday())}</h3>${agendaHtml()}${isGrounded()?`<p class="urgent-text">Grounded until ${formatDate(S.family.restrictions.groundedUntil)}.</p>`:''}</section><section class="card"><h3>Notifications</h3>${notificationsHtml()}</section><section class="card wide"><h3>What's happening?</h3>${eventHtml()}</section><section class="card"><h3>Right now</h3>${statRow('Location',esc(S.location))}${statRow('Weather',`${weatherIcon(S.weather.type)} ${esc(S.weather.type)} • ${S.weather.temp}°C`)}${statRow('Emotion',esc(S.emotion.current))}<p class="muted-text">${esc(S.emotion.reason||weatherAdvice())}</p></section><section class="card"><h3>Pending decisions</h3>${pendingHtml()}</section>${gift?`<section class="card wide"><h3>🎁 A gift reaction is still yours to choose</h3><p>You received <b>${esc(gift.item)}</b> for ${esc(gift.occasion)}. Your private feeling and outward behavior do not have to match.</p><div class="inline-actions"><button data-act="giftThank">Say thank you</button><button data-act="giftExcited">Act excited</button><button data-act="giftHide">Hide disappointment</button><button data-act="giftHug">Hug giver</button><button class="ghost" data-act="giftComplain">Complain</button></div></section>`:''}</div>`}
+function quickContextActions(){const a=[];const exam=nextExam();if(exam){const d=daysBetween(currentDate(),exam.dateISO);if(d<=3)a.push(['school','📝 '+exam.subject,d<=0?`Assessment today • ${timeLabel(exam.minute)}`:`Assessment in ${d} day${d===1?'':'s'} • prep ${Math.round(examSubject(exam)?.prep||0)}%`])}const sd=schoolDayEvent();if(sd&&!isTerminal(sd.status)&&currentMinute()<=SCHOOL_DAY.cutoff)a.push(['school','🏫 School today',schoolDayStatus()]);if(needsFormalSchool()){const hw=S.school.subjects.find(s=>s.homework?.status==='Late'||(s.homework?.status==='Assigned'&&daysBetween(currentDate(),s.homework.dueDate)<=1));if(hw)a.push(['school','📒 '+hw.name+' homework',homeworkLabel(hw.homework)])}if(S.needs.hunger>=60)a.push(['places','🍽️ Eat',S.age<=1?'Signal caregiver / be fed':'Take care of hunger']);if(S.needs.toilet>=65)a.push(['places','🚽 Bathroom',S.age<=4?'Age-appropriate toileting help':'Relieve yourself']);if(S.needs.sleep<=35||S.energy<=30)a.push(['places','😴 Sleep','You are running low on rest']);if(unreadMessages())a.push(['phone','💬 Messages',`${unreadMessages()} unread`]);if(pendingOpen().length)a.push(['calendar','⏳ Pending decision',`${pendingOpen().length} unresolved`]);if(!a.length)a.push(['places','🧭 Choose an activity','Your immediate needs are stable'],['people','👥 See someone','Relationships keep moving']);return a.slice(0,6)}
+function calendarPanel(){const up=upcomingEvents(15),recent=[...S.calendar].filter(e=>isTerminal(e.status)&&e.type!=='schoolDay').sort((a,b)=>stampOf(b.resolvedAt||{dateISO:b.dateISO}).localeCompare(stampOf(a.resolvedAt||{dateISO:a.dateISO}))).slice(0,8),rec=S.school?.record;return `<div class="dashboard"><section class="card"><h3>Current time</h3>${statRow('Date',formatDate(currentDate()))}${statRow('Time',timeLabel(currentMinute()))}${statRow('Weekday',weekday())}${statRow('Season',season())}${statRow('School',esc(schoolDayStatus()))}${statRow('Bedtime',S.age<18?timeLabel(bedtimeMinute()):'Your choice')}</section><section class="card"><h3>Today</h3>${agendaHtml()}</section><section class="card"><h3>Pending decisions</h3>${pendingHtml()}</section>${rec&&needsFormalSchool()?`<section class="card"><h3>Attendance this year</h3>${statRow('Days attended',rec.daysAttended)}${statRow('Unexcused absences',rec.absences)}${statRow('Excused',rec.excused)}${statRow('Late arrivals',rec.tardies)}${statRow('Missed assessments',rec.examsMissed)}${statRow('Missing homework',rec.missingHomework)}</section>`:''}<section class="card wide"><h3>Upcoming</h3>${up.map(e=>{const d=daysBetween(currentDate(),e.dateISO);return `<div class="calendar-row"><div><b>${typeIcon(e.type)} ${esc(e.title)}</b><small>${formatDate(e.dateISO)}${e.minute!=null&&e.type!=='homework'?` • ${timeLabel(e.minute)}`:''}${e.location?` • ${esc(e.location)}`:''}${e.required?' • required':''}</small></div><div class="inline-actions">${e.status&&e.status!=='Scheduled'?statusTag(e.status):''}<span class="countdown">${d===0?'TODAY':d===1?'TOMORROW':`${d} days`}</span></div></div>`}).join('')||'<p class="muted-text">Nothing scheduled.</p>'}</section><section class="card wide"><h3>Recently resolved</h3>${recent.map(e=>`<div class="calendar-row"><div><b>${typeIcon(e.type)} ${esc(e.title)}</b><small>${formatDate(e.dateISO)}${e.resolutionReason?` • ${esc(e.resolutionReason)}`:''}</small></div>${statusTag(e.status)}</div>`).join('')||'<p class="muted-text">Nothing resolved recently.</p>'}</section></div>`}
+function developmentPanel(){const k=S.development.kindergarten,p=S.pendingDecisions.find(x=>!x.resolved&&x.type==='kindergarten');return `<div class="dashboard"><section class="card"><h3>Development & autonomy</h3><p class="stage-note"><b>${lifeStage()}</b> • skills grow through actual care routines.</p>${Object.entries(S.development.skills).map(([key,v])=>`<div class="skill-line"><span>${esc(key.replace(/([A-Z])/g,' $1'))}</span><div class="progress"><i style="width:${clamp(v)}%"></i></div><b>${Math.round(v)}%</b></div>`).join('')}</section><section class="card"><h3>Early education</h3>${statRow('Kindergarten',esc(k.decision||(p?p.status:'Not decided')))}${p&&p.status==='Waiting for your preference'?`<p>Your family is discussing kindergarten. Your preference matters, but caregivers still make the final decision${p.autoDecideDate?` — by ${formatDate(p.autoDecideDate)} at the latest`:''}.</p><div class="inline-actions"><button data-act="kindergartenYes">I want to go</button><button class="ghost" data-act="kindergartenNo">I don't want to go</button></div>`:p?`<p class="muted-text">${esc(p.detail)}</p>`:''}<h4>Milestones</h4>${S.development.milestones.slice(0,6).map(x=>`<p>${esc(x)}</p>`).join('')||'<p class="muted-text">Milestones appear as skills develop.</p>'}</section></div>`}
+function examStatusLabel(e){const d=daysBetween(currentDate(),e.dateISO);if(e.status==='Completed')return `${e.score}%`;if(e.status==='Replaced by make-up')return 'Replaced';if(e.status==='Make-up scheduled'){const mk=S.exams.find(x=>x.id===e.makeupId);return mk?`Make-up ${formatDate(mk.dateISO)}`:'Make-up'}if(!examIsOpen(e))return e.status;return d===0?`TODAY ${timeLabel(e.minute)}`:`${d} day${d===1?'':'s'}`}
+function schoolPanel(){
+ if(!S.school)return `<div class="dashboard"><section class="card wide"><h3>No school right now</h3><p class="muted-text">Education appears when it is part of your current stage or family decision.</p></section></div>`;normalizeSchool();
+ if(S.school.grade==='Kindergarten')return `<div class="dashboard"><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Group',esc(S.school.className))}${statRow('Attendance',Math.round(S.school.attendance)+'%')}${statRow('Today',esc(schoolDayStatus()))}${actionButton('school','🎒 Go to kindergarten','Weekdays 8:00 AM–3:00 PM')}<p class="muted-text">Kindergarten is play-based. No GPA, rank, formal exams or competitive club system.</p></section><section class="card wide"><h3>Learning through play</h3><div class="action-grid">${S.school.subjects.map(s=>`<button class="action" data-early-learn="${esc(s.name)}"><strong>${esc(s.name)}</strong><small>Development ${Math.round(s.score)}% • stories, games and guided activity</small></button>`).join('')}</div></section></div>`;
+ const primary=S.age<=11,rec=ensureSchoolRecord(),offers=(S.school.activityOffers||[]).filter(o=>['Offered','Waiting','Denied'].includes(o.status)).slice(0,6),clubs=(S.school.clubs||[]).filter(c=>c.status==='Active'),removed=(S.school.clubs||[]).filter(c=>c.status==='Removed'),events=(S.school.contests||[]).filter(c=>!['Declined'].includes(c.status)).slice(0,8);
+ const sd=schoolDayEvent(),sdOpen=sd&&!isTerminal(sd.status)&&currentMinute()<=SCHOOL_DAY.cutoff;
+ const subjectHtml=S.school.subjects.map(s=>{const t=ensureTeacher(s),exam=S.exams.filter(e=>e.subject===s.name&&examIsOpen(e)).sort((a,b)=>a.dateISO.localeCompare(b.dateISO))[0],due=exam?daysBetween(currentDate(),exam.dateISO):null,live=exam&&due===0&&currentMinute()<=exam.graceMinute,hw=s.homework||{},hwOpen=HW_OPEN.includes(hw.status);
+  return `<div class="subject-card ${live?'is-due':''}"><div class="subject-head"><div class="subject-title"><b class="subject-name">${esc(s.name)}</b><span class="subject-teacher">${esc(t.name)} · Relationship ${Math.round(t.rel)}%</span></div><div class="subject-grade"><small>Grade</small><strong>${Math.round(s.score)}</strong></div></div><div class="progress"><i style="width:${clamp(s.score)}%"></i></div><div class="mini-meta"><span>Skill ${Math.round(s.skill)}%</span><span>Prep ${Math.round(s.prep)}%</span>${hw.status&&hw.status!=='None'?`<span class="${['Late','Missing'].includes(hw.status)||homeworkLabel(hw)==='Due today'?'urgent-text':''}">Homework: ${esc(homeworkLabel(hw))}${hwOpen?` ${hw.progress||0}%`:''}</span>`:''}${exam&&!live?`<span class="${due<=3?'urgent-text':''}">${esc(exam.type)} ${due===0?'today':`in ${due}d`}</span>`:''}</div>${live?`<div class="assessment-callout"><div><b>ASSESSMENT TODAY • ${timeLabel(exam.minute)}</b><small>${currentMinute()>exam.endMinute?`Late sitting until ${timeLabel(exam.graceMinute)}`:esc(exam.type)}</small></div><button class="primary small" data-exam-take="${exam.id}">Take Assessment</button></div>`:''}<div class="subject-actions"><details class="study-menu"><summary class="${live?'ghost':''}">Study ▾</summary><div><button class="small" data-study="${esc(s.name)}" data-minutes="30">30 min</button><button class="small" data-study="${esc(s.name)}" data-minutes="60">1 hour</button><button class="small" data-study="${esc(s.name)}" data-minutes="180">3 hours</button></div></details><button class="small ghost" data-study-friend="${esc(s.name)}">Study with friend</button><button class="small ghost" data-study-teacher="${esc(s.name)}">Ask teacher</button>${hwOpen?`<button class="small" data-homework="${esc(s.name)}">Do homework</button>`:''}</div></div>`}).join('');
+ const examList=[...S.exams].sort((a,b)=>a.dateISO.localeCompare(b.dateISO)||a.minute-b.minute);
+ const examHtml=examList.map(e=>{const d=daysBetween(currentDate(),e.dateISO),can=examIsOpen(e)&&d===0&&currentMinute()<=e.graceMinute;return `<div class="exam-row ${examIsOpen(e)?'':'is-done'}"><div><b>${esc(e.subject)}</b><small>${esc(e.type)} • ${formatDate(e.dateISO)} ${timeLabel(e.minute)}${e.reason&&!examIsOpen(e)?` • ${esc(e.reason)}`:''}</small></div><div class="inline-actions">${examIsOpen(e)?`<span class="countdown">${esc(examStatusLabel(e))}</span>`:statusTag(e.status==='Completed'?`Completed ${e.score}%`:examStatusLabel(e))}${can?`<button class="small primary" data-exam-take="${e.id}">Take assessment</button><button class="small ghost" data-exam-cheat="${e.id}">Attempt cheat</button>`:''}</div></div>`}).join('')||'<p class="muted-text">No assessments scheduled.</p>';
+ const offerHtml=offers.length?offers.map(o=>`<div class="opportunity-row"><div><b>${esc(o.name)}</b><small>${o.status==='Offered'?`Decide by ${formatDate(o.decisionDate)}${S.age<13?' • caregiver approval required':''}`:o.status==='Waiting'?'Waiting for caregiver decision':o.status==='Denied'?'Caregiver said no this time':esc(o.status)}</small></div>${o.status==='Offered'?`<div class="inline-actions"><button class="small" data-activity-join="${o.id}">${S.age<13?'Ask to join':'Join'}</button><button class="small ghost" data-activity-decline="${o.id}">Decline</button></div>`:statusTag(o.status)}</div>`).join(''):'<p class="muted-text">No activity offers waiting.</p>';
+ const clubHtml=clubs.length?clubs.map(c=>{ensureClub(c);const def=D.clubDefs[c.name]||{actions:[['practice','Practice',60],['special','Special activity',90],['social','Talk with members',45]]},ev=clubSessionEvent(c),today=ev&&ev.dateISO===currentDate(),open=today&&currentMinute()<=ev.graceMinute,before=ev&&(ev.dateISO>currentDate()||(today&&currentMinute()<ev.startMinute));
+  return `<div class="commitment-card club-card"><div><b>${esc(c.name)} <span class="tag">${esc(c.position)}</span>${c.warnings?' <span class="tag bad">Warning</span>':''}</b><small>Led by ${esc(c.leader)} · relationship ${Math.round(c.leaderRel)}% • attendance ${clubAttendanceRate(c)}% (${c.attended} attended, ${c.missedSessions} missed${c.excusedSessions?`, ${c.excusedSessions} excused`:''}) • skill ${Math.round(c.skill||0)}%</small><small>${ev?`Next session ${today?'<b>today</b>':formatDate(ev.dateISO)} ${timeLabel(ev.startMinute)}–${timeLabel(ev.endMinute)}${ev.status==='Due'?' • happening now':''}`:'No session scheduled'}</small><div class="progress"><i style="width:${clamp(c.skill||0)}%"></i></div></div><div class="inline-actions">${open?`<button class="small primary" data-club-attend="${c.id}">Attend session</button><button class="small ghost" data-club-skip="${c.id}">Skip</button>`:''}${before?`<button class="small ghost" data-club-excuse="${c.id}">Tell leader you can't come</button>`:''}${def.actions.map(a=>`<button class="small ghost" data-club-action="${c.id}" data-kind="${a[0]}">${esc(a[1])}</button>`).join('')}<button class="small ghost" data-club-action="${c.id}" data-kind="leave">Leave</button></div></div>`}).join(''):'<p class="muted-text">You have not joined a club yet.</p>';
+ const eventHtml=events.length?events.map(c=>{const d=daysBetween(currentDate(),c.eventDate);if(c.status==='Open')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Register by ${formatDate(c.decisionDate)} • event ${formatDate(c.eventDate)}</small></div><div class="inline-actions"><button class="small" data-contest-enter="${c.id}">${S.age<13?'Ask to enter':'Register'}</button><button class="small ghost" data-contest-decline="${c.id}">Decline</button></div></div>`;if(c.status==='Waiting')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Waiting for caregiver approval</small></div>${statusTag('Waiting')}</div>`;if(c.status==='Registered'){const ev=contestEvent(c),live=ev&&ev.dateISO===currentDate()&&currentMinute()<=ev.graceMinute;return `<div class="commitment-card"><div><b>${esc(c.name)}</b><small>${d<=0?`Today • check-in ${timeLabel(ev?.startMinute??600)}–${timeLabel(ev?.graceMinute??690)}`:`Event in ${d} day${d===1?'':'s'} • ${formatDate(c.eventDate)}`} • preparation ${Math.round(c.prep||0)}%</small><div class="progress"><i style="width:${clamp(c.prep||0)}%"></i></div></div><div class="inline-actions">${live?`<button class="small primary" data-contest-attend="${c.id}">Go to the event</button>`:''}<button class="small ghost" data-contest-practice="${c.id}">Prepare 75m</button></div></div>`}return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>${esc(c.result||c.status)}</small></div>${statusTag(c.status)}</div>`}).join(''):'<p class="muted-text">No current event opportunities.</p>';
+ return `<div class="dashboard"><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Grade',esc(S.school.grade))}${statRow('Class',esc(S.school.className))}${statRow('Academic average',Math.round(schoolAverage())+'%')}${statRow('Attendance',Math.round(S.school.attendance)+'%')}${statRow('Behavior',Math.round(S.school.behavior)+'%')}${!primary&&S.school.gpa!=null?statRow('GPA',Number(S.school.gpa).toFixed(2)):''}</section><section class="card"><h3>School day</h3>${statRow('Today',esc(schoolDayStatus()))}${statRow('Hours',`${timeLabel(SCHOOL_DAY.start)}–${timeLabel(SCHOOL_DAY.end)}`)}${statRow('This year',`${rec.daysAttended} days • ${rec.absences} absent • ${rec.tardies} late`)}${sdOpen?actionButton('school','🎓 Go to school',currentMinute()>SCHOOL_DAY.tardyAfter?'You will be marked tardy':'Classes, assessments and classmates'):`<p class="muted-text">${isSchoolDay()?'The school day is not open for attendance right now.':'No classes today.'}</p>`}<p class="muted-text">Arrive by ${timeLabel(SCHOOL_DAY.tardyAfter)} to be on time. After ${timeLabel(SCHOOL_DAY.cutoff)} you are marked absent.</p></section><section class="card wide"><h3>Subjects, teachers & homework</h3><div class="subject-grid">${subjectHtml}</div></section><section class="card wide"><h3>Assessments</h3>${examHtml}</section><section class="card wide"><div class="section-heading"><div><h3>Clubs & activities</h3><p class="muted-text">Sessions are weekly commitments. Missing them has consequences; telling the leader beforehand is understood.</p></div><button class="small" data-act="exploreClub">Explore activities</button></div><h4>Offers</h4>${offerHtml}<h4>Your commitments</h4>${clubHtml}${removed.length?`<p class="muted-text">Removed: ${removed.map(c=>esc(c.name)).join(', ')}</p>`:''}</section><section class="card wide"><div class="section-heading"><div><h3>Competitions & school events</h3><p class="muted-text">Registering is not enough — you have to show up on the day.</p></div><button class="small" data-act="exploreContest">Find event</button></div>${eventHtml}</section></div>`
+}
+function handleLifecycleClick(b){
+ const d=b.dataset;
+ if(d.nextDayConfirm){performNextDay();return true}
+ if(d.closeModal){closeChoiceModal();render();return true}
+ if(d.clubAttend){attendClubSession(d.clubAttend);save();render();return true}
+ if(d.clubSkip){skipClubSession(d.clubSkip);save();render();return true}
+ if(d.clubExcuse){excuseClubSession(d.clubExcuse);save();render();return true}
+ if(d.contestAttend){attendContest(d.contestAttend);save();render();return true}
+ if(d.noteOpen){const n=S.notifications.find(x=>x.id===d.noteOpen);if(n){n.read=true;if(n.status==='Unread')n.status='Read';if(n.tab)active=n.tab}save();render();return true}
+ if(d.notesRead){for(const n of activeNotifications()){n.read=true;n.status='Read'}save();render();return true}
+ return false
+}
 
 // ---------- UI helpers ----------
 function pendingOpen(){return S.pendingDecisions.filter(x=>!x.resolved)}
 function unreadMessages(){return canUsePhone()?S.messages.filter(x=>!x.read).length:0}
-function nextExam(){return [...(S.exams||[])].filter(e=>e.score==null).sort((a,b)=>a.dateISO.localeCompare(b.dateISO))[0]}
 function navItems(){const a=[['home','🏠','My Life'],['places','🧭','Daily Life'],['people','👥',S.age<6?'People & Play':'People']];if(S.age<=7)a.push(['development','🌱','Growing Up']);if(S.school)a.push(['school','📚','Education']);if(S.age>=5)a.push(['business','💰','Money & Items']);if(S.age>=D.ageRules.phone)a.push(['phone','📱','Phone']);a.push(['family',S.age>=13?'❤️':'👨‍👩‍👧',S.age>=13?'Family & Relationships':'Family']);if(S.age>=D.ageRules.partTimeWork)a.push(['career','💼',S.age>=60?'Work & Retirement':'Work & Career']);if(S.age>=18)a.push(['health','🩺','Health']);a.push(['calendar','🗓️','Calendar'],['world','🌍','World & Journal']);return a}
-function quickContextActions(){const a=[];if(S.needs.hunger>=60)a.push(['eat','🍽️ Eat',S.age<=1?'Signal caregiver / be fed':'Take care of hunger']);if(S.needs.toilet>=65)a.push(['toilet','🚽 Bathroom',S.age<=4?'Age-appropriate toileting help':'Relieve yourself']);if(S.needs.sleep<=35||S.energy<=30)a.push(['sleep','😴 Sleep','You are running low on rest']);if(S.needs.hygiene<=35)a.push(['shower','🚿 Wash up',S.age<=7?'Get age-appropriate help':'Restore hygiene']);const exam=nextExam();if(exam){const d=daysBetween(currentDate(),exam.dateISO);if(d<=3)a.push(['school','📚 '+exam.subject,d<=0?'Exam today':'Exam in '+d+' days'])}if(unreadMessages())a.push(['phone','💬 Messages',`${unreadMessages()} unread`]);if(pendingOpen().length)a.push(['calendar','⏳ Pending decision',`${pendingOpen().length} unresolved`]);if(!a.length)a.push(['places','🧭 Choose an activity','Your immediate needs are stable'],['people','👥 See someone','Relationships keep moving']);return a.slice(0,5)}
 function needIcon(k){return ({hunger:'🍽️',hygiene:'🚿',toilet:'🚽',fun:'😊',social:'👥',comfort:'🏠',sleep:'⚡'})[k]||'•'}
 function needDisplayValue(k,v){return Math.round(['hunger','toilet'].includes(k)?100-v:v)}
 function needAction(k){return k==='hunger'?'eat':k==='toilet'?'toilet':k==='hygiene'?'shower':k==='sleep'?'sleep':k==='fun'?'game':k==='social'?'people':'rest'}
@@ -503,14 +1328,10 @@ function renderNeeds(){
  host.innerHTML=Object.entries(S.needs).map(([k,v])=>{const value=needDisplayValue(k,v),danger=value<=25;return `<button class="need-compact ${danger?'need-danger':''}" data-need="${k}" title="${esc(labels[k]||k)}: ${value}/100"><span>${needIcon(k)} <em>${esc(labels[k]||k)}</em></span><b>${value}</b><i><em style="width:${value}%"></em></i></button>`}).join('');
  const w=[];if(S.needs.hunger>65)w.push('Food');if(S.needs.sleep<40)w.push('Rest');if(S.needs.fun<50)w.push(S.age<8?'Play':'Something fun');if(S.needs.social<45)w.push(S.age<6?'Caregiver attention':'See someone');if(S.age>=12&&!S.phone.owned)w.push('A phone');$('wants-hud').innerHTML=(w.slice(0,3).map(x=>`<span class="want-pill">${esc(x)}</span>`).join('')||'<span class="muted-text">Content for now</span>')
 }
-function renderUpcomingCompact(){const host=$('upcoming-strip');if(!host)return;const list=upcomingEvents(5);host.innerHTML=list.length?list.map(e=>{const d=daysBetween(currentDate(),e.dateISO);return `<div class="upcoming-chip"><span>${e.type==='decision'?'⏳':e.type==='birthday'?'🎂':e.type==='exam'?'📚':'🗓️'}</span><b>${esc(e.title)}</b><small>${d===0?'Today':d===1?'Tomorrow':d+'d'}</small></div>`}).join(''):'<span class="muted-text">No upcoming deadlines.</span>'}
-function renderHeader(){if(!S)return;$('life-name').textContent=S.name;$('life-subtitle').textContent=`${lifeStage()} • Age ${S.age} • ${formatDate(currentDate())} • ${timeLabel(currentMinute())} • ${S.place}`;$('s-age').textContent=S.age;$('s-money').textContent=money(S.money);$('s-health').textContent=Math.round(S.health);$('s-happy').textContent=Math.round(S.happiness);$('s-energy').textContent=Math.round(S.energy);$('s-stress').textContent=Math.round(S.stress);$('s-luck').textContent=Math.round(S.luck)+'%';$('s-mentality').textContent=S.mentality;$('i-place').textContent=S.place;$('i-dob').textContent=formatDate(S.dob);$('i-zodiac').textContent=S.zodiac;$('i-family').textContent=S.wealth;$('event-meta').textContent=`${weekday().toUpperCase()} • ${timeLabel(currentMinute())} • ${weatherIcon(S.weather.type)} ${S.weather.type.toUpperCase()}`;$('event-title').textContent=S.current.title;$('event-text').textContent=S.current.text;renderNeeds();renderUpcomingCompact();const nav=navItems();if(!nav.some(x=>x[0]===active))active='home';$('tabs').innerHTML=nav.map(x=>`<button class="side-link ${active===x[0]?'active':''}" data-tab="${x[0]}"><span>${x[1]}</span><b>${x[2]}</b></button>`).join('')}
+function renderHeader(){if(!S)return;$('life-name').textContent=S.name;$('life-subtitle').textContent=`${lifeStage()} • Age ${S.age} • ${formatDate(currentDate())} • ${timeLabel(currentMinute())} • ${S.place}`;$('s-age').textContent=S.age;$('s-money').textContent=money(S.money);$('s-health').textContent=Math.round(S.health);$('s-happy').textContent=Math.round(S.happiness);$('s-energy').textContent=Math.round(S.energy);$('s-stress').textContent=Math.round(S.stress);$('s-luck').textContent=Math.round(S.luck)+'%';$('s-mentality').textContent=S.mentality;$('i-place').textContent=S.place;$('i-dob').textContent=formatDate(S.dob);$('i-zodiac').textContent=S.zodiac;$('i-family').textContent=S.wealth;$('event-meta').textContent=`${weekday().toUpperCase()} • ${timeLabel(currentMinute())} • ${weatherIcon(S.weather.type)} ${S.weather.type.toUpperCase()}`;renderHero();renderNeeds();renderUpcomingCompact();const nav=navItems();if(!nav.some(x=>x[0]===active))active='home';$('tabs').innerHTML=nav.map(x=>`<button class="side-link ${active===x[0]?'active':''}" data-tab="${x[0]}"><span>${x[1]}</span><b>${x[2]}</b></button>`).join('')}
 function actionButton(id,title,small,arg=''){return `<button class="action" data-act="${id}" ${arg!==''?`data-arg="${esc(arg)}"`:''}><strong>${title}</strong><small>${small}</small></button>`}
 function statRow(label,value){return `<div class="row"><span>${label}</span><b>${value}</b></div>`}
-function pendingHtml(){const p=pendingOpen();if(!p.length)return '<p class="muted-text">Nothing is waiting on a future decision.</p>';return p.slice(0,7).map(x=>`<div class="pending-row"><div><b>${esc(x.title)}</b><small>${esc(x.detail||x.status)}${x.resolveDate?` • ${formatDate(x.resolveDate)}`:''}</small></div><div class="inline-actions"><span class="tag">${esc(x.status)}</span>${['purchaseConsideration','conditionalPurchase'].includes(x.type)?`<button class="small ghost" data-pending-again="${x.id}">Ask again</button>`:''}</div></div>`).join('')}
-function eventHtml(){const e=S.events.find(x=>x.status==='Open');if(!e)return '<p class="muted-text">No major interruption right now. Ordinary life is still moving.</p>';return `<div class="event-card"><div class="event-kicker">CURRENT EVENT</div><h3>${esc(e.title)}</h3><p>${esc(e.text)}</p><div class="event-actions">${e.choices.map(c=>`<button data-event-id="${e.id}" data-event-choice="${c.id}">${esc(c.label)}</button>`).join('')}</div></div>`}
 
-function homePanel(){const q=quickContextActions(),gift=S.giftHistory.find(x=>!x.reaction);return `<div class="dashboard home-dashboard"><section class="card wide"><div class="section-heading"><div><h3>What needs your attention?</h3><p class="muted-text">The game surfaces context instead of making you hunt through menus.</p></div><span class="tag">${esc(S.emotion.current)}</span></div><div class="context-grid">${q.map(x=>`<button class="context-action" data-tab-jump="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join('')}</div></section><section class="card wide"><h3>What's happening?</h3>${eventHtml()}</section><section class="card"><h3>Right now</h3>${statRow('Location',esc(S.location))}${statRow('Weather',`${weatherIcon(S.weather.type)} ${esc(S.weather.type)} • ${S.weather.temp}°C`)}${statRow('Emotion',esc(S.emotion.current))}<p class="muted-text">${esc(S.emotion.reason||weatherAdvice())}</p></section><section class="card"><h3>Pending decisions</h3>${pendingHtml()}</section>${gift?`<section class="card wide"><h3>🎁 A gift reaction is still yours to choose</h3><p>You received <b>${esc(gift.item)}</b> for ${esc(gift.occasion)}. Your private feeling and outward behavior do not have to match.</p><div class="inline-actions"><button data-act="giftThank">Say thank you</button><button data-act="giftExcited">Act excited</button><button data-act="giftHide">Hide disappointment</button><button data-act="giftHug">Hug giver</button><button class="ghost" data-act="giftComplain">Complain</button></div></section>`:''}</div>`}
 function careCards(){return `<div class="action-section"><h3>Care</h3><div class="action-grid">${actionButton('eat','🍽️ Eat',S.age<=1?'Caregiver feeding':S.age<=4?'Eat with help / practice':'Meal')}${actionButton('snack','🍎 Snack','A smaller amount of food')}${actionButton('drink','💧 Drink water','Hydration and comfort')}${actionButton('toilet','🚽 '+(S.age<=1?'Caregiver toileting':S.age<=4?'Potty / toilet':'Use bathroom'),'Age-appropriate bathroom care')}${actionButton('shower','🚿 '+(S.age<=3?'Bath with caregiver':S.age<=7?'Wash with supervision':'Shower'),'Restore hygiene')}${actionButton('brush','🪥 Brush teeth','5–10 minutes')}${actionButton('washHands','🧼 Wash hands','Quick hygiene')}${actionButton('dress','👕 Get dressed',S.age<=7?'Help depends on development':'Choose clothes')}${actionButton('sleep','😴 Sleep','Full sleep based on age')}${actionButton('nap','🛏️ Nap','Shorter recovery')}${actionButton('rest','🫖 Rest','30-minute recovery')}</div></div>`}
 function personalCards(){
  const age=S.age,a=[];
@@ -546,14 +1367,6 @@ function personalCards(){
 }
 function placesPanel(){const places=D.placesOutside.filter(p=>S.age>=p.minAge&&(!p.maxAge||S.age<=p.maxAge));return `<div class="dashboard"><section class="card wide"><div class="section-heading"><div><h3>Daily Life • ${lifeStage()}</h3><p class="muted-text">Core physiological actions stay accessible; the method changes with age and development.</p></div><span class="tag">${timeLabel(currentMinute())}</span></div>${careCards()}</section><section class="card wide">${personalCards()}</section><section class="card wide"><h3>Go out</h3><p class="muted-text">Transport: ${esc(localTransport())}. Children and teens use supervision/permission rules automatically.</p><div class="place-grid">${places.map(p=>`<button class="place-card" data-place="${p.id}"><b>${esc(p.name)}</b><small>${p.minutes>=120?Math.round(p.minutes/60)+'h':p.minutes+' min'}${p.cost?` • about ${money(S.age<13?0:p.cost)}`:' • free'}</small></button>`).join('')}</div></section><section class="card"><h3>Weather comfort</h3><p class="muted-text">${esc(weatherAdvice())}</p><div class="inline-actions">${S.homeAmenities.fan?'<button data-act="comfort" data-arg="fan">Use fan</button>':''}${S.homeAmenities.ac?'<button data-act="comfort" data-arg="ac">Use A/C</button>':''}${S.homeAmenities.fireplace?'<button data-act="comfort" data-arg="fireplace">Use fireplace</button>':''}</div></section></div>`}
 
-function schoolPanel(){if(!S.school)return `<div class="dashboard"><section class="card wide"><h3>No school right now</h3><p class="muted-text">Education appears when it is part of your current stage or family decision.</p></section></div>`;normalizeSchool();if(S.school.grade==='Kindergarten'){return `<div class="dashboard"><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Group',esc(S.school.className))}${statRow('Attendance',Math.round(S.school.attendance)+'%')}<p class="muted-text">Kindergarten is play-based. No GPA, rank, formal exams or competitive club system.</p></section><section class="card wide"><h3>Learning through play</h3><div class="action-grid">${S.school.subjects.map(s=>`<button class="action" data-early-learn="${esc(s.name)}"><strong>${esc(s.name)}</strong><small>Development ${Math.round(s.score)}% • stories, games and guided activity</small></button>`).join('')}</div></section></div>`}
- const primary=S.age<=11,offers=(S.school.activityOffers||[]).filter(o=>['Offered','Waiting','Denied'].includes(o.status)).slice(0,6),clubs=(S.school.clubs||[]).filter(c=>c.status==='Active'),events=(S.school.contests||[]).filter(c=>!['Declined'].includes(c.status)).slice(0,8);
- const subjectHtml=S.school.subjects.map(s=>{const exam=S.exams.find(e=>e.subject===s.name&&e.score==null),due=exam?daysBetween(currentDate(),exam.dateISO):null,hw=s.homework||{};return `<div class="subject-card"><div class="subject-head"><div><b>${esc(s.name)}</b><small>${esc(s.teacher.name)} • teacher relationship ${Math.round(s.teacher.rel)}%</small></div><strong>${Math.round(s.score)}</strong></div><div class="progress"><i style="width:${clamp(s.score)}%"></i></div><div class="mini-meta"><span>Skill ${Math.round(s.skill)}%</span><span>Prep ${Math.round(s.prep)}%</span>${exam?`<span class="${due<=3?'urgent-text':''}">${due<=0?'Exam today':`Exam ${due}d`}</span>`:''}</div><div class="inline-actions"><button class="small" data-study="${esc(s.name)}" data-minutes="30">Study 30m</button><button class="small" data-study="${esc(s.name)}" data-minutes="60">Study 1h</button><button class="small" data-study="${esc(s.name)}" data-minutes="180">Study 3h</button><button class="small ghost" data-study-friend="${esc(s.name)}">Study with friend</button><button class="small ghost" data-study-teacher="${esc(s.name)}">Ask teacher</button>${['Assigned','Late'].includes(hw.status)?`<button class="small" data-homework="${esc(s.name)}">Homework ${hw.progress||0}%</button>`:''}</div></div>`}).join('');
- const examHtml=S.exams.map(e=>{const d=daysBetween(currentDate(),e.dateISO);return `<div class="exam-row"><div><b>${esc(e.subject)}</b><small>${esc(e.type)} • ${formatDate(e.dateISO)} • prep ${Math.round(e.prep||0)}%</small></div><div class="inline-actions"><span class="countdown">${e.score!=null?`${e.score}%`:d<0?'Missed':d===0?'TODAY':`${d} days`}</span>${e.score==null&&d<=0?`<button class="small" data-exam-take="${e.id}">Take exam</button><button class="small ghost" data-exam-cheat="${e.id}">Attempt cheat</button>`:''}</div></div>`}).join('')||'<p class="muted-text">No assessments scheduled.</p>';
- const offerHtml=offers.length?offers.map(o=>`<div class="opportunity-row"><div><b>${esc(o.name)}</b><small>${o.status==='Offered'?`Decide by ${formatDate(o.decisionDate)}${S.age<13?' • caregiver approval required':''}`:o.status==='Waiting'?'Waiting for caregiver decision':o.status==='Denied'?'Caregiver said no this time':esc(o.status)}</small></div>${o.status==='Offered'?`<div class="inline-actions"><button class="small" data-activity-join="${o.id}">${S.age<13?'Ask to join':'Join'}</button><button class="small ghost" data-activity-decline="${o.id}">Decline</button></div>`:`<span class="tag">${esc(o.status)}</span>`}</div>`).join(''):'<p class="muted-text">No activity offers waiting.</p>';
- const clubHtml=clubs.length?clubs.map(c=>{const def=D.clubDefs[c.name]||{actions:[['practice','Practice',60],['special','Special activity',90],['social','Talk with members',45]]};return `<div class="commitment-card"><div><b>${esc(c.name)}</b><small>${c.sessions||0} sessions • skill ${Math.round(c.skill||0)}% • next session ${c.nextSessionDate?formatDate(c.nextSessionDate):'TBD'}</small><div class="progress"><i style="width:${clamp(c.skill||0)}%"></i></div></div><div class="inline-actions">${def.actions.map(a=>`<button class="small" data-club-action="${c.id}" data-kind="${a[0]}">${esc(a[1])}</button>`).join('')}<button class="small ghost" data-club-action="${c.id}" data-kind="leave">Leave</button></div></div>`}).join(''):'<p class="muted-text">You have not joined a club yet.</p>';
- const eventHtml=events.length?events.map(c=>{const d=daysBetween(currentDate(),c.eventDate);if(c.status==='Open')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Register by ${formatDate(c.decisionDate)} • event ${formatDate(c.eventDate)}</small></div><div class="inline-actions"><button class="small" data-contest-enter="${c.id}">${S.age<13?'Ask to enter':'Register'}</button><button class="small ghost" data-contest-decline="${c.id}">Decline</button></div></div>`;if(c.status==='Waiting')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Waiting for caregiver approval</small></div><span class="tag">Waiting</span></div>`;if(c.status==='Registered')return `<div class="commitment-card"><div><b>${esc(c.name)}</b><small>${d<=0?'Event today':`Event in ${d} day${d===1?'':'s'}`} • preparation ${Math.round(c.prep||0)}%</small><div class="progress"><i style="width:${clamp(c.prep||0)}%"></i></div></div><button class="small" data-contest-practice="${c.id}">Prepare 75m</button></div>`;return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>${esc(c.result||c.status)}</small></div><span class="tag">${esc(c.status)}</span></div>`}).join(''):'<p class="muted-text">No current event opportunities.</p>';
- return `<div class="dashboard"><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Grade',esc(S.school.grade))}${statRow('Class',esc(S.school.className))}${statRow('Academic average',Math.round(schoolAverage())+'%')}${statRow('Attendance',Math.round(S.school.attendance)+'%')}${statRow('Behavior',Math.round(S.school.behavior)+'%')}${!primary&&S.school.gpa!=null?statRow('GPA',Number(S.school.gpa).toFixed(2)):''}</section><section class="card"><h3>School day</h3>${actionButton('school','🎓 Attend school','Several hours • classes + classmates')}<p class="muted-text">Studying consumes real time; sleep, stress, subject skill and preparation affect exams.</p></section><section class="card wide"><h3>Subjects, teachers & homework</h3><div class="subject-grid">${subjectHtml}</div></section><section class="card wide"><h3>Exams & countdowns</h3>${examHtml}</section><section class="card wide"><div class="section-heading"><div><h3>Clubs & activities</h3><p class="muted-text">Joined clubs contain real actions, schedules and relationship opportunities.</p></div><button class="small" data-act="exploreClub">Explore activities</button></div><h4>Offers</h4>${offerHtml}<h4>Your commitments</h4>${clubHtml}</section><section class="card wide"><div class="section-heading"><div><h3>Competitions & school events</h3><p class="muted-text">Registration closes, preparation takes time, and results trigger once.</p></div><button class="small" data-act="exploreContest">Find event</button></div>${eventHtml}</section></div>`}
 
 function peoplePanel(){return `<div class="dashboard"><section class="card wide"><h3>${S.age<6?'Your social world':'Relationships remember what happened'}</h3><p class="muted-text">Closeness is only one part: trust, fun, conflict, mood and shared memories all matter. NPCs can contact you without waiting for you.</p></section>${S.people.map(p=>`<section class="person-card"><div class="person-title"><div><h3>${esc(p.name)}</h3><small>${esc(p.role)} • known since age ${p.knownSince}</small></div><span class="tag">${esc(p.mood)}</span></div><div class="relationship-bars"><label>Closeness <span>${Math.round(p.rel)}</span><i><em style="width:${clamp(p.rel)}%"></em></i></label><label>Trust <span>${Math.round(p.trust)}</span><i><em style="width:${clamp(p.trust)}%"></em></i></label><label>Conflict <span>${Math.round(p.conflict)}</span><i class="dangerbar"><em style="width:${clamp(p.conflict)}%"></em></i></label></div><p class="muted-text">${esc(p.memory)}</p><button class="action compact" data-person-open="${p.id}"><strong>Interact with ${esc(p.name.split(' • ')[0])}</strong><small>Talk, spend time, confide, apologize${canUsePhone()?', message/call':''}${S.age>=13?', relationship choices':''}</small></button></section>`).join('')}</div>`}
 
@@ -564,13 +1377,11 @@ function phonePanel(){if(S.age<D.ageRules.phone)return `<div class="dashboard"><
 
 function familyPanel(){const caregivers=S.people.filter(p=>['parent','grandparent'].includes(p.role));const romance=S.age>=13?`<section class="card"><h3>${S.age<16?'Crushes & close bonds':'Romance'}</h3>${statRow('Status',esc(S.romance.status))}${S.romance.partner?statRow('Partner / interest',esc(S.romance.partner)):''}<p class="muted-text">Use individual People interactions for age-appropriate romantic choices. Dating apps remain adult-only.</p></section>`:'';return `<div class="dashboard"><section class="card"><h3>Family dynamics</h3>${statRow('Closeness',Math.round(S.family.closeness)+'%')}${statRow('Tension',Math.round(S.family.tension)+'%')}${statRow('Responsibility',Math.round(S.family.responsibility)+'%')}${statRow('Household strictness',Math.round(familyRules().strictness)+'%')}${statRow('Generosity',Math.round(familyRules().generosity)+'%')}<button data-act="familyTalk">${S.age<3?'Connect with caregiver':S.age<6?'Talk / express yourself':'Have a real conversation'}</button></section><section class="card"><h3>Caregivers</h3>${caregivers.map(p=>`<div class="row"><span>${esc(p.name)}<br><small>${esc((p.traits||[]).join(', '))}</small></span><b>${Math.round(p.rel)}</b></div>`).join('')}</section>${romance}<section class="card wide"><h3>Family events & memories</h3>${S.familyEvents.slice(0,8).map(e=>`<div class="row"><span>${esc(e.text)}</span><small>${e.dateISO?formatDate(e.dateISO):'Age '+S.age}</small></div>`).join('')||'<p class="muted-text">No recent special family event.</p>'}</section></div>`}
 
-function developmentPanel(){const k=S.development.kindergarten;return `<div class="dashboard"><section class="card"><h3>Development & autonomy</h3><p class="stage-note"><b>${lifeStage()}</b> • skills grow through actual care routines.</p>${Object.entries(S.development.skills).map(([key,v])=>`<div class="skill-line"><span>${esc(key.replace(/([A-Z])/g,' $1'))}</span><div class="progress"><i style="width:${clamp(v)}%"></i></div><b>${Math.round(v)}%</b></div>`).join('')}</section><section class="card"><h3>Early education</h3>${statRow('Kindergarten',esc(k.decision||'Not decided'))}${S.age===3&&!k.decision?`<p>Your family is discussing kindergarten. Your preference matters, but caregivers still make the final decision.</p><div class="inline-actions"><button data-act="kindergartenYes">I want to go</button><button class="ghost" data-act="kindergartenNo">I don't want to go</button></div>`:''}<h4>Milestones</h4>${S.development.milestones.slice(0,6).map(x=>`<p>${esc(x)}</p>`).join('')||'<p class="muted-text">Milestones appear as skills develop.</p>'}</section></div>`}
 
 function careerPanel(){const job=S.career.job,pool=jobPool();return `<div class="dashboard"><section class="card"><h3>${S.age>=60?'Work & retirement':'Career / part-time work'}</h3>${job?`${statRow('Role',esc(job.title))}${statRow('Pay',money(job.pay)+'/hr')}${statRow('Performance',Math.round(S.career.performance)+'%')}${statRow('Manager',esc(job.manager||'—'))}<div class="inline-actions"><button data-act="workShift">Work shift</button><button class="ghost" data-act="careerSkill">Build skill</button><button class="ghost" data-act="quitJob">Quit</button></div>`:`<p class="muted-text">${S.age<18?'Part-time jobs can fit around school.':'Applications can lead to interviews/offers after a delay.'}</p><div class="job-grid">${pool.map(j=>`<button class="job-card" data-job="${j.id}"><b>${esc(j.title)}</b><small>${money(j.pay)}/hr • ${j.hours}h shift</small></button>`).join('')}</div>`}${S.age>=60?`<button data-act="retire">${S.career.retired?'Retired':'Retire'}</button>`:''}</section><section class="card"><h3>Career profile</h3>${statRow('General skill',S.career.skills)}${statRow('Reputation',Math.round(S.career.reputation)+'%')}${statRow('Retired',S.career.retired?'Yes':'No')}<button data-act="careerSkill">Practice a career skill</button></section></div>`}
 
 function healthPanel(){return `<div class="dashboard"><section class="card"><h3>Health</h3>${statRow('Overall',Math.round(S.health)+'%')}${statRow('Fitness',Math.round(S.healthState.fitness)+'%')}${statRow('Sleep quality',Math.round(S.healthState.sleep)+'%')}${statRow('Current issue',esc(S.healthState.illness||'None'))}</section><section class="card"><h3>Care</h3><div class="action-grid">${actionButton('healthCheck','🩺 Checkup',S.age<18?'Caregiver/household handles access':'Costs $25')}${actionButton('mentalCare','🧠 Mental wellbeing','Stress support')}${actionButton('exercise','🏃 Exercise','Fitness and stress')}</div></section></div>`}
 
-function calendarPanel(){const up=upcomingEvents(15);return `<div class="dashboard"><section class="card"><h3>Current time</h3>${statRow('Date',formatDate(currentDate()))}${statRow('Time',timeLabel(currentMinute()))}${statRow('Weekday',weekday())}${statRow('Season',season())}${statRow('Age',S.age)}</section><section class="card"><h3>Pending decisions</h3>${pendingHtml()}</section><section class="card wide"><h3>Upcoming</h3>${up.map(e=>{const d=daysBetween(currentDate(),e.dateISO);return `<div class="calendar-row"><div><b>${esc(e.title)}</b><small>${formatDate(e.dateISO)}${e.minute!=null?` • ${timeLabel(e.minute)}`:''}</small></div><span class="countdown">${d===0?'TODAY':d===1?'TOMORROW':`${d} days`}</span></div>`}).join('')||'<p class="muted-text">Nothing scheduled.</p>'}</section></div>`}
 
 function worldPanel(){const t=travelMode();const weather=S.weather.forecast?.length?S.weather.forecast.map(x=>`<div class="forecast"><span>${weatherIcon(x.type)}</span><b>${esc(x.type)}</b><small>${x.temp}°C<br>${formatDate(x.dateISO)}</small></div>`).join(''):'';return `<div class="dashboard"><section class="card"><h3>Travel</h3>${statRow('Trips / outings',S.travel.trips)}${statRow('Current rule',esc(t.label))}<p class="muted-text">${esc(t.note)}</p><button data-act="trip">${esc(t.label)}</button></section><section class="card"><h3>Weather</h3><div class="weather-big">${weatherIcon(S.weather.type)} ${esc(S.weather.type)} • ${S.weather.temp}°C</div><p class="muted-text">Humidity ${S.weather.humidity}% • ${esc(weatherAdvice())}</p><div class="forecast-row">${weather}</div></section><section class="card wide"><h3>Life journal / milestones</h3>${S.milestones.slice(0,15).map(m=>`<div class="timeline-entry"><span>${formatDate(m.dateISO||currentDate())} • Age ${m.age}</span><b>${esc(m.title)}</b><p>${esc(m.text)}</p></div>`).join('')||'<p class="muted-text">Important milestones will collect here over time.</p>'}</section><section class="card wide"><h3>Journal note</h3><p class="muted-text">Important milestones stay here. The chronological Life log appears once at the bottom of the main page to avoid duplicate history panels.</p></section></div>`}
 
@@ -591,14 +1402,12 @@ function openGiftPersonModal(personId){const p=personById(personId);if(!p)return
 function giveInventoryItem(itemId,personId){const it=S.inventoryItems.find(x=>x.id===itemId),p=personById(personId);if(!it||!p)return;removeItem(it.id);p.rel=clamp(p.rel+4+it.sentimental*.03);p.trust=clamp(p.trust+2);rememberPerson(p,`You gave them ${it.name}.`,2);advanceTime(10);closeChoiceModal();feedback(`Gifted ${it.name}`,`${p.name} remembers the gesture.`,10)}
 
 // ---------- Start / load / screen lifecycle ----------
-function initializeNewLife(){S=makeState();migrate();setWeather();ensureCalendarBasics();log('Life begins',S.current.text,true);enterGame()}
-function enterGame(){migrate();if(!S.school&&((S.age>=6&&S.age<=18)||(S.age>=3&&S.age<=5&&S.development.kindergarten.enrolled)))progressSchoolForAge();schoolActivityTick();processCalendar();$('creator').classList.add('hidden');$('game').classList.remove('hidden');render();save()}
 function loadLast(){const raw=loadRaw();if(!raw){toast('No autosave found.');return}try{S=JSON.parse(raw);enterGame();toast('Life loaded')}catch(err){console.error('Load failed',err);toast('Autosave is invalid or incompatible.')}}
 function importSaveFile(file){if(!file)return;file.text().then(t=>{try{S=JSON.parse(t);enterGame();toast('Save imported')}catch(err){console.error('Import failed',err);toast('Invalid save file')}})}
 
 // ---------- Main event delegation ----------
-function handlePanelClick(e){const b=e.target.closest('button');if(!b||!S)return;if(b.dataset.tabJump){active=b.dataset.tabJump;render();return}if(b.dataset.act){act(b.dataset.act,b.dataset.arg);return}if(b.dataset.place){visitPlace(b.dataset.place);save();render();return}if(b.dataset.personOpen){openPersonModal(b.dataset.personOpen);return}if(b.dataset.earlyLearn){const sub=S.school?.subjects?.find(x=>x.name===b.dataset.earlyLearn);if(sub){sub.score=clamp(sub.score+3);S.needs.fun=clamp(S.needs.fun+7);advanceTime(45);feedback('Learning through play',`${sub.name} development ${Math.round(sub.score)}%`,45);save();render()}return}if(b.dataset.study){studySubject(b.dataset.study,Number(b.dataset.minutes)||60);save();render();return}if(b.dataset.studyFriend){studySubject(b.dataset.studyFriend,60,'friend');save();render();return}if(b.dataset.studyTeacher){studySubject(b.dataset.studyTeacher,30,'teacher');save();render();return}if(b.dataset.homework){doHomework(b.dataset.homework);save();render();return}if(b.dataset.examTake){takeExam(b.dataset.examTake,false);save();render();return}if(b.dataset.examCheat){takeExam(b.dataset.examCheat,true);save();render();return}if(b.dataset.activityJoin){decideActivity(b.dataset.activityJoin,true);save();render();return}if(b.dataset.activityDecline){decideActivity(b.dataset.activityDecline,false);save();render();return}if(b.dataset.clubAction){clubAction(b.dataset.clubAction,b.dataset.kind);save();render();return}if(b.dataset.contestEnter){contestAction(b.dataset.contestEnter,'enter');save();render();return}if(b.dataset.contestDecline){contestAction(b.dataset.contestDecline,'decline');save();render();return}if(b.dataset.contestPractice){contestAction(b.dataset.contestPractice,'practice');save();render();return}if(b.dataset.chore){doChore(b.dataset.chore);save();render();return}if(b.dataset.shopOwn){buyWithOwnMoney(b.dataset.shopOwn);save();render();return}if(b.dataset.shopParent){caregiverRequestOptions(b.dataset.shopParent);save();render();return}if(b.dataset.shopBirthday){requestFutureGift(b.dataset.shopBirthday,'Birthday');save();render();return}if(b.dataset.shopChristmas){requestFutureGift(b.dataset.shopChristmas,'Christmas');save();render();return}if(b.dataset.giftAskagain){const r=S.giftRequests.find(x=>x.id===b.dataset.giftAskagain&&!x.resolved);if(r){r.begging=(r.begging||1)+1;if(r.begging>=3){r.chancePenalty=(r.chancePenalty||0)+4;S.family.tension=clamp(S.family.tension+2)}log('Asked again',`${r.item} is still waiting for ${r.occasion}.`);save();render()}return}if(b.dataset.itemAction){if(b.dataset.itemAction==='gift'){const it=S.inventoryItems.find(x=>x.id===b.dataset.itemId);if(!it)return;openModal(`Give ${it.name} to…`,`<div class="modal-action-grid">${S.people.map(p=>`<button data-gift-item="${it.id}" data-gift-person="${p.id}">${esc(p.name)}</button>`).join('')}</div>`)}else{useInventoryItem(b.dataset.itemId,b.dataset.itemAction);save();render()}return}if(b.dataset.pendingAgain){askAgainPending(b.dataset.pendingAgain);save();render();return}if(b.dataset.phoneApp){if(b.dataset.phoneApp==='Social')socialPost();else phoneApp(b.dataset.phoneApp);save();render();return}if(b.dataset.job){applyForJob(b.dataset.job);save();render();return}if(b.dataset.stallWork){runStall(true);save();render();return}if(b.dataset.stallClose){S.stall.active=false;log('Stand closed','You pack up the stand for now.');save();render();return}if(b.dataset.yard){negotiateYardSale(b.dataset.yard);save();render();return}if(b.dataset.eventId){resolveEventChoice(b.dataset.eventId,b.dataset.eventChoice);return}}
-function handleModalClick(e){const b=e.target.closest('button');if(!b)return;if(b.dataset.personAction){personAction(b.dataset.personId,b.dataset.personAction);save();render();if(b.dataset.personAction!=='giveGift')closeChoiceModal();return}if(b.dataset.giftItem){giveInventoryItem(b.dataset.giftItem,b.dataset.giftPerson);save();render();return}if(b.dataset.messageReply){replyMessage(b.dataset.messageReply);save();render();return}}
+function handlePanelClick(e){const b=e.target.closest('button');if(!b||!S)return;if(handleLifecycleClick(b))return;if(b.dataset.tabJump){active=b.dataset.tabJump;render();return}if(b.dataset.act){act(b.dataset.act,b.dataset.arg);return}if(b.dataset.place){visitPlace(b.dataset.place);save();render();return}if(b.dataset.personOpen){openPersonModal(b.dataset.personOpen);return}if(b.dataset.earlyLearn){const sub=S.school?.subjects?.find(x=>x.name===b.dataset.earlyLearn);if(sub){sub.score=clamp(sub.score+3);S.needs.fun=clamp(S.needs.fun+7);advanceTime(45);feedback('Learning through play',`${sub.name} development ${Math.round(sub.score)}%`,45);save();render()}return}if(b.dataset.study){studySubject(b.dataset.study,Number(b.dataset.minutes)||60);save();render();return}if(b.dataset.studyFriend){studySubject(b.dataset.studyFriend,60,'friend');save();render();return}if(b.dataset.studyTeacher){studySubject(b.dataset.studyTeacher,30,'teacher');save();render();return}if(b.dataset.homework){doHomework(b.dataset.homework);save();render();return}if(b.dataset.examTake){takeExam(b.dataset.examTake,false);save();render();return}if(b.dataset.examCheat){takeExam(b.dataset.examCheat,true);save();render();return}if(b.dataset.activityJoin){decideActivity(b.dataset.activityJoin,true);save();render();return}if(b.dataset.activityDecline){decideActivity(b.dataset.activityDecline,false);save();render();return}if(b.dataset.clubAction){clubAction(b.dataset.clubAction,b.dataset.kind);save();render();return}if(b.dataset.contestEnter){contestAction(b.dataset.contestEnter,'enter');save();render();return}if(b.dataset.contestDecline){contestAction(b.dataset.contestDecline,'decline');save();render();return}if(b.dataset.contestPractice){contestAction(b.dataset.contestPractice,'practice');save();render();return}if(b.dataset.chore){doChore(b.dataset.chore);save();render();return}if(b.dataset.shopOwn){buyWithOwnMoney(b.dataset.shopOwn);save();render();return}if(b.dataset.shopParent){caregiverRequestOptions(b.dataset.shopParent);save();render();return}if(b.dataset.shopBirthday){requestFutureGift(b.dataset.shopBirthday,'Birthday');save();render();return}if(b.dataset.shopChristmas){requestFutureGift(b.dataset.shopChristmas,'Christmas');save();render();return}if(b.dataset.giftAskagain){const r=S.giftRequests.find(x=>x.id===b.dataset.giftAskagain&&!x.resolved);if(r){r.begging=(r.begging||1)+1;if(r.begging>=3){r.chancePenalty=(r.chancePenalty||0)+4;S.family.tension=clamp(S.family.tension+2)}log('Asked again',`${r.item} is still waiting for ${r.occasion}.`);save();render()}return}if(b.dataset.itemAction){if(b.dataset.itemAction==='gift'){const it=S.inventoryItems.find(x=>x.id===b.dataset.itemId);if(!it)return;openModal(`Give ${it.name} to…`,`<div class="modal-action-grid">${S.people.map(p=>`<button data-gift-item="${it.id}" data-gift-person="${p.id}">${esc(p.name)}</button>`).join('')}</div>`)}else{useInventoryItem(b.dataset.itemId,b.dataset.itemAction);save();render()}return}if(b.dataset.pendingAgain){askAgainPending(b.dataset.pendingAgain);save();render();return}if(b.dataset.phoneApp){if(b.dataset.phoneApp==='Social')socialPost();else phoneApp(b.dataset.phoneApp);save();render();return}if(b.dataset.job){applyForJob(b.dataset.job);save();render();return}if(b.dataset.stallWork){runStall(true);save();render();return}if(b.dataset.stallClose){S.stall.active=false;log('Stand closed','You pack up the stand for now.');save();render();return}if(b.dataset.yard){negotiateYardSale(b.dataset.yard);save();render();return}if(b.dataset.eventId){resolveEventChoice(b.dataset.eventId,b.dataset.eventChoice);return}}
+function handleModalClick(e){const b=e.target.closest('button');if(!b||!S)return;if(handleLifecycleClick(b))return;if(b.dataset.personAction){personAction(b.dataset.personId,b.dataset.personAction);save();render();if(b.dataset.personAction!=='giveGift')closeChoiceModal();return}if(b.dataset.giftItem){giveInventoryItem(b.dataset.giftItem,b.dataset.giftPerson);save();render();return}if(b.dataset.messageReply){replyMessage(b.dataset.messageReply);save();render();return}}
 
 $('personality').addEventListener('click',e=>{const b=e.target.closest('[data-chip]');if(!b)return;const v=b.dataset.chip;if(selectedP.includes(v))selectedP=selectedP.filter(x=>x!==v);else if(selectedP.length<5)selectedP.push(v);chips('personality',D.personalities,selectedP)});
 $('talents').addEventListener('click',e=>{const b=e.target.closest('[data-chip]');if(!b)return;const v=b.dataset.chip;if(selectedT.includes(v))selectedT=selectedT.filter(x=>x!==v);else if(selectedT.length<5)selectedT.push(v);chips('talents',D.talents,selectedT)});
@@ -607,7 +1416,7 @@ document.querySelectorAll('[data-random]').forEach(b=>b.addEventListener('click'
 $('begin').addEventListener('click',()=>{try{$('creator-error').hidden=true;initializeNewLife()}catch(err){console.error('Start-game error',err);$('creator-error').hidden=false;$('creator-error').textContent='Could not start life: '+(err?.message||err)}});
 $('load-last').addEventListener('click',loadLast);$('import-btn').addEventListener('click',importFile);$('import-file').addEventListener('change',e=>importSaveFile(e.target.files?.[0]));
 $('save').addEventListener('click',()=>{save();toast('Saved')});$('export').addEventListener('click',exportSave);$('pause').addEventListener('click',()=>$('overlay').classList.remove('hidden'));$('close-menu').addEventListener('click',()=>$('overlay').classList.add('hidden'));$('menu-save').addEventListener('click',()=>{save();toast('Saved')});$('menu-export').addEventListener('click',exportSave);$('menu-import').addEventListener('click',importFile);$('menu-new').addEventListener('click',restart);$('close-choice').addEventListener('click',closeChoiceModal);
-$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;active=b.dataset.tab;render()});$('panel-host').addEventListener('click',handlePanelClick);$('event-actions').addEventListener('click',handlePanelClick);$('choice-content').addEventListener('click',handleModalClick);$('age-up').addEventListener('click',ageUp);$('clear-log').addEventListener('click',()=>{if(!S)return;if(confirm('Clear the visible life log? Important milestones remain in the journal.')){S.log=[];save();render()}});
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;active=b.dataset.tab;render()});$('panel-host').addEventListener('click',handlePanelClick);$('event-actions').addEventListener('click',handlePanelClick);$('choice-content').addEventListener('click',handleModalClick);$('age-up').addEventListener('click',ageUp);$('next-day').addEventListener('click',()=>{nextDay();save();render()});$('clear-log').addEventListener('click',()=>{if(!S)return;if(confirm('Clear the visible life log? Important milestones remain in the journal.')){S.log=[];save();render()}});
 $('needs-hud').addEventListener('click',e=>{const b=e.target.closest('[data-need]');if(!b||!S)return;const k=b.dataset.need;if(k==='social'){active='people';render()}else if(k==='comfort'){active='places';render()}else act(needAction(k))});
 $('choice-overlay').addEventListener('click',e=>{if(e.target===$('choice-overlay'))closeChoiceModal()});document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('choice-overlay').classList.contains('hidden'))closeChoiceModal();else $('overlay').classList.toggle('hidden')});
 $('panel-host').addEventListener('change',()=>{});
@@ -619,7 +1428,7 @@ chips('personality',D.personalities,selectedP);chips('talents',D.talents,selecte
 // Safe test hook used by QC. It does not alter normal gameplay unless called explicitly.
 window.__LIFE_SIM_TEST__={
  getState:()=>S?JSON.parse(JSON.stringify(S)):null,
- setAge:(age)=>{if(!S)return;age=Math.max(0,Math.min(100,Number(age)||0));S.age=age;const b=parseISO(S.dob);b.setUTCFullYear(b.getUTCFullYear()+age);S.clock.dateISO=isoDate(b);S.clock.minute=480;addStagePeople();progressSchoolForAge();ensurePhoneApps();render();save()},
+ setAge:(age)=>{if(!S)return;age=Math.max(0,Math.min(100,Number(age)||0));S.age=age;const b=parseISO(S.dob);b.setUTCFullYear(b.getUTCFullYear()+age);S.clock.dateISO=isoDate(b);S.clock.minute=480;addStagePeople();progressSchoolForAge();ensurePhoneApps();reconcileState('test');render();save()},
  setNeed:(k,v)=>{if(S&&k in S.needs){S.needs[k]=clamp(v);render()}},
  setMoney:(cash=0,savings=0,parentSavings=0)=>{if(!S)return;S.money=Math.max(0,Number(cash)||0);S.finance.savings=Math.max(0,Number(savings)||0);S.finance.parentSavings=Math.max(0,Number(parentSavings)||0);render();save()},
  setFamilyRules:(patch={})=>{if(!S)return;Object.assign(S.family.rules,patch);render();save()},
@@ -632,7 +1441,23 @@ window.__LIFE_SIM_TEST__={
  advanceDays:(n,quiet=false)=>{advanceTime(Math.max(0,Number(n)||0)*1440,{skipNeeds:true,silent:true,skipRoutine:!!quiet});render();save()},
  openTab:(tab)=>{active=tab;render()},
  saveNow:()=>save(),
- migrate:()=>migrate()
+ migrate:()=>migrate(),
+ loadState:(obj)=>{S=JSON.parse(JSON.stringify(obj));enterGame();return true},
+ setClock:(dateISO,minute)=>{if(!S)return;if(dateISO)S.clock.dateISO=dateISO;if(minute!=null)S.clock.minute=Number(minute);reconcileState('test');render();save()},
+ advanceMinutes:(n)=>{advanceTime(Number(n)||0,{silent:true});render();save()},
+ nextDay:(force=false)=>{nextDay(!!force);render();save()},
+ ageUp:()=>ageUp(),
+ takeExam:(id,cheat=false)=>{takeExam(id,!!cheat);render();save()},
+ attendSchool:()=>{attendSchool();render();save()},
+ doHomework:(name)=>{doHomework(name);render();save()},
+ clubAttend:(id)=>{attendClubSession(id);render();save()},
+ clubSkip:(id)=>{skipClubSession(id);render();save()},
+ clubExcuse:(id)=>{excuseClubSession(id);render();save()},
+ contestAttend:(id)=>{attendContest(id);render();save()},
+ eventChoice:(id,choice)=>resolveEventChoice(id,choice),
+ reconcile:()=>{reconcileState('test');render();save()},
+ todayWarnings:()=>todayWarnings(),
+ call:(name,...args)=>{const f={addExamRecord,activateClub,registerContest,ensureSchoolDayObligation,nextSchoolDay,isSchoolDay,queueEvent,closeChoiceModal,setKindergartenPreference,exploreSchoolActivity,exploreSchoolEvent,generateHomework,contestAction,decideActivity}[name];if(!f)throw new Error('Unknown test function '+name);const r=f(...args);render();save();return r===undefined?null:JSON.parse(JSON.stringify(r))}
 };
 
 if(new URLSearchParams(location.search).get('smoke')==='1')setTimeout(()=>{try{$('c-name').value='Smoke Test';initializeNewLife();document.body.dataset.smoke=(!$('game').classList.contains('hidden')&&S)?'pass':'fail'}catch(e){console.error(e);document.body.dataset.smoke='fail';document.body.dataset.smokeError=e.message}},30);

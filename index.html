@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <title>Life Sim — Living World v7</title>
+  <title>Life Sim — Living World v7.2</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="app">
   <section id="creator" class="screen">
     <div class="hero">
-      <div class="eyebrow">LIFE SIMULATION • LIVING WORLD v7</div>
+      <div class="eyebrow">LIFE SIMULATION • LIVING WORLD v7.2</div>
       <h1>A Life of Your Own</h1>
       <p>Start at birth. Everyday life, other people, deadlines and consequences continue around you.</p>
     </div>
@@ -46,13 +46,13 @@
       </aside>
       <section class="life-main">
         <div class="life-hud panel">
-          <div class="hud-story"><div class="event-meta" id="event-meta">DAY</div><div class="age-line"><span>AGE</span><strong id="s-age">0</strong></div><h1 id="event-title">Welcome to the world.</h1><p id="event-text">Your story is beginning.</p><div id="event-actions" class="event-actions"></div></div>
+          <div class="hud-story"><div class="event-meta" id="event-meta">DAY</div><div class="age-line"><span>AGE</span><strong id="s-age">0</strong></div><h1 id="event-title">Welcome to the world.</h1><p id="event-text">Your story is beginning.</p><div id="event-detail" class="event-detail"></div><div id="event-actions" class="event-actions"></div></div>
           <aside class="needs-hud"><div class="hud-section-title"><span>NEEDS RIGHT NOW</span><small>click to respond</small></div><div id="needs-hud" class="needs-compact"></div><div class="hud-section-title wants-title"><span>WANTS</span></div><div id="wants-hud" class="wants-hud"></div></aside>
         </div>
         <div id="upcoming-strip" class="upcoming-strip" aria-label="Upcoming events"></div>
         <div class="quick-stats" aria-label="Life status"><div><span>CASH</span><b id="s-money">$0</b></div><div><span>HEALTH</span><b id="s-health">100</b></div><div><span>MOOD</span><b id="s-happy">70</b></div><div><span>ENERGY</span><b id="s-energy">100</b></div><div><span>STRESS</span><b id="s-stress">10</b></div><div><span>LUCK</span><b id="s-luck">50%</b></div><div><span>MENTALITY</span><b id="s-mentality">Balanced</b></div></div>
         <div id="panel-host"></div>
-        <div class="panel age-panel"><button id="age-up" class="age-up">🎂 AGE UP</button><span>Skip to the next birthday. Scheduled decisions, holidays and world changes still process.</span></div>
+        <div class="panel age-panel"><div class="time-buttons"><button id="next-day" class="next-day">☀️ NEXT DAY</button><button id="age-up" class="age-up">🎂 AGE UP</button></div><span><b>Next Day</b> finishes today and sleeps into tomorrow morning. <b>Age Up</b> simulates the whole year to your next birthday and shows a summary — obligations are still attended or missed along the way.</span></div>
         <div class="panel log-panel"><div class="section-heading"><h3>Life log</h3><button id="clear-log">Clear view</button></div><div id="log" class="log"></div></div>
       </section>
     </main>
