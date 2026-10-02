@@ -1,0 +1,5305 @@
+{
+  "version": 7.2,
+  "name": "Jordan",
+  "dob": "2004-05-20",
+  "place": "Paris, France",
+  "zodiac": "Taurus",
+  "gender": "Boy",
+  "attraction": "Not sure yet",
+  "wealth": "Extremely wealthy",
+  "home": "Chaotic",
+  "personality": [
+    "Empathetic"
+  ],
+  "talents": [
+    "Writing",
+    "Acting"
+  ],
+  "age": 6,
+  "day": 2205,
+  "clock": {
+    "dateISO": "2010-06-02",
+    "minute": 900
+  },
+  "location": "Home",
+  "money": 52,
+  "health": 100,
+  "happiness": 56,
+  "energy": 61.7,
+  "stress": 3,
+  "luck": 43.51209582743837,
+  "mentality": "Empathetic",
+  "emotion": {
+    "current": "Thoughtful",
+    "reason": "You chose: Talk it out.",
+    "intensity": 35
+  },
+  "needs": {
+    "hunger": 44.715,
+    "hygiene": 76.33333333333334,
+    "toilet": 58.75,
+    "fun": 93.73166666666667,
+    "social": 100,
+    "comfort": 98.72500000000001,
+    "sleep": 76.075
+  },
+  "development": {
+    "skills": {
+      "selfFeeding": 10,
+      "potty": 0,
+      "bathing": 29,
+      "dressing": 9,
+      "cooking": 0,
+      "money": 0,
+      "safety": 0,
+      "reading": 37,
+      "communication": 84
+    },
+    "kindergarten": {
+      "asked": true,
+      "enrolled": true,
+      "preference": true,
+      "decision": "Enrolled"
+    },
+    "milestones": []
+  },
+  "family": {
+    "closeness": 95,
+    "tension": 12,
+    "responsibility": 0,
+    "allowance": 0,
+    "rules": {
+      "strictness": 46,
+      "respect": 58,
+      "generosity": 88,
+      "reliability": 57.8,
+      "curfew": 21
+    },
+    "restrictions": {
+      "groundedUntil": null,
+      "reason": null
+    }
+  },
+  "people": [
+    {
+      "id": "npc-mur8cr8t-pu7bk8",
+      "role": "parent",
+      "age": 34,
+      "rel": 78,
+      "trust": 70,
+      "fun": 72.74659119802794,
+      "jealousy": 10.978827101278371,
+      "conflict": 6.534150527963124,
+      "mood": "busy",
+      "lastSeen": 22,
+      "knownSince": 0,
+      "history": [
+        {
+          "dateISO": "2010-05-29",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-28",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-27",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-22",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        }
+      ],
+      "memory": "Something changed in their life while you were elsewhere.",
+      "traits": [
+        "Quiet"
+      ],
+      "name": "Mom"
+    },
+    {
+      "id": "npc-mur8cr8t-fvphma",
+      "role": "parent",
+      "age": 36,
+      "rel": 83.05,
+      "trust": 72,
+      "fun": 53.04813152049283,
+      "jealousy": 7.76338217651908,
+      "conflict": 6.859450781210312,
+      "mood": "good",
+      "lastSeen": 22,
+      "knownSince": 0,
+      "history": [
+        {
+          "dateISO": "2010-05-29",
+          "age": 6,
+          "text": "You gave them Sweater.",
+          "importance": 2
+        },
+        {
+          "dateISO": "2010-05-25",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-21",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2008-05-21",
+          "age": 4,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        }
+      ],
+      "memory": "You gave them Sweater.",
+      "traits": [
+        "Strict"
+      ],
+      "name": "Dad"
+    },
+    {
+      "id": "npc-mur8cr8t-kcw8zw",
+      "role": "grandparent",
+      "age": 61,
+      "rel": 72,
+      "trust": 68.86723106065217,
+      "fun": 71.43347981128278,
+      "jealousy": 8.005995908673176,
+      "conflict": 3.963193448214536,
+      "mood": "good",
+      "lastSeen": 22,
+      "knownSince": 0,
+      "history": [
+        {
+          "dateISO": "2010-05-23",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        }
+      ],
+      "memory": "Something changed in their life while you were elsewhere.",
+      "traits": [
+        "Curious"
+      ],
+      "name": "Grandmother"
+    },
+    {
+      "id": "npc-mur8evcl-qgw5zf",
+      "role": "friend",
+      "age": 6,
+      "rel": 94.89848999466878,
+      "trust": 69.44681277565218,
+      "fun": 47.65013638040357,
+      "jealousy": 8.670643563936196,
+      "conflict": 2.2231371211113418,
+      "mood": "quiet",
+      "lastSeen": 19,
+      "knownSince": 3,
+      "history": [
+        {
+          "dateISO": "2010-06-01",
+          "age": 6,
+          "text": "You accepted an invitation and spent time together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied Science together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied History together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied History together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied English / Language together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied English / Language together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied English / Language together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied English / Language together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied English / Language together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied English / Language together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You studied Mathematics together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-26",
+          "age": 6,
+          "text": "You studied Mathematics together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-26",
+          "age": 6,
+          "text": "You accepted an invitation and spent time together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-26",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-24",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-22",
+          "age": 6,
+          "text": "You spent time together through Chess Club.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2009-05-22",
+          "age": 5,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2008-05-20",
+          "age": 4,
+          "text": "Their routines changed over the year.",
+          "importance": 1
+        }
+      ],
+      "memory": "You accepted an invitation and spent time together.",
+      "traits": [
+        "Quiet"
+      ],
+      "name": "Mia • neighbor"
+    },
+    {
+      "id": "npc-mur8j39t-xukfnl",
+      "name": "Noah • classmate",
+      "role": "friend",
+      "age": 6,
+      "rel": 70.77250068396336,
+      "trust": 71.56343596533337,
+      "fun": 68.59280431475148,
+      "jealousy": 1.2246786696678251,
+      "conflict": 0.5145087515285574,
+      "mood": "confident",
+      "lastSeen": 13,
+      "knownSince": 6,
+      "history": [
+        {
+          "dateISO": "2010-06-02",
+          "age": 6,
+          "text": "School interaction: Talk it out.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You accepted an invitation and spent time together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-30",
+          "age": 6,
+          "text": "You had a real conversation.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-26",
+          "age": 6,
+          "text": "Something changed in their life while you were elsewhere.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-23",
+          "age": 6,
+          "text": "You had a real conversation.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-20",
+          "age": 6,
+          "text": "They became busier with their own life.",
+          "importance": 1
+        }
+      ],
+      "memory": "School interaction: Talk it out.",
+      "traits": [
+        "Kind"
+      ]
+    },
+    {
+      "id": "npc-mur8n1kl-fx9c3u",
+      "name": "Eli • neighbor",
+      "role": "friend",
+      "age": 6,
+      "rel": 66.86796075529227,
+      "trust": 73.48945161554656,
+      "fun": 54.59359746609536,
+      "jealousy": 10.80106606040899,
+      "conflict": 2.2677298785974376,
+      "mood": "confident",
+      "lastSeen": 10,
+      "knownSince": 6,
+      "history": [
+        {
+          "dateISO": "2010-06-01",
+          "age": 6,
+          "text": "You accepted an invitation and spent time together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-29",
+          "age": 6,
+          "text": "You had a real conversation.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-23",
+          "age": 6,
+          "text": "You played together.",
+          "importance": 1
+        },
+        {
+          "dateISO": "2010-05-23",
+          "age": 6,
+          "text": "You had a real conversation.",
+          "importance": 1
+        }
+      ],
+      "memory": "You accepted an invitation and spent time together.",
+      "traits": [
+        "Busy"
+      ]
+    }
+  ],
+  "school": {
+    "name": "Sunrise Secondary School",
+    "grade": "Grade 1",
+    "className": "1-B",
+    "attendance": 94.54999999999998,
+    "behavior": 72,
+    "gpa": null,
+    "rank": null,
+    "subjects": [
+      {
+        "name": "Mathematics",
+        "score": 89.32,
+        "skill": 100,
+        "prep": 30.349999999999998,
+        "trend": "↑",
+        "teacher": {
+          "name": "Ms. Patel",
+          "rel": 70,
+          "style": "Fair"
+        },
+        "homework": {
+          "status": "Submitted",
+          "progress": 100,
+          "dueDate": "2010-06-02",
+          "id": "hw-mur9ygrz-a3tz48",
+          "assignedDate": "2010-05-31",
+          "submittedDate": "2010-05-31",
+          "resolvedDate": "2010-05-31"
+        },
+        "lastStudyDate": "2010-05-30"
+      },
+      {
+        "name": "English / Language",
+        "score": 78,
+        "skill": 85,
+        "prep": 54,
+        "trend": "→",
+        "teacher": {
+          "name": "Ms. Lee",
+          "rel": 60,
+          "style": "Strict"
+        },
+        "homework": {
+          "status": "None",
+          "progress": 0,
+          "dueDate": null
+        },
+        "lastStudyDate": "2010-05-30"
+      },
+      {
+        "name": "Science",
+        "score": 88,
+        "skill": 75.52047620755292,
+        "prep": 10,
+        "trend": "→",
+        "teacher": {
+          "name": "Mr. Brown",
+          "rel": 75,
+          "style": "Warm"
+        },
+        "homework": {
+          "status": "Submitted",
+          "progress": 100,
+          "dueDate": "2010-06-04",
+          "id": "hw-mur9ygrz-fspwz4",
+          "assignedDate": "2010-05-31",
+          "submittedDate": "2010-05-31",
+          "resolvedDate": "2010-05-31"
+        },
+        "lastStudyDate": "2010-05-30",
+        "homeworkHistory": [
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-31",
+            "id": "hw-mur8pp6m-wyenua",
+            "assignedDate": "2010-05-25",
+            "submittedDate": "2010-05-26",
+            "resolvedDate": "2010-05-26",
+            "subject": "Science"
+          },
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-24",
+            "id": "hw-mur8l4u9-7sj7ck",
+            "assignedDate": "2010-05-21",
+            "submittedDate": "2010-05-23",
+            "resolvedDate": "2010-05-23",
+            "subject": "Science"
+          }
+        ]
+      },
+      {
+        "name": "History",
+        "score": 92,
+        "skill": 69.83373323458827,
+        "prep": 23,
+        "trend": "↑",
+        "teacher": {
+          "name": "Mx. Morgan",
+          "rel": 73,
+          "style": "Fair"
+        },
+        "homework": {
+          "status": "Submitted",
+          "progress": 100,
+          "dueDate": "2010-05-31",
+          "id": "hw-mur8qysk-zdvh32",
+          "assignedDate": "2010-05-27",
+          "submittedDate": "2010-05-28",
+          "resolvedDate": "2010-05-28"
+        },
+        "lastStudyDate": "2010-05-30",
+        "homeworkHistory": [
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-28",
+            "id": "hw-mur8pp6m-y41yb7",
+            "assignedDate": "2010-05-25",
+            "submittedDate": "2010-05-26",
+            "resolvedDate": "2010-05-26",
+            "subject": "History"
+          },
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-24",
+            "id": "hw-mur8l4u9-8plmbd",
+            "assignedDate": "2010-05-21",
+            "submittedDate": "2010-05-23",
+            "resolvedDate": "2010-05-23",
+            "subject": "History"
+          }
+        ]
+      },
+      {
+        "name": "Geography",
+        "score": 74,
+        "skill": 65.35643245700486,
+        "prep": 2,
+        "trend": "→",
+        "teacher": {
+          "name": "Mx. Lee",
+          "rel": 57,
+          "style": "Fair"
+        },
+        "homework": {
+          "status": "Assigned",
+          "progress": 0,
+          "dueDate": "2010-06-07",
+          "id": "hw-mura0801-3npe91",
+          "assignedDate": "2010-06-02"
+        },
+        "lastStudyDate": null,
+        "homeworkHistory": [
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-24",
+            "id": "hw-mur8j39t-y7sjbt",
+            "assignedDate": "2010-05-20",
+            "submittedDate": "2010-05-20",
+            "resolvedDate": "2010-05-20",
+            "subject": "Geography"
+          }
+        ]
+      },
+      {
+        "name": "Art",
+        "score": 76,
+        "skill": 59.62810091400847,
+        "prep": 2,
+        "trend": "→",
+        "teacher": {
+          "name": "Mr. Patel",
+          "rel": 68,
+          "style": "Fair"
+        },
+        "homework": {
+          "status": "Assigned",
+          "progress": 0,
+          "dueDate": "2010-06-07",
+          "id": "hw-mura0801-brrdma",
+          "assignedDate": "2010-06-02"
+        },
+        "lastStudyDate": null
+      },
+      {
+        "name": "Music",
+        "score": 77,
+        "skill": 74.98413302311434,
+        "prep": 4,
+        "trend": "↑",
+        "teacher": {
+          "name": "Ms. Nguyen",
+          "rel": 66,
+          "style": "Fair"
+        },
+        "homework": {
+          "status": "Assigned",
+          "progress": 0,
+          "dueDate": "2010-06-07",
+          "id": "hw-mura0801-bd1h2b",
+          "assignedDate": "2010-06-02"
+        },
+        "lastStudyDate": null,
+        "homeworkHistory": [
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-24",
+            "id": "hw-mur8j39t-mtteqj",
+            "assignedDate": "2010-05-20",
+            "submittedDate": "2010-05-20",
+            "resolvedDate": "2010-05-20",
+            "subject": "Music"
+          }
+        ]
+      },
+      {
+        "name": "Physical Education",
+        "score": 82,
+        "skill": 72.1504563134313,
+        "prep": 15,
+        "trend": "→",
+        "teacher": {
+          "name": "Ms. Brown",
+          "rel": 70,
+          "style": "Fair"
+        },
+        "homework": {
+          "status": "Submitted",
+          "progress": 100,
+          "dueDate": "2010-05-31",
+          "id": "hw-mur8qysk-2qhq3h",
+          "assignedDate": "2010-05-27",
+          "submittedDate": "2010-05-28",
+          "resolvedDate": "2010-05-28"
+        },
+        "lastStudyDate": "2010-05-24"
+      },
+      {
+        "name": "Technology",
+        "score": 77,
+        "skill": 72.26176196087657,
+        "prep": 3,
+        "trend": "→",
+        "teacher": {
+          "name": "Mx. Garcia",
+          "rel": 73,
+          "style": "Warm"
+        },
+        "homework": {
+          "status": "Submitted",
+          "progress": 100,
+          "dueDate": "2010-06-02",
+          "id": "hw-mur9ygrz-7ykxj7",
+          "assignedDate": "2010-05-31",
+          "submittedDate": "2010-05-31",
+          "resolvedDate": "2010-05-31"
+        },
+        "lastStudyDate": null,
+        "homeworkHistory": [
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-31",
+            "id": "hw-mur8r9m9-urwvt3",
+            "assignedDate": "2010-05-27",
+            "submittedDate": "2010-05-28",
+            "resolvedDate": "2010-05-28",
+            "subject": "Technology"
+          },
+          {
+            "status": "Submitted",
+            "progress": 100,
+            "dueDate": "2010-05-24",
+            "id": "hw-mur8j39t-co8rcl",
+            "assignedDate": "2010-05-20",
+            "submittedDate": "2010-05-20",
+            "resolvedDate": "2010-05-20",
+            "subject": "Technology"
+          }
+        ]
+      }
+    ],
+    "clubs": [
+      {
+        "id": "club-mur8mced-04nqud",
+        "status": "Active",
+        "joinedDate": "2010-05-22",
+        "skill": 71.75,
+        "sessions": 12,
+        "members": [
+          "Mina",
+          "Alex"
+        ],
+        "name": "Chess Club",
+        "attended": 2,
+        "missedSessions": 0,
+        "excusedSessions": 0,
+        "consecutiveMissed": 0,
+        "leaderRel": 62,
+        "warnings": 0,
+        "recent": [
+          "A",
+          "A"
+        ],
+        "position": "New member",
+        "leader": "Ms. Garcia",
+        "nextSessionDate": "2010-06-07"
+      }
+    ],
+    "activityOffers": [
+      {
+        "id": "offer-mur8lu4h-kyg88f",
+        "name": "Chess Club",
+        "status": "Joined",
+        "createdDate": "2010-05-21",
+        "decisionDate": "2010-05-25"
+      }
+    ],
+    "contests": [
+      {
+        "id": "contest-mur8m63x-5wkw6q",
+        "status": "No-show",
+        "prep": 100,
+        "result": "Did not attend",
+        "name": "Reading Challenge",
+        "createdDate": "2010-05-21",
+        "decisionDate": "2010-05-25",
+        "eventDate": "2010-06-02"
+      },
+      {
+        "id": "contest-mur8m4ad-l5t216",
+        "status": "Denied",
+        "prep": 0,
+        "result": null,
+        "name": "School Art Day",
+        "createdDate": "2010-05-21",
+        "decisionDate": "2010-05-25",
+        "eventDate": "2010-06-03"
+      }
+    ],
+    "friends": [],
+    "rivals": [],
+    "yearStarted": "2010-05-20",
+    "record": {
+      "daysAttended": 9,
+      "absences": 1,
+      "excused": 0,
+      "tardies": 2,
+      "examsCompleted": 1,
+      "examsMissed": 0,
+      "examsExcused": 0,
+      "submittedHomework": 13,
+      "lateHomework": 0,
+      "missingHomework": 0,
+      "meetingHeld": false
+    }
+  },
+  "exams": [
+    {
+      "id": "exam-mur8j39t-fc8bf7",
+      "subject": "Mathematics",
+      "dateISO": "2010-05-28",
+      "minute": 540,
+      "type": "Class assessment",
+      "score": 88,
+      "status": "Completed",
+      "prep": 0,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "days": -5,
+      "resolvedAt": {
+        "dateISO": "2010-05-28",
+        "minute": 615
+      },
+      "reason": "Completed",
+      "subjectDelta": 0.3199999999999932,
+      "consequencesApplied": true
+    },
+    {
+      "id": "exam-mur8j39t-h51540",
+      "subject": "English / Language",
+      "dateISO": "2010-06-04",
+      "minute": 540,
+      "type": "Class assessment",
+      "score": null,
+      "status": "Scheduled",
+      "prep": 0,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "days": 2
+    },
+    {
+      "id": "exam-mur8j39t-7b8cmu",
+      "subject": "Science",
+      "dateISO": "2010-08-25",
+      "minute": 540,
+      "type": "Class assessment",
+      "score": null,
+      "status": "Scheduled",
+      "prep": 0,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "days": 84
+    },
+    {
+      "id": "exam-mur8j39t-88cqpl",
+      "subject": "History",
+      "dateISO": "2010-08-25",
+      "minute": 540,
+      "type": "Class assessment",
+      "score": null,
+      "status": "Scheduled",
+      "prep": 0,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "days": 84
+    },
+    {
+      "id": "exam-mur8j39t-t3v4b9",
+      "subject": "Geography",
+      "dateISO": "2010-08-25",
+      "minute": 540,
+      "type": "Class assessment",
+      "score": null,
+      "status": "Scheduled",
+      "prep": 0,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "days": 84
+    },
+    {
+      "id": "exam-mur8j39t-s9sgs8",
+      "subject": "Art",
+      "dateISO": "2010-08-25",
+      "minute": 540,
+      "type": "Class assessment",
+      "score": null,
+      "status": "Scheduled",
+      "prep": 0,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "days": 84
+    }
+  ],
+  "calendar": [
+    {
+      "id": "cal-exam-mur8j39t-fc8bf7",
+      "type": "exam",
+      "title": "Mathematics • Class assessment",
+      "dateISO": "2010-05-28",
+      "status": "Completed",
+      "payload": {
+        "examId": "exam-mur8j39t-fc8bf7"
+      },
+      "source": "school",
+      "createdDate": "2010-05-20",
+      "startMinute": 540,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "minute": 540,
+      "category": "Exam",
+      "required": true,
+      "importance": 3,
+      "location": "School",
+      "participants": [],
+      "sourceId": "exam-mur8j39t-fc8bf7",
+      "attendanceStatus": null,
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Due",
+          "dateISO": "2010-05-28",
+          "minute": 540,
+          "reason": "Window opened"
+        },
+        {
+          "from": "Due",
+          "to": "Attending",
+          "dateISO": "2010-05-28",
+          "minute": 540,
+          "reason": "Sitting the assessment"
+        },
+        {
+          "from": "Attending",
+          "to": "Completed",
+          "dateISO": "2010-05-28",
+          "minute": 615,
+          "reason": "Completed"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-28",
+        "minute": 615
+      },
+      "resolutionReason": "Completed"
+    },
+    {
+      "id": "cal-exam-mur8j39t-h51540",
+      "type": "exam",
+      "title": "English / Language • Class assessment",
+      "dateISO": "2010-06-04",
+      "status": "Scheduled",
+      "payload": {
+        "examId": "exam-mur8j39t-h51540"
+      },
+      "source": "school",
+      "createdDate": "2010-05-20",
+      "startMinute": 540,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "minute": 540,
+      "category": "Exam",
+      "required": true,
+      "importance": 3,
+      "location": "School",
+      "participants": [],
+      "sourceId": "exam-mur8j39t-h51540",
+      "attendanceStatus": null,
+      "history": []
+    },
+    {
+      "id": "cal-exam-mur8j39t-7b8cmu",
+      "type": "exam",
+      "title": "Science • Class assessment",
+      "dateISO": "2010-08-25",
+      "status": "Scheduled",
+      "payload": {
+        "examId": "exam-mur8j39t-7b8cmu"
+      },
+      "source": "school",
+      "createdDate": "2010-05-20",
+      "startMinute": 540,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "minute": 540,
+      "category": "Exam",
+      "required": true,
+      "importance": 3,
+      "location": "School",
+      "participants": [],
+      "sourceId": "exam-mur8j39t-7b8cmu",
+      "attendanceStatus": null,
+      "history": []
+    },
+    {
+      "id": "cal-exam-mur8j39t-88cqpl",
+      "type": "exam",
+      "title": "History • Class assessment",
+      "dateISO": "2010-08-25",
+      "status": "Scheduled",
+      "payload": {
+        "examId": "exam-mur8j39t-88cqpl"
+      },
+      "source": "school",
+      "createdDate": "2010-05-20",
+      "startMinute": 540,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "minute": 540,
+      "category": "Exam",
+      "required": true,
+      "importance": 3,
+      "location": "School",
+      "participants": [],
+      "sourceId": "exam-mur8j39t-88cqpl",
+      "attendanceStatus": null,
+      "history": []
+    },
+    {
+      "id": "cal-exam-mur8j39t-t3v4b9",
+      "type": "exam",
+      "title": "Geography • Class assessment",
+      "dateISO": "2010-08-25",
+      "status": "Scheduled",
+      "payload": {
+        "examId": "exam-mur8j39t-t3v4b9"
+      },
+      "source": "school",
+      "createdDate": "2010-05-20",
+      "startMinute": 540,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "minute": 540,
+      "category": "Exam",
+      "required": true,
+      "importance": 3,
+      "location": "School",
+      "participants": [],
+      "sourceId": "exam-mur8j39t-t3v4b9",
+      "attendanceStatus": null,
+      "history": []
+    },
+    {
+      "id": "cal-exam-mur8j39t-s9sgs8",
+      "type": "exam",
+      "title": "Art • Class assessment",
+      "dateISO": "2010-08-25",
+      "status": "Scheduled",
+      "payload": {
+        "examId": "exam-mur8j39t-s9sgs8"
+      },
+      "source": "school",
+      "createdDate": "2010-05-20",
+      "startMinute": 540,
+      "endMinute": 615,
+      "graceMinute": 660,
+      "minute": 540,
+      "category": "Exam",
+      "required": true,
+      "importance": 3,
+      "location": "School",
+      "participants": [],
+      "sourceId": "exam-mur8j39t-s9sgs8",
+      "attendanceStatus": null,
+      "history": []
+    },
+    {
+      "id": "school-2010-05-20",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-20",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-20",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Tardy",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Due",
+          "dateISO": "2010-05-20",
+          "minute": 600,
+          "reason": "Window opened"
+        },
+        {
+          "from": "Due",
+          "to": "Attending",
+          "dateISO": "2010-05-20",
+          "minute": 600,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-20",
+          "minute": 900,
+          "reason": "Arrived late"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-20",
+        "minute": 900
+      },
+      "resolutionReason": "Arrived late"
+    },
+    {
+      "id": "school-2010-05-21",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-21",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-21",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Present",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Attending",
+          "dateISO": "2010-05-21",
+          "minute": 390,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-21",
+          "minute": 900,
+          "reason": "On time"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-21",
+        "minute": 900
+      },
+      "resolutionReason": "On time"
+    },
+    {
+      "id": "club-club-mur8mced-04nqud-2010-05-24",
+      "type": "clubSession",
+      "title": "Chess Club session",
+      "dateISO": "2010-05-24",
+      "status": "Attended",
+      "payload": {
+        "clubId": "club-mur8mced-04nqud"
+      },
+      "source": "club",
+      "createdDate": "2010-05-22",
+      "startMinute": 930,
+      "endMinute": 1020,
+      "graceMinute": 960,
+      "participants": [
+        "Mina",
+        "Alex"
+      ],
+      "minute": 930,
+      "category": "Club",
+      "required": false,
+      "importance": 1,
+      "location": "School",
+      "sourceId": "club-mur8mced-04nqud",
+      "attendanceStatus": null,
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Due",
+          "dateISO": "2010-05-24",
+          "minute": 930,
+          "reason": "Window opened"
+        },
+        {
+          "from": "Due",
+          "to": "Attending",
+          "dateISO": "2010-05-24",
+          "minute": 930,
+          "reason": "Arrived"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-24",
+          "minute": 1020,
+          "reason": "Attended"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-24",
+        "minute": 1020
+      },
+      "resolutionReason": "Attended"
+    },
+    {
+      "id": "contest-contest-mur8m63x-5wkw6q",
+      "type": "schoolEvent",
+      "title": "Reading Challenge",
+      "dateISO": "2010-06-02",
+      "status": "No-show",
+      "payload": {
+        "contestId": "contest-mur8m63x-5wkw6q"
+      },
+      "source": "school",
+      "createdDate": "2010-05-22",
+      "startMinute": 600,
+      "endMinute": 780,
+      "graceMinute": 690,
+      "minute": 600,
+      "category": "Competition",
+      "required": true,
+      "importance": 2,
+      "location": "School hall",
+      "participants": [],
+      "sourceId": "contest-mur8m63x-5wkw6q",
+      "attendanceStatus": null,
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "No-show",
+          "dateISO": "2010-06-02",
+          "minute": 900,
+          "reason": "Did not check in"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-06-02",
+        "minute": 900
+      },
+      "resolutionReason": "Did not check in"
+    },
+    {
+      "id": "school-2010-05-24",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-24",
+      "status": "Missed",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-24",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Absent",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Due",
+          "dateISO": "2010-05-24",
+          "minute": 569,
+          "reason": "Window opened"
+        },
+        {
+          "from": "Due",
+          "to": "Missed",
+          "dateISO": "2010-05-24",
+          "minute": 689,
+          "reason": "Did not arrive by the attendance cutoff"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-24",
+        "minute": 689
+      },
+      "resolutionReason": "Did not arrive by the attendance cutoff"
+    },
+    {
+      "id": "club-club-mur8mced-04nqud-2010-05-31",
+      "type": "clubSession",
+      "title": "Chess Club session",
+      "dateISO": "2010-05-31",
+      "status": "Attended",
+      "payload": {
+        "clubId": "club-mur8mced-04nqud"
+      },
+      "source": "club",
+      "createdDate": "2010-05-24",
+      "startMinute": 930,
+      "endMinute": 1020,
+      "graceMinute": 960,
+      "participants": [
+        "Mina",
+        "Alex"
+      ],
+      "minute": 930,
+      "category": "Club",
+      "required": false,
+      "importance": 1,
+      "location": "School",
+      "sourceId": "club-mur8mced-04nqud",
+      "attendanceStatus": null,
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Due",
+          "dateISO": "2010-05-31",
+          "minute": 930,
+          "reason": "Window opened"
+        },
+        {
+          "from": "Due",
+          "to": "Attending",
+          "dateISO": "2010-05-31",
+          "minute": 930,
+          "reason": "Arrived"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-31",
+          "minute": 1020,
+          "reason": "Attended"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-31",
+        "minute": 1020
+      },
+      "resolutionReason": "Attended"
+    },
+    {
+      "id": "school-2010-05-25",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-25",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-25",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Present",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Attending",
+          "dateISO": "2010-05-25",
+          "minute": 390,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-25",
+          "minute": 900,
+          "reason": "On time"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-25",
+        "minute": 900
+      },
+      "resolutionReason": "On time"
+    },
+    {
+      "id": "school-2010-05-26",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-26",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-26",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Tardy",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Due",
+          "dateISO": "2010-05-26",
+          "minute": 510,
+          "reason": "Window opened"
+        },
+        {
+          "from": "Due",
+          "to": "Attending",
+          "dateISO": "2010-05-26",
+          "minute": 510,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-26",
+          "minute": 900,
+          "reason": "Arrived late"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-26",
+        "minute": 900
+      },
+      "resolutionReason": "Arrived late"
+    },
+    {
+      "id": "school-2010-05-27",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-27",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-27",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Present",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Attending",
+          "dateISO": "2010-05-27",
+          "minute": 390,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-27",
+          "minute": 900,
+          "reason": "On time"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-27",
+        "minute": 900
+      },
+      "resolutionReason": "On time"
+    },
+    {
+      "id": "school-2010-05-28",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-28",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-28",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Present",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Attending",
+          "dateISO": "2010-05-28",
+          "minute": 429,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-28",
+          "minute": 900,
+          "reason": "On time"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-28",
+        "minute": 900
+      },
+      "resolutionReason": "On time"
+    },
+    {
+      "id": "school-2010-05-31",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-05-31",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-05-31",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Present",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Attending",
+          "dateISO": "2010-05-31",
+          "minute": 390,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-05-31",
+          "minute": 900,
+          "reason": "On time"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-05-31",
+        "minute": 900
+      },
+      "resolutionReason": "On time"
+    },
+    {
+      "id": "club-club-mur8mced-04nqud-2010-06-07",
+      "type": "clubSession",
+      "title": "Chess Club session",
+      "dateISO": "2010-06-07",
+      "status": "Scheduled",
+      "payload": {
+        "clubId": "club-mur8mced-04nqud"
+      },
+      "source": "club",
+      "createdDate": "2010-05-31",
+      "startMinute": 930,
+      "endMinute": 1020,
+      "graceMinute": 960,
+      "participants": [
+        "Mina",
+        "Alex"
+      ],
+      "minute": 930,
+      "category": "Club",
+      "required": false,
+      "importance": 1,
+      "location": "School",
+      "sourceId": "club-mur8mced-04nqud",
+      "attendanceStatus": null,
+      "history": []
+    },
+    {
+      "id": "school-2010-06-01",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-06-01",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-06-01",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Present",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Attending",
+          "dateISO": "2010-06-01",
+          "minute": 390,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-06-01",
+          "minute": 900,
+          "reason": "On time"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-06-01",
+        "minute": 900
+      },
+      "resolutionReason": "On time"
+    },
+    {
+      "id": "school-2010-06-02",
+      "type": "schoolDay",
+      "title": "School • Sunrise Secondary School",
+      "dateISO": "2010-06-02",
+      "status": "Attended",
+      "payload": {
+        "school": "Sunrise Secondary School"
+      },
+      "source": "school",
+      "createdDate": "2010-06-02",
+      "startMinute": 480,
+      "endMinute": 900,
+      "graceMinute": 660,
+      "minute": 480,
+      "category": "School",
+      "required": true,
+      "importance": 2,
+      "location": "School",
+      "participants": [],
+      "sourceId": null,
+      "attendanceStatus": "Present",
+      "history": [
+        {
+          "from": "Scheduled",
+          "to": "Attending",
+          "dateISO": "2010-06-02",
+          "minute": 390,
+          "reason": "Leaving for school"
+        },
+        {
+          "from": "Attending",
+          "to": "Attended",
+          "dateISO": "2010-06-02",
+          "minute": 900,
+          "reason": "On time"
+        }
+      ],
+      "resolvedAt": {
+        "dateISO": "2010-06-02",
+        "minute": 900
+      },
+      "resolutionReason": "On time"
+    }
+  ],
+  "pendingDecisions": [
+    {
+      "createdDate": "2010-05-21",
+      "type": "clubApproval",
+      "title": "Join Chess Club",
+      "resolveDate": "2010-05-22",
+      "payload": {
+        "offerId": "offer-mur8lu4h-kyg88f"
+      },
+      "status": "Approved",
+      "detail": "Your caregiver will decide tomorrow.",
+      "id": "pending-mur8m261-j4zmvg",
+      "resolved": true,
+      "expiresDate": "2010-05-31",
+      "minAge": null,
+      "maxAge": null,
+      "resolvedDate": "2010-05-22",
+      "resolutionReason": "Approved",
+      "supersededBy": null
+    },
+    {
+      "createdDate": "2010-05-21",
+      "type": "contestApproval",
+      "title": "Enter School Art Day",
+      "resolveDate": "2010-05-22",
+      "payload": {
+        "contestId": "contest-mur8m4ad-l5t216"
+      },
+      "status": "Denied",
+      "detail": "Decision tomorrow.",
+      "id": "pending-mur8mag9-cnsbmk",
+      "resolved": true,
+      "expiresDate": "2010-05-31",
+      "minAge": null,
+      "maxAge": null,
+      "resolvedDate": "2010-05-22",
+      "resolutionReason": "Denied",
+      "supersededBy": null
+    },
+    {
+      "createdDate": "2010-05-21",
+      "type": "contestApproval",
+      "title": "Enter Reading Challenge",
+      "resolveDate": "2010-05-22",
+      "payload": {
+        "contestId": "contest-mur8m63x-5wkw6q"
+      },
+      "status": "Approved",
+      "detail": "Decision tomorrow.",
+      "id": "pending-mur8maro-h6x3sj",
+      "resolved": true,
+      "expiresDate": "2010-05-31",
+      "minAge": null,
+      "maxAge": null,
+      "resolvedDate": "2010-05-22",
+      "resolutionReason": "Approved",
+      "supersededBy": null
+    }
+  ],
+  "events": [
+    {
+      "id": "event-mura00sg-87z1vx",
+      "dateISO": "2010-06-02",
+      "minute": 0,
+      "status": "Resolved",
+      "participants": [
+        "npc-mur8j39t-xukfnl"
+      ],
+      "choices": [
+        {
+          "id": "talk",
+          "label": "Talk it out"
+        },
+        {
+          "id": "joke",
+          "label": "Make a joke"
+        },
+        {
+          "id": "ignore",
+          "label": "Ignore it"
+        }
+      ],
+      "priority": 3,
+      "type": "schoolSocial",
+      "title": "Something happens with Noah • classmate",
+      "text": "A school-day interaction could strengthen or strain the relationship.",
+      "expiresAt": {
+        "dateISO": "2010-06-03",
+        "minute": 1260
+      },
+      "choice": "Talk it out",
+      "resolvedAt": {
+        "dateISO": "2010-06-02",
+        "minute": 390
+      }
+    },
+    {
+      "id": "event-mur9znqh-fkgcs7",
+      "dateISO": "2010-06-01",
+      "minute": 960,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Accept"
+        },
+        {
+          "id": "1",
+          "label": "Maybe later"
+        },
+        {
+          "id": "2",
+          "label": "Decline"
+        }
+      ],
+      "priority": 3,
+      "type": "friendInvite",
+      "title": "An invitation",
+      "text": "Someone you know wants to spend time together soon.",
+      "expiresAt": {
+        "dateISO": "2010-06-01",
+        "minute": 1080
+      },
+      "choice": "Accept",
+      "resolvedAt": {
+        "dateISO": "2010-06-01",
+        "minute": 976
+      }
+    },
+    {
+      "id": "event-mur9zhjk-h5frnb",
+      "dateISO": "2010-06-01",
+      "minute": 0,
+      "status": "Resolved",
+      "participants": [
+        "npc-mur8n1kl-fx9c3u"
+      ],
+      "choices": [
+        {
+          "id": "accept",
+          "label": "Accept"
+        },
+        {
+          "id": "later",
+          "label": "Maybe later"
+        },
+        {
+          "id": "decline",
+          "label": "Decline"
+        }
+      ],
+      "priority": 3,
+      "type": "friendInvite",
+      "title": "Eli • neighbor wants to see you",
+      "text": "They invite you to spend time together.",
+      "expiresAt": {
+        "dateISO": "2010-06-01",
+        "minute": 1080
+      },
+      "choice": "Accept",
+      "resolvedAt": {
+        "dateISO": "2010-06-01",
+        "minute": 10
+      }
+    },
+    {
+      "id": "event-mur9z7hb-qn3jb9",
+      "dateISO": "2010-05-31",
+      "minute": 1140,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Adapt the plan"
+        },
+        {
+          "id": "1",
+          "label": "Stay home"
+        }
+      ],
+      "priority": 3,
+      "type": "rainPlan",
+      "title": "The weather changes the plan",
+      "text": "Rain disrupts what people around you expected to do today.",
+      "expiresAt": {
+        "dateISO": "2010-06-01",
+        "minute": 1260
+      },
+      "choice": "Stay home",
+      "resolvedAt": {
+        "dateISO": "2010-05-31",
+        "minute": 1420
+      }
+    },
+    {
+      "id": "event-mur9xls6-fz3q42",
+      "dateISO": "2010-05-30",
+      "minute": 0,
+      "status": "Resolved",
+      "participants": [
+        "npc-mur8j39t-xukfnl"
+      ],
+      "choices": [
+        {
+          "id": "accept",
+          "label": "Accept"
+        },
+        {
+          "id": "later",
+          "label": "Maybe later"
+        },
+        {
+          "id": "decline",
+          "label": "Decline"
+        }
+      ],
+      "priority": 3,
+      "type": "friendInvite",
+      "title": "Noah • classmate wants to see you",
+      "text": "They invite you to spend time together.",
+      "expiresAt": {
+        "dateISO": "2010-05-30",
+        "minute": 1080
+      },
+      "choice": "Accept",
+      "resolvedAt": {
+        "dateISO": "2010-05-30",
+        "minute": 422
+      }
+    },
+    {
+      "id": "event-mur8qysk-34tazf",
+      "dateISO": "2010-05-27",
+      "minute": 0,
+      "status": "Resolved",
+      "participants": [
+        "npc-mur8cr8t-fvphma"
+      ],
+      "choices": [
+        {
+          "id": "honest",
+          "label": "Be honest"
+        },
+        {
+          "id": "hide",
+          "label": "Downplay problems"
+        },
+        {
+          "id": "help",
+          "label": "Ask for help"
+        }
+      ],
+      "priority": 3,
+      "type": "parentSchool",
+      "title": "Dad asks about school",
+      "text": "They want to know how grades, homework and stress are going.",
+      "expiresAt": {
+        "dateISO": "2010-05-28",
+        "minute": 1260
+      },
+      "choice": "Be honest",
+      "resolvedAt": {
+        "dateISO": "2010-05-27",
+        "minute": 75
+      }
+    },
+    {
+      "id": "event-mur8qcke-mvnmba",
+      "dateISO": "2010-05-26",
+      "minute": 0,
+      "status": "Resolved",
+      "participants": [
+        "npc-mur8evcl-qgw5zf"
+      ],
+      "choices": [
+        {
+          "id": "accept",
+          "label": "Accept"
+        },
+        {
+          "id": "later",
+          "label": "Maybe later"
+        },
+        {
+          "id": "decline",
+          "label": "Decline"
+        }
+      ],
+      "priority": 3,
+      "type": "friendInvite",
+      "title": "Mia • neighbor wants to see you",
+      "text": "They invite you to spend time together.",
+      "expiresAt": {
+        "dateISO": "2010-05-26",
+        "minute": 1080
+      },
+      "choice": "Accept",
+      "resolvedAt": {
+        "dateISO": "2010-05-26",
+        "minute": 390
+      }
+    },
+    {
+      "id": "event-mur8nyk6-9vdncn",
+      "dateISO": "2010-05-23",
+      "minute": 800,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Go see"
+        },
+        {
+          "id": "1",
+          "label": "Help out"
+        },
+        {
+          "id": "2",
+          "label": "Stay home"
+        }
+      ],
+      "priority": 3,
+      "type": "neighborhoodDay",
+      "title": "Something is happening nearby",
+      "text": "Neighbors are gathering for a small community event.",
+      "expiresAt": {
+        "dateISO": "2010-05-24",
+        "minute": 1260
+      },
+      "choice": "Go see",
+      "resolvedAt": {
+        "dateISO": "2010-05-24",
+        "minute": 479
+      }
+    },
+    {
+      "id": "event-mur8nu7h-9zqd79",
+      "dateISO": "2010-05-23",
+      "minute": 700,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Attend with family"
+        },
+        {
+          "id": "1",
+          "label": "Help choose a gift"
+        },
+        {
+          "id": "2",
+          "label": "Stay home"
+        }
+      ],
+      "priority": 3,
+      "type": "relativeBabyShower",
+      "title": "A baby shower in the family",
+      "text": "A relative is expecting a baby, and the family is gathering to celebrate.",
+      "expiresAt": {
+        "dateISO": "2010-05-24",
+        "minute": 1260
+      },
+      "choice": "Attend with family",
+      "resolvedAt": {
+        "dateISO": "2010-05-24",
+        "minute": 569
+      }
+    },
+    {
+      "id": "event-mur8mt95-7cxqs9",
+      "dateISO": "2010-05-23",
+      "minute": 61,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Pay attention"
+        },
+        {
+          "id": "1",
+          "label": "Leave them alone"
+        }
+      ],
+      "priority": 3,
+      "type": "neighborMoves",
+      "title": "Someone is moving in nearby",
+      "text": "A moving truck stops in the neighborhood. New people can change old routines.",
+      "expiresAt": {
+        "dateISO": "2010-05-24",
+        "minute": 1260
+      },
+      "choice": "Pay attention",
+      "resolvedAt": {
+        "dateISO": "2010-05-23",
+        "minute": 181
+      }
+    },
+    {
+      "id": "event-mur8mhy9-p2khpi",
+      "dateISO": "2010-05-22",
+      "minute": 466,
+      "status": "Expired",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Go"
+        },
+        {
+          "id": "1",
+          "label": "Ask caregiver / make a plan"
+        },
+        {
+          "id": "2",
+          "label": "Decline"
+        }
+      ],
+      "priority": 3,
+      "type": "birthdayInvite",
+      "title": "Birthday invitation",
+      "text": "Someone your age invites you to a birthday party.",
+      "expiresAt": {
+        "dateISO": "2010-05-22",
+        "minute": 1080
+      },
+      "resolvedAt": {
+        "dateISO": "2010-05-22",
+        "minute": 1081
+      }
+    },
+    {
+      "id": "event-mur8knqh-ceefj3",
+      "dateISO": "2010-05-20",
+      "minute": 1080,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Accept"
+        },
+        {
+          "id": "1",
+          "label": "Maybe later"
+        },
+        {
+          "id": "2",
+          "label": "Decline"
+        }
+      ],
+      "priority": 3,
+      "type": "friendInvite",
+      "title": "An invitation",
+      "text": "Someone you know wants to spend time together soon.",
+      "expiresAt": {
+        "dateISO": "2010-05-21",
+        "minute": 720
+      },
+      "choice": "Accept",
+      "resolvedAt": {
+        "dateISO": "2010-05-20",
+        "minute": 1260
+      }
+    },
+    {
+      "id": "event-mur8j8jl-4hl7db",
+      "dateISO": "2010-05-20",
+      "minute": 900,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Pick it up"
+        },
+        {
+          "id": "1",
+          "label": "Leave it"
+        }
+      ],
+      "priority": 3,
+      "type": "findCoins",
+      "title": "Something on the ground",
+      "text": "You notice some money near the pavement.",
+      "expiresAt": {
+        "dateISO": "2010-05-21",
+        "minute": 1260
+      },
+      "choice": "Pick it up",
+      "resolvedAt": {
+        "dateISO": "2010-05-20",
+        "minute": 900
+      }
+    },
+    {
+      "id": "event-mur8j39u-hsvhmj",
+      "dateISO": "2010-05-20",
+      "minute": 0,
+      "status": "Resolved",
+      "participants": [],
+      "choices": [
+        {
+          "id": "big",
+          "label": "Celebrate with people"
+        },
+        {
+          "id": "small",
+          "label": "Keep it small"
+        },
+        {
+          "id": "skip",
+          "label": "No party"
+        }
+      ],
+      "priority": 3,
+      "type": "birthdayParty",
+      "title": "How do you want to celebrate?",
+      "text": "Your family asks what kind of birthday celebration sounds good.",
+      "expiresAt": {
+        "dateISO": "2010-05-21",
+        "minute": 1260
+      },
+      "choice": "Celebrate with people",
+      "resolvedAt": {
+        "dateISO": "2010-05-20",
+        "minute": 420
+      }
+    },
+    {
+      "id": "event-mur8ivj9-frtxj4",
+      "dateISO": "2009-05-21",
+      "minute": 585,
+      "status": "Expired",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Lean into it"
+        },
+        {
+          "id": "1",
+          "label": "Keep playing"
+        }
+      ],
+      "priority": 3,
+      "type": "familyOrdinary",
+      "title": "A small family moment",
+      "text": "An ordinary moment with family becomes part of your early memory.",
+      "expiresAt": {
+        "dateISO": "2009-05-22",
+        "minute": 1260
+      },
+      "resolvedAt": {
+        "dateISO": "2009-05-22",
+        "minute": 1439
+      }
+    },
+    {
+      "id": "event-mur8gcsp-5ecfzi",
+      "dateISO": "2007-05-22",
+      "minute": 585,
+      "status": "Expired",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Adapt the plan"
+        },
+        {
+          "id": "1",
+          "label": "Stay home"
+        }
+      ],
+      "priority": 3,
+      "type": "rainPlan",
+      "title": "The weather changes the plan",
+      "text": "Rain disrupts what people around you expected to do today.",
+      "expiresAt": {
+        "dateISO": "2007-05-23",
+        "minute": 1260
+      },
+      "resolvedAt": {
+        "dateISO": "2007-05-23",
+        "minute": 1439
+      }
+    },
+    {
+      "id": "event-mur8gb9x-cqt0m3",
+      "dateISO": "2007-05-22",
+      "minute": 495,
+      "status": "Expired",
+      "participants": [],
+      "choices": [
+        {
+          "id": "0",
+          "label": "Lean into it"
+        },
+        {
+          "id": "1",
+          "label": "Keep playing"
+        }
+      ],
+      "priority": 3,
+      "type": "familyOrdinary",
+      "title": "A small family moment",
+      "text": "An ordinary moment with family becomes part of your early memory.",
+      "expiresAt": {
+        "dateISO": "2007-05-23",
+        "minute": 1260
+      },
+      "resolvedAt": {
+        "dateISO": "2007-05-23",
+        "minute": 1439
+      }
+    }
+  ],
+  "eventCooldowns": {
+    "familyOrdinary": "2009-05-21",
+    "rainPlan": "2010-05-31",
+    "findCoins": "2010-05-20",
+    "friendInvite": "2010-06-01",
+    "birthdayInvite": "2010-05-22",
+    "neighborMoves": "2010-05-23",
+    "relativeBabyShower": "2010-05-23",
+    "neighborhoodDay": "2010-05-23"
+  },
+  "messages": [],
+  "notifications": [
+    {
+      "id": "note-mur9zhjk-y2mqyr",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-06-01",
+      "minute": 0,
+      "title": "Bathroom needed",
+      "text": "Your bladder is making it hard to focus.",
+      "read": false
+    },
+    {
+      "id": "note-mur9yibb-phl0xn",
+      "status": "Resolved",
+      "sourceType": "club",
+      "sourceId": "club-club-mur8mced-04nqud-2010-05-31",
+      "tab": "school",
+      "dateISO": "2010-05-31",
+      "minute": 930,
+      "title": "Club session now",
+      "text": "Chess Club started at 3:30 PM.",
+      "read": true,
+      "resolvedDate": "2010-05-31"
+    },
+    {
+      "id": "note-mur9ygrz-sk55p5",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-31",
+      "minute": 480,
+      "title": "Bathroom needed",
+      "text": "Your bladder is making it hard to focus.",
+      "read": false
+    },
+    {
+      "id": "note-mur9v40w-4u3t7x",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-29",
+      "minute": 660,
+      "title": "Bathroom needed",
+      "text": "Your bladder is making it hard to focus.",
+      "read": false
+    },
+    {
+      "id": "note-mur9udbg-r36v3l",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-29",
+      "minute": 0,
+      "title": "Very hungry",
+      "text": "Food should be a priority.",
+      "read": false
+    },
+    {
+      "id": "note-mur8ryzs-qwhpn9",
+      "status": "Resolved",
+      "sourceType": "exam",
+      "sourceId": "exam-mur8j39t-fc8bf7",
+      "tab": "school",
+      "dateISO": "2010-05-28",
+      "minute": 540,
+      "title": "Assessment today",
+      "text": "Mathematics class assessment • 9:00 AM. Late sitting closes at 11:00 AM.",
+      "read": true,
+      "resolvedDate": "2010-05-28"
+    },
+    {
+      "id": "note-mur8rgjg-2ouc6d",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-28",
+      "minute": 0,
+      "title": "Very hungry",
+      "text": "Food should be a priority.",
+      "read": false
+    },
+    {
+      "id": "note-mur8r9m8-p7kfyp",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-27",
+      "minute": 900,
+      "title": "Very hungry",
+      "text": "Food should be a priority.",
+      "read": false
+    },
+    {
+      "id": "note-mur8r9m8-0zcw4n",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-27",
+      "minute": 480,
+      "title": "Bathroom needed",
+      "text": "Your bladder is making it hard to focus.",
+      "read": false
+    },
+    {
+      "id": "note-mur8pddh-iys49c",
+      "status": "Resolved",
+      "sourceType": "club",
+      "sourceId": "club-club-mur8mced-04nqud-2010-05-24",
+      "tab": "school",
+      "dateISO": "2010-05-24",
+      "minute": 930,
+      "title": "Club session now",
+      "text": "Chess Club started at 3:30 PM.",
+      "read": true,
+      "resolvedDate": "2010-05-24"
+    },
+    {
+      "id": "note-mur8msvx-qtiys5",
+      "status": "Unread",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-23",
+      "minute": 0,
+      "title": "Very hungry",
+      "text": "Food should be a priority.",
+      "read": false
+    },
+    {
+      "id": "note-mur8mn9o-piwz8u",
+      "status": "Expired",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-22",
+      "minute": 1081,
+      "title": "Very hungry",
+      "text": "Food should be a priority.",
+      "read": false
+    },
+    {
+      "id": "note-mur8l6yx-exgoky",
+      "status": "Expired",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-21",
+      "minute": 480,
+      "title": "Very hungry",
+      "text": "Food should be a priority.",
+      "read": false
+    },
+    {
+      "id": "note-mur8l4u9-b991nj",
+      "status": "Expired",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-21",
+      "minute": 0,
+      "title": "Bathroom needed",
+      "text": "Your bladder is making it hard to focus.",
+      "read": false
+    },
+    {
+      "id": "note-mur8j7kl-f88459",
+      "status": "Expired",
+      "sourceType": null,
+      "sourceId": null,
+      "tab": null,
+      "dateISO": "2010-05-20",
+      "minute": 600,
+      "title": "Bathroom needed",
+      "text": "Your bladder is making it hard to focus.",
+      "read": false
+    }
+  ],
+  "log": [
+    {
+      "id": "log-mura0801-fac662",
+      "dateISO": "2010-06-02",
+      "minute": 900,
+      "day": 2205,
+      "age": 6,
+      "title": "School day",
+      "text": "The day opens with History. Group work in Geography is chaotic, but your group finishes. At lunch, Mia saves you a seat.",
+      "important": false
+    },
+    {
+      "id": "log-mura0801-vlt4m7",
+      "dateISO": "2010-06-02",
+      "minute": 900,
+      "day": 2205,
+      "age": 6,
+      "title": "No-show • Reading Challenge",
+      "text": "Your name is called at check-in and nobody answers. The organizers move on, and your caregiver, who signed the form, is not thrilled.",
+      "important": false
+    },
+    {
+      "id": "log-mura00sh-sojfbz",
+      "dateISO": "2010-06-02",
+      "minute": 390,
+      "day": 2205,
+      "age": 6,
+      "title": "Slept",
+      "text": "10h 0m • You woke once in the dark and took a while to drift off again.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zv14-viywri",
+      "dateISO": "2010-06-01",
+      "minute": 1171,
+      "day": 2204,
+      "age": 6,
+      "title": "Took a nap",
+      "text": "Energy +26",
+      "important": false
+    },
+    {
+      "id": "log-mur9zpw8-9ji665",
+      "dateISO": "2010-06-01",
+      "minute": 1096,
+      "day": 2204,
+      "age": 6,
+      "title": "Invitation accepted",
+      "text": "You spend time with Mia • neighbor.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zokg-o7oswb",
+      "dateISO": "2010-06-01",
+      "minute": 976,
+      "day": 2204,
+      "age": 6,
+      "title": "Used the bathroom",
+      "text": "Bladder relieved.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zo5s-13sbby",
+      "dateISO": "2010-06-01",
+      "minute": 968,
+      "day": 2204,
+      "age": 6,
+      "title": "Used the bathroom",
+      "text": "Bladder relieved.",
+      "important": false
+    },
+    {
+      "id": "log-mur9znqh-z6cto4",
+      "dateISO": "2010-06-01",
+      "minute": 960,
+      "day": 2204,
+      "age": 6,
+      "title": "Washed with supervision",
+      "text": "Bathing skill 29%.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zn7s-e3c1j7",
+      "dateISO": "2010-06-01",
+      "minute": 940,
+      "day": 2204,
+      "age": 6,
+      "title": "Ate a meal",
+      "text": "hunger -32 • family food available",
+      "important": false
+    },
+    {
+      "id": "log-mur9zlix-5pdse5",
+      "dateISO": "2010-06-01",
+      "minute": 900,
+      "day": 2204,
+      "age": 6,
+      "title": "School day",
+      "text": "Morning announcements run long, as usual. History drags a little, but one explanation finally clicks. At lunch, Mia saves you a seat.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zjyw-o6w7mp",
+      "dateISO": "2010-06-01",
+      "minute": 390,
+      "day": 2204,
+      "age": 6,
+      "title": "Slept",
+      "text": "4h 20m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zjc8-qp41dt",
+      "dateISO": "2010-06-01",
+      "minute": 130,
+      "day": 2204,
+      "age": 6,
+      "title": "Invitation accepted",
+      "text": "You spend time with Eli • neighbor.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zhjk-00zcu0",
+      "dateISO": "2010-06-01",
+      "minute": 10,
+      "day": 2204,
+      "age": 6,
+      "title": "Stayed home",
+      "text": "You wait out the bad weather.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zd7z-o0se27",
+      "dateISO": "2010-05-31",
+      "minute": 1420,
+      "day": 2203,
+      "age": 6,
+      "title": "Ate a meal",
+      "text": "hunger -53 • family food available",
+      "important": false
+    },
+    {
+      "id": "log-mur9zapb-k874u6",
+      "dateISO": "2010-05-31",
+      "minute": 1380,
+      "day": 2203,
+      "age": 6,
+      "title": "Mathematics homework submitted",
+      "text": "Done before the deadline — Ms. Patel will notice.",
+      "important": false
+    },
+    {
+      "id": "log-mur9zakv-qntqje",
+      "dateISO": "2010-05-31",
+      "minute": 1320,
+      "day": 2203,
+      "age": 6,
+      "title": "Mathematics homework",
+      "text": "Progress 50% • Due in 2 days",
+      "important": false
+    },
+    {
+      "id": "log-mur9z9pz-zlyhm8",
+      "dateISO": "2010-05-31",
+      "minute": 1260,
+      "day": 2203,
+      "age": 6,
+      "title": "Science homework submitted",
+      "text": "It took longer than expected, but the work is solid.",
+      "important": false
+    },
+    {
+      "id": "log-mur9z9pz-7x6ej7",
+      "dateISO": "2010-05-31",
+      "minute": 1260,
+      "day": 2203,
+      "age": 6,
+      "title": "Past bedtime",
+      "text": "Mom finds you still awake. \"It's way past your bedtime.\" You get sent to bed.",
+      "important": false
+    },
+    {
+      "id": "log-mur9z9c7-yyu1qx",
+      "dateISO": "2010-05-31",
+      "minute": 1200,
+      "day": 2203,
+      "age": 6,
+      "title": "Science homework",
+      "text": "Progress 50% • Due in 4 days",
+      "important": false
+    },
+    {
+      "id": "log-mur9z7hb-ycymc0",
+      "dateISO": "2010-05-31",
+      "minute": 1140,
+      "day": 2203,
+      "age": 6,
+      "title": "Technology homework submitted",
+      "text": "It took longer than expected, but the work is solid.",
+      "important": false
+    },
+    {
+      "id": "log-mur9z75j-wdkxl3",
+      "dateISO": "2010-05-31",
+      "minute": 1080,
+      "day": 2203,
+      "age": 6,
+      "title": "Technology homework",
+      "text": "Progress 50% • Due in 2 days",
+      "important": false
+    },
+    {
+      "id": "log-mur9yibb-vcmemc",
+      "dateISO": "2010-05-31",
+      "minute": 1020,
+      "day": 2203,
+      "age": 6,
+      "title": "Chess Club session",
+      "text": "Alex beats you in a game you thought you were winning. You replay the final moves twice.",
+      "important": false
+    },
+    {
+      "id": "log-mur9ygrz-dywtgx",
+      "dateISO": "2010-05-31",
+      "minute": 900,
+      "day": 2203,
+      "age": 6,
+      "title": "School day",
+      "text": "You make it in a few minutes before the bell. There is a surprise question in History; you get it right. Mia spends lunch telling you about their weekend.",
+      "important": false
+    },
+    {
+      "id": "log-mur9yf2n-dc6x9c",
+      "dateISO": "2010-05-31",
+      "minute": 390,
+      "day": 2203,
+      "age": 6,
+      "title": "Slept",
+      "text": "10h 48m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur9ydun-e07a9c",
+      "dateISO": "2010-05-30",
+      "minute": 1182,
+      "day": 2202,
+      "age": 6,
+      "title": "Ate a meal",
+      "text": "hunger -53 • family food available",
+      "important": false
+    },
+    {
+      "id": "log-mur9yauf-640rfo",
+      "dateISO": "2010-05-30",
+      "minute": 1142,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied Science",
+      "text": "Preparation +9 • Skill 76% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9ya7z-8z8jz6",
+      "dateISO": "2010-05-30",
+      "minute": 1082,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied History",
+      "text": "Preparation +9 • Skill 69% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9ya3b-59rn6w",
+      "dateISO": "2010-05-30",
+      "minute": 1022,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied History",
+      "text": "Preparation +9 • Skill 64% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9y9nz-tiv11y",
+      "dateISO": "2010-05-30",
+      "minute": 962,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied English / Language",
+      "text": "Preparation +9 • Skill 85% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9y9db-dsz7hn",
+      "dateISO": "2010-05-30",
+      "minute": 902,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied English / Language",
+      "text": "Preparation +9 • Skill 80% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9y97z-ua9y8o",
+      "dateISO": "2010-05-30",
+      "minute": 842,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied English / Language",
+      "text": "Preparation +9 • Skill 75% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9y8z3-sq6iv8",
+      "dateISO": "2010-05-30",
+      "minute": 782,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied English / Language",
+      "text": "Preparation +9 • Skill 70% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9y8on-9z0tfy",
+      "dateISO": "2010-05-30",
+      "minute": 722,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied English / Language",
+      "text": "Preparation +9 • Skill 65% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9y7n3-ih2vkn",
+      "dateISO": "2010-05-30",
+      "minute": 662,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied English / Language",
+      "text": "Preparation +9 • Skill 60% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9y6h3-xoxj5k",
+      "dateISO": "2010-05-30",
+      "minute": 602,
+      "day": 2202,
+      "age": 6,
+      "title": "Studied Mathematics",
+      "text": "Preparation +9 • Skill 100% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur9xsgu-51m05i",
+      "dateISO": "2010-05-30",
+      "minute": 542,
+      "day": 2202,
+      "age": 6,
+      "title": "Invitation accepted",
+      "text": "You spend time with Noah • classmate.",
+      "important": false
+    },
+    {
+      "id": "log-mur9xpmy-ytjf23",
+      "dateISO": "2010-05-30",
+      "minute": 422,
+      "day": 2202,
+      "age": 6,
+      "title": "Noah • classmate • talk",
+      "text": "Closeness 63 • trust 66 • conflict 1",
+      "important": false
+    },
+    {
+      "id": "log-mur9xls6-x86k5v",
+      "dateISO": "2010-05-30",
+      "minute": 397,
+      "day": 2202,
+      "age": 6,
+      "title": "Slept",
+      "text": "10h 7m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur9xksy-uq0rru",
+      "dateISO": "2010-05-29",
+      "minute": 813,
+      "day": 2201,
+      "age": 6,
+      "title": "Eli • neighbor • talk",
+      "text": "Closeness 62 • trust 71 • conflict 2",
+      "important": false
+    },
+    {
+      "id": "log-mur9xbex-66iml5",
+      "dateISO": "2010-05-29",
+      "minute": 788,
+      "day": 2201,
+      "age": 6,
+      "title": "Ate a meal",
+      "text": "hunger -45 • family food available",
+      "important": false
+    },
+    {
+      "id": "log-mur9xadt-tpaxzk",
+      "dateISO": "2010-05-29",
+      "minute": 748,
+      "day": 2201,
+      "age": 6,
+      "title": "Used the bathroom",
+      "text": "Bladder relieved.",
+      "important": false
+    },
+    {
+      "id": "log-mur9xa21-59yf31",
+      "dateISO": "2010-05-29",
+      "minute": 740,
+      "day": 2201,
+      "age": 6,
+      "title": "Washed with supervision",
+      "text": "Bathing skill 21%.",
+      "important": false
+    },
+    {
+      "id": "log-mur9x9nq-vu76is",
+      "dateISO": "2010-05-29",
+      "minute": 720,
+      "day": 2201,
+      "age": 6,
+      "title": "Ate a meal",
+      "text": "hunger -54 • family food available",
+      "important": false
+    },
+    {
+      "id": "log-mur9vg7t-0lv7ht",
+      "dateISO": "2010-05-29",
+      "minute": 680,
+      "day": 2201,
+      "age": 6,
+      "title": "Gifted Sweater",
+      "text": "Dad remembers the gesture.",
+      "important": false
+    },
+    {
+      "id": "log-mur9vddk-du6pfj",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Took item out",
+      "text": "Sweater",
+      "important": false
+    },
+    {
+      "id": "log-mur9vcb4-stukn0",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Stored item",
+      "text": "Sweater",
+      "important": false
+    },
+    {
+      "id": "log-mur9vbe8-ggxwyl",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9vb8w-pyzzpe",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9vb48-5ma19c",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9vazk-cq18t0",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9vauo-zjhwx8",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9vapc-rkei8u",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9va68-wmz8z5",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v9rk-0ddq7d",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v92w-4vjgk7",
+      "dateISO": "2010-05-29",
+      "minute": 670,
+      "day": 2201,
+      "age": 6,
+      "title": "Used Sweater",
+      "text": "The item was useful.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v8qo-vfvv0b",
+      "dateISO": "2010-05-29",
+      "minute": 660,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v8m8-mh8187",
+      "dateISO": "2010-05-29",
+      "minute": 660,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v868-083xoq",
+      "dateISO": "2010-05-29",
+      "minute": 660,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v6ew-wit7e0",
+      "dateISO": "2010-05-29",
+      "minute": 660,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v54w-b3vtab",
+      "dateISO": "2010-05-29",
+      "minute": 660,
+      "day": 2201,
+      "age": 6,
+      "title": "Wearing Sweater",
+      "text": "It is now equipped.",
+      "important": false
+    },
+    {
+      "id": "log-mur9v40x-blduub",
+      "dateISO": "2010-05-29",
+      "minute": 660,
+      "day": 2201,
+      "age": 6,
+      "title": "Made something creative",
+      "text": "Fun +10 • Creative practice",
+      "important": false
+    },
+    {
+      "id": "log-mur9um5h-96evod",
+      "dateISO": "2010-05-29",
+      "minute": 600,
+      "day": 2201,
+      "age": 6,
+      "title": "Slept",
+      "text": "9h 25m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur9udbh-pw1mf2",
+      "dateISO": "2010-05-29",
+      "minute": 35,
+      "day": 2201,
+      "age": 6,
+      "title": "Chess Club • Practice puzzles",
+      "text": "Club skill 68% • 11 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur9udbg-6yy5rl",
+      "dateISO": "2010-05-29",
+      "minute": 0,
+      "day": 2201,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Grandmother notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur9uala-svm5x6",
+      "dateISO": "2010-05-28",
+      "minute": 1430,
+      "day": 2200,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "Club skill 61% • 10 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur9uala-0p54ns",
+      "dateISO": "2010-05-28",
+      "minute": 1340,
+      "day": 2200,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "It is imperfect, but it becomes experience.",
+      "important": false
+    },
+    {
+      "id": "log-mur9u1n2-n5njab",
+      "dateISO": "2010-05-28",
+      "minute": 1340,
+      "day": 2200,
+      "age": 6,
+      "title": "Technology homework submitted",
+      "text": "You finish the last question and put it in your bag. One less thing to worry about.",
+      "important": false
+    },
+    {
+      "id": "log-mur9u1ba-0ksvdm",
+      "dateISO": "2010-05-28",
+      "minute": 1280,
+      "day": 2200,
+      "age": 6,
+      "title": "Technology homework",
+      "text": "Progress 50% • Due in 3 days",
+      "important": false
+    },
+    {
+      "id": "log-mur9u1ba-fu00h7",
+      "dateISO": "2010-05-28",
+      "minute": 1280,
+      "day": 2200,
+      "age": 6,
+      "title": "Past bedtime",
+      "text": "Mom finds you still awake. \"It's way past your bedtime.\" You get sent to bed.",
+      "important": false
+    },
+    {
+      "id": "log-mur9u0a6-v5gaom",
+      "dateISO": "2010-05-28",
+      "minute": 1220,
+      "day": 2200,
+      "age": 6,
+      "title": "Physical Education homework submitted",
+      "text": "You finish the last question and put it in your bag. One less thing to worry about.",
+      "important": false
+    },
+    {
+      "id": "log-mur9u01y-fww9w9",
+      "dateISO": "2010-05-28",
+      "minute": 1160,
+      "day": 2200,
+      "age": 6,
+      "title": "Physical Education homework",
+      "text": "Progress 50% • Due in 3 days",
+      "important": false
+    },
+    {
+      "id": "log-mur9tza6-yi6s2p",
+      "dateISO": "2010-05-28",
+      "minute": 1100,
+      "day": 2200,
+      "age": 6,
+      "title": "History homework submitted",
+      "text": "It took longer than expected, but the work is solid.",
+      "important": false
+    },
+    {
+      "id": "log-mur9tza5-hnepk0",
+      "dateISO": "2010-05-28",
+      "minute": 1100,
+      "day": 2200,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Mom notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur9tyyu-8uv1bo",
+      "dateISO": "2010-05-28",
+      "minute": 1040,
+      "day": 2200,
+      "age": 6,
+      "title": "History homework",
+      "text": "Progress 50% • Due in 3 days",
+      "important": false
+    },
+    {
+      "id": "log-mur9toli-ftxtdp",
+      "dateISO": "2010-05-28",
+      "minute": 980,
+      "day": 2200,
+      "age": 6,
+      "title": "Made a picture journal",
+      "text": "Stress -8 • thoughts organized",
+      "important": false
+    },
+    {
+      "id": "log-mur9tndq-5nns0c",
+      "dateISO": "2010-05-28",
+      "minute": 960,
+      "day": 2200,
+      "age": 6,
+      "title": "Used a computer",
+      "text": "Caregiver-approved household/school computer time",
+      "important": false
+    },
+    {
+      "id": "log-mur9tndq-w6q20e",
+      "dateISO": "2010-05-28",
+      "minute": 900,
+      "day": 2200,
+      "age": 6,
+      "title": "Permission granted",
+      "text": "Grandmother says yes to using the shared electronic device today.",
+      "important": false
+    },
+    {
+      "id": "log-mur8ryzs-tdd6k6",
+      "dateISO": "2010-05-28",
+      "minute": 900,
+      "day": 2200,
+      "age": 6,
+      "title": "School day",
+      "text": "You make it in a few minutes before the bell. You sit the Mathematics class assessment (88%). Group work in Music is chaotic, but your group finishes. At lunch, Mia saves you a seat.",
+      "important": false
+    },
+    {
+      "id": "log-mur8ryzs-rrbvui",
+      "dateISO": "2010-05-28",
+      "minute": 615,
+      "day": 2200,
+      "age": 6,
+      "title": "Mathematics Class assessment • 88%",
+      "text": "You worked steadily and only hesitated on one question. Walking out, you already suspect it went well.",
+      "important": false
+    },
+    {
+      "id": "log-mur8rw9r-g2cjct",
+      "dateISO": "2010-05-28",
+      "minute": 429,
+      "day": 2200,
+      "age": 6,
+      "title": "Slept",
+      "text": "7h 9m • You slept straight through the alarm and woke at 7:09 AM.",
+      "important": false
+    },
+    {
+      "id": "log-mur8rgjh-i8mtxe",
+      "dateISO": "2010-05-28",
+      "minute": 0,
+      "day": 2200,
+      "age": 6,
+      "title": "Studied Mathematics",
+      "text": "Preparation +13 • Skill 96%",
+      "important": false
+    },
+    {
+      "id": "log-mur8rgjg-0rcoxr",
+      "dateISO": "2010-05-28",
+      "minute": 0,
+      "day": 2200,
+      "age": 6,
+      "title": "Bathroom accident",
+      "text": "You could not hold it. It is recoverable, but uncomfortable and embarrassing.",
+      "important": false
+    },
+    {
+      "id": "log-mur8rfds-m0s22y",
+      "dateISO": "2010-05-27",
+      "minute": 1260,
+      "day": 2199,
+      "age": 6,
+      "title": "Studied Mathematics",
+      "text": "Preparation +13 • Skill 88%",
+      "important": false
+    },
+    {
+      "id": "log-mur8rfds-qvvixa",
+      "dateISO": "2010-05-27",
+      "minute": 1260,
+      "day": 2199,
+      "age": 6,
+      "title": "Past bedtime",
+      "text": "Mom finds you still awake. \"It's way past your bedtime.\" You get sent to bed.",
+      "important": false
+    },
+    {
+      "id": "log-mur8rdks-vwkmy9",
+      "dateISO": "2010-05-27",
+      "minute": 1080,
+      "day": 2199,
+      "age": 6,
+      "title": "Studied Mathematics",
+      "text": "Preparation +13 • Skill 80%",
+      "important": false
+    },
+    {
+      "id": "log-mur8r9m9-wdbizx",
+      "dateISO": "2010-05-27",
+      "minute": 900,
+      "day": 2199,
+      "age": 6,
+      "title": "School day",
+      "text": "You make it in a few minutes before the bell. History drags a little, but one explanation finally clicks. At lunch, Mia saves you a seat.",
+      "important": false
+    },
+    {
+      "id": "log-mur8r7wx-hoblw4",
+      "dateISO": "2010-05-27",
+      "minute": 390,
+      "day": 2199,
+      "age": 6,
+      "title": "Slept",
+      "text": "5h 15m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8r4u8-ibsq1y",
+      "dateISO": "2010-05-27",
+      "minute": 75,
+      "day": 2199,
+      "age": 6,
+      "title": "Talked about school",
+      "text": "You share the real situation with your caregiver.",
+      "important": false
+    },
+    {
+      "id": "log-mur8qysl-s7ww0z",
+      "dateISO": "2010-05-27",
+      "minute": 75,
+      "day": 2199,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "Club skill 57% • 9 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8qysk-gif1pz",
+      "dateISO": "2010-05-26",
+      "minute": 1425,
+      "day": 2198,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "It is imperfect, but it becomes experience.",
+      "important": false
+    },
+    {
+      "id": "log-mur8qwyc-vw8gou",
+      "dateISO": "2010-05-26",
+      "minute": 1425,
+      "day": 2198,
+      "age": 6,
+      "title": "Chess Club • Practice puzzles",
+      "text": "Club skill 53% • 8 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8qu60-6akto4",
+      "dateISO": "2010-05-26",
+      "minute": 1380,
+      "day": 2198,
+      "age": 6,
+      "title": "Science homework submitted",
+      "text": "Done before the deadline — Mr. Brown will notice.",
+      "important": false
+    },
+    {
+      "id": "log-mur8qu00-cj9lhk",
+      "dateISO": "2010-05-26",
+      "minute": 1320,
+      "day": 2198,
+      "age": 6,
+      "title": "Science homework",
+      "text": "Progress 50% • Due in 5 days",
+      "important": false
+    },
+    {
+      "id": "log-mur8qse0-4zd5m0",
+      "dateISO": "2010-05-26",
+      "minute": 1260,
+      "day": 2198,
+      "age": 6,
+      "title": "History homework submitted",
+      "text": "Done before the deadline — Mx. Morgan will notice.",
+      "important": false
+    },
+    {
+      "id": "log-mur8qse0-wg00sd",
+      "dateISO": "2010-05-26",
+      "minute": 1260,
+      "day": 2198,
+      "age": 6,
+      "title": "Past bedtime",
+      "text": "Mom finds you still awake. \"It's way past your bedtime.\" You get sent to bed.",
+      "important": false
+    },
+    {
+      "id": "log-mur8qrzc-gm255y",
+      "dateISO": "2010-05-26",
+      "minute": 1200,
+      "day": 2198,
+      "age": 6,
+      "title": "History homework",
+      "text": "Progress 50% • Due in 2 days",
+      "important": false
+    },
+    {
+      "id": "log-mur8qojc-qbaks2",
+      "dateISO": "2010-05-26",
+      "minute": 1140,
+      "day": 2198,
+      "age": 6,
+      "title": "Studied Mathematics",
+      "text": "Preparation +13 • Skill 72%",
+      "important": false
+    },
+    {
+      "id": "log-mur8qlrs-488vnl",
+      "dateISO": "2010-05-26",
+      "minute": 960,
+      "day": 2198,
+      "age": 6,
+      "title": "Studied Mathematics",
+      "text": "Preparation +9 • Skill 64% • studied with a friend",
+      "important": false
+    },
+    {
+      "id": "log-mur8qjsg-a5opjk",
+      "dateISO": "2010-05-26",
+      "minute": 900,
+      "day": 2198,
+      "age": 6,
+      "title": "School day (late)",
+      "text": "You slip into class after the bell, and Ms. Patel gives you a look before carrying on. Group work in Geography is chaotic, but your group finishes. At lunch, Mia saves you a seat.",
+      "important": false
+    },
+    {
+      "id": "log-mur8qixa-8kjlqu",
+      "dateISO": "2010-05-26",
+      "minute": 510,
+      "day": 2198,
+      "age": 6,
+      "title": "Invitation accepted",
+      "text": "You spend time with Mia • neighbor.",
+      "important": false
+    },
+    {
+      "id": "log-mur8qcke-i1fl4c",
+      "dateISO": "2010-05-26",
+      "minute": 390,
+      "day": 2198,
+      "age": 6,
+      "title": "Slept",
+      "text": "10h 0m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8q9uu-ar3ffn",
+      "dateISO": "2010-05-25",
+      "minute": 1052,
+      "day": 2197,
+      "age": 6,
+      "title": "Chess Club • Practice puzzles",
+      "text": "Club skill 46% • 7 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8q4fp-q766wu",
+      "dateISO": "2010-05-25",
+      "minute": 1007,
+      "day": 2197,
+      "age": 6,
+      "title": "Practiced dressing",
+      "text": "Dressing skill 9%.",
+      "important": false
+    },
+    {
+      "id": "log-mur8q46t-ywk1co",
+      "dateISO": "2010-05-25",
+      "minute": 995,
+      "day": 2197,
+      "age": 6,
+      "title": "Brushed teeth",
+      "text": "Hygiene +8",
+      "important": false
+    },
+    {
+      "id": "log-mur8q3y1-ty374o",
+      "dateISO": "2010-05-25",
+      "minute": 988,
+      "day": 2197,
+      "age": 6,
+      "title": "Used the bathroom",
+      "text": "Bladder relieved.",
+      "important": false
+    },
+    {
+      "id": "log-mur8q3px-6cty80",
+      "dateISO": "2010-05-25",
+      "minute": 980,
+      "day": 2197,
+      "age": 6,
+      "title": "Had a snack",
+      "text": "hunger -24",
+      "important": false
+    },
+    {
+      "id": "log-mur8q2yl-wgqnhe",
+      "dateISO": "2010-05-25",
+      "minute": 968,
+      "day": 2197,
+      "age": 6,
+      "title": "Washed hands",
+      "text": "Hygiene +4",
+      "important": false
+    },
+    {
+      "id": "log-mur8q2np-ebjtmb",
+      "dateISO": "2010-05-25",
+      "minute": 965,
+      "day": 2197,
+      "age": 6,
+      "title": "Washed with supervision",
+      "text": "Bathing skill 13%.",
+      "important": false
+    },
+    {
+      "id": "log-mur8q2dx-6y7ikg",
+      "dateISO": "2010-05-25",
+      "minute": 945,
+      "day": 2197,
+      "age": 6,
+      "title": "Drank water",
+      "text": "Comfort +9",
+      "important": false
+    },
+    {
+      "id": "log-mur8q24l-ty2qjx",
+      "dateISO": "2010-05-25",
+      "minute": 940,
+      "day": 2197,
+      "age": 6,
+      "title": "Ate a meal",
+      "text": "hunger -54 • family food available",
+      "important": false
+    },
+    {
+      "id": "log-mur8pv2e-d1ipkq",
+      "dateISO": "2010-05-25",
+      "minute": 900,
+      "day": 2197,
+      "age": 6,
+      "title": "School day",
+      "text": "You make it in a few minutes before the bell. Ms. Patel goes off on a tangent that turns out to be the most interesting part of the day. You and Mia trade snacks at lunch.",
+      "important": false
+    },
+    {
+      "id": "log-mur8pp6m-cn0vf0",
+      "dateISO": "2010-05-25",
+      "minute": 390,
+      "day": 2197,
+      "age": 6,
+      "title": "Slept",
+      "text": "10h 0m • You woke once in the dark and took a while to drift off again.",
+      "important": false
+    },
+    {
+      "id": "log-mur8pp6m-o2q78v",
+      "dateISO": "2010-05-25",
+      "minute": 0,
+      "day": 2197,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Mom notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8pp6l-24ws0u",
+      "dateISO": "2010-05-24",
+      "minute": 1230,
+      "day": 2196,
+      "age": 6,
+      "title": "Absence notice",
+      "text": "The school sends home a routine note about Mon, May 24, 2010. Mom frowns at it, but lets it go — this time.",
+      "important": false
+    },
+    {
+      "id": "log-mur8pddi-xspy3x",
+      "dateISO": "2010-05-24",
+      "minute": 1020,
+      "day": 2196,
+      "age": 6,
+      "title": "Chess Club session",
+      "text": "Ms. Garcia shows a trap that you immediately want to try on someone.",
+      "important": false
+    },
+    {
+      "id": "log-mur8p8hm-07essx",
+      "dateISO": "2010-05-24",
+      "minute": 884,
+      "day": 2196,
+      "age": 6,
+      "title": "Studied Physical Education",
+      "text": "Preparation +7 • Skill 71%",
+      "important": false
+    },
+    {
+      "id": "log-mur8p5kz-ewwqyv",
+      "dateISO": "2010-05-24",
+      "minute": 854,
+      "day": 2196,
+      "age": 6,
+      "title": "Studied Physical Education",
+      "text": "Preparation +7 • Skill 67%",
+      "important": false
+    },
+    {
+      "id": "log-mur8oz1m-h1t6yv",
+      "dateISO": "2010-05-24",
+      "minute": 824,
+      "day": 2196,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "Club skill 34% • 5 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8oz1m-gpfq47",
+      "dateISO": "2010-05-24",
+      "minute": 734,
+      "day": 2196,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "It is imperfect, but it becomes experience.",
+      "important": false
+    },
+    {
+      "id": "log-mur8ou7a-au78sb",
+      "dateISO": "2010-05-24",
+      "minute": 734,
+      "day": 2196,
+      "age": 6,
+      "title": "Chess Club • Practice puzzles",
+      "text": "Club skill 30% • 4 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8okdj-52j2fa",
+      "dateISO": "2010-05-24",
+      "minute": 689,
+      "day": 2196,
+      "age": 6,
+      "title": "Family baby shower",
+      "text": "You attend with family and become part of the celebration.",
+      "important": false
+    },
+    {
+      "id": "log-mur8okdj-3qrsw6",
+      "dateISO": "2010-05-24",
+      "minute": 689,
+      "day": 2196,
+      "age": 6,
+      "title": "Marked absent",
+      "text": "You never made it to school by 11:00 AM. The school records an unexplained absence, and your family will be asked about it.",
+      "important": false
+    },
+    {
+      "id": "log-mur8ogh3-6y0dbn",
+      "dateISO": "2010-05-24",
+      "minute": 569,
+      "day": 2196,
+      "age": 6,
+      "title": "Neighborhood event",
+      "text": "You spend some time around the neighborhood gathering.",
+      "important": false
+    },
+    {
+      "id": "log-mur8oa73-az0p6t",
+      "dateISO": "2010-05-24",
+      "minute": 479,
+      "day": 2196,
+      "age": 6,
+      "title": "Slept",
+      "text": "11h 29m • You slept straight through the alarm and woke at 7:59 AM.",
+      "important": false
+    },
+    {
+      "id": "log-mur8oa72-q9jexz",
+      "dateISO": "2010-05-24",
+      "minute": 0,
+      "day": 2196,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Grandmother notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8nyk6-ugw37p",
+      "dateISO": "2010-05-23",
+      "minute": 800,
+      "day": 2195,
+      "age": 6,
+      "title": "Eli • neighbor • play",
+      "text": "Closeness 60 • trust 69 • conflict 2",
+      "important": false
+    },
+    {
+      "id": "log-mur8nvz1-8xl4yp",
+      "dateISO": "2010-05-23",
+      "minute": 725,
+      "day": 2195,
+      "age": 6,
+      "title": "Eli • neighbor • talk",
+      "text": "Closeness 55 • trust 69 • conflict 2",
+      "important": false
+    },
+    {
+      "id": "log-mur8nu7h-7y3f7t",
+      "dateISO": "2010-05-23",
+      "minute": 700,
+      "day": 2195,
+      "age": 6,
+      "title": "Noah • classmate • talk",
+      "text": "Closeness 61 • trust 64 • conflict 1",
+      "important": false
+    },
+    {
+      "id": "log-mur8n96l-pcjz3v",
+      "dateISO": "2010-05-23",
+      "minute": 675,
+      "day": 2195,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 100%",
+      "important": false
+    },
+    {
+      "id": "log-mur8n27x-xn6rgy",
+      "dateISO": "2010-05-23",
+      "minute": 600,
+      "day": 2195,
+      "age": 6,
+      "title": "Slept",
+      "text": "6h 59m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8n1kl-vul22f",
+      "dateISO": "2010-05-23",
+      "minute": 181,
+      "day": 2195,
+      "age": 6,
+      "title": "New neighbor",
+      "text": "Eli • neighbor moves nearby. You may or may not become close.",
+      "important": false
+    },
+    {
+      "id": "log-mur8muro-kz2xr7",
+      "dateISO": "2010-05-23",
+      "minute": 181,
+      "day": 2195,
+      "age": 6,
+      "title": "Science homework submitted",
+      "text": "You finish the last question and put it in your bag. One less thing to worry about.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mugc-0dogt2",
+      "dateISO": "2010-05-23",
+      "minute": 121,
+      "day": 2195,
+      "age": 6,
+      "title": "Science homework",
+      "text": "Progress 50% • Due tomorrow",
+      "important": false
+    },
+    {
+      "id": "log-mur8mt95-1s7a5p",
+      "dateISO": "2010-05-23",
+      "minute": 61,
+      "day": 2195,
+      "age": 6,
+      "title": "History homework submitted",
+      "text": "You finish the last question and put it in your bag. One less thing to worry about.",
+      "important": false
+    },
+    {
+      "id": "log-mur8msvx-uhpzt7",
+      "dateISO": "2010-05-23",
+      "minute": 1,
+      "day": 2195,
+      "age": 6,
+      "title": "History homework",
+      "text": "Progress 50% • Due tomorrow",
+      "important": false
+    },
+    {
+      "id": "log-mur8msvx-pcm5b2",
+      "dateISO": "2010-05-23",
+      "minute": 0,
+      "day": 2195,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Grandmother notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mo1x-d92dgd",
+      "dateISO": "2010-05-22",
+      "minute": 1381,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 100%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mnvt-g2qj77",
+      "dateISO": "2010-05-22",
+      "minute": 1306,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 100%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mnvs-7uab7u",
+      "dateISO": "2010-05-22",
+      "minute": 1306,
+      "day": 2194,
+      "age": 6,
+      "title": "Bathroom accident",
+      "text": "You could not hold it. It is recoverable, but uncomfortable and embarrassing.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mnpg-mw0ua3",
+      "dateISO": "2010-05-22",
+      "minute": 1231,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 90%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mnfp-8ybvy0",
+      "dateISO": "2010-05-22",
+      "minute": 1156,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 80%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mn9o-x13sil",
+      "dateISO": "2010-05-22",
+      "minute": 1081,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 70%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mn9o-wsvtam",
+      "dateISO": "2010-05-22",
+      "minute": 1081,
+      "day": 2194,
+      "age": 6,
+      "title": "Invitation expired",
+      "text": "Nobody heard back from you, so the plan moved on without you.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mn4s-qtf90i",
+      "dateISO": "2010-05-22",
+      "minute": 1006,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 60%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mmzg-x30e04",
+      "dateISO": "2010-05-22",
+      "minute": 931,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 50%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mmto-b6c2p8",
+      "dateISO": "2010-05-22",
+      "minute": 856,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 40%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mmos-d2hcxw",
+      "dateISO": "2010-05-22",
+      "minute": 781,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 30%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mmdh-jgh8df",
+      "dateISO": "2010-05-22",
+      "minute": 706,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 20%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mlq4-ntgzd7",
+      "dateISO": "2010-05-22",
+      "minute": 631,
+      "day": 2194,
+      "age": 6,
+      "title": "Prepared for Reading Challenge",
+      "text": "Preparation 10%",
+      "important": false
+    },
+    {
+      "id": "log-mur8mick-yy02ha",
+      "dateISO": "2010-05-22",
+      "minute": 556,
+      "day": 2194,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "Club skill 23% • 3 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8mick-mkxgb7",
+      "dateISO": "2010-05-22",
+      "minute": 466,
+      "day": 2194,
+      "age": 6,
+      "title": "Chess Club • Play tournament game",
+      "text": "It is imperfect, but it becomes experience.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mhy9-u6zgs3",
+      "dateISO": "2010-05-22",
+      "minute": 466,
+      "day": 2194,
+      "age": 6,
+      "title": "Chess Club • Play a friendly match",
+      "text": "Club skill 19% • 2 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8mgzh-je9dz9",
+      "dateISO": "2010-05-22",
+      "minute": 421,
+      "day": 2194,
+      "age": 6,
+      "title": "Chess Club • Practice puzzles",
+      "text": "Club skill 19% • 1 sessions",
+      "important": false
+    },
+    {
+      "id": "log-mur8mcee-38xuwx",
+      "dateISO": "2010-05-22",
+      "minute": 376,
+      "day": 2194,
+      "age": 6,
+      "title": "Slept",
+      "text": "9h 46m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mcee-s85s1p",
+      "dateISO": "2010-05-22",
+      "minute": 0,
+      "day": 2194,
+      "age": 6,
+      "title": "Registered • Reading Challenge",
+      "text": "The event is Wed, Jun 2, 2010 at 10:00 AM. You need to actually show up — preparation now matters.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mcee-j3nfha",
+      "dateISO": "2010-05-22",
+      "minute": 0,
+      "day": 2194,
+      "age": 6,
+      "title": "Event permission denied",
+      "text": "Your caregiver says no to School Art Day.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mcee-0752me",
+      "dateISO": "2010-05-22",
+      "minute": 0,
+      "day": 2194,
+      "age": 6,
+      "title": "Joined Chess Club",
+      "text": "It is a real commitment now: sessions every week at 3:30 PM, led by Ms. Garcia. Showing up matters.",
+      "important": true
+    },
+    {
+      "id": "log-mur8mced-q7g6fm",
+      "dateISO": "2010-05-22",
+      "minute": 0,
+      "day": 2194,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Mom notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8maro-46ffmb",
+      "dateISO": "2010-05-21",
+      "minute": 900,
+      "day": 2193,
+      "age": 6,
+      "title": "Asked to enter",
+      "text": "You ask to enter Reading Challenge.",
+      "important": false
+    },
+    {
+      "id": "log-mur8mag9-ubdmex",
+      "dateISO": "2010-05-21",
+      "minute": 900,
+      "day": 2193,
+      "age": 6,
+      "title": "Asked to enter",
+      "text": "You ask to enter School Art Day.",
+      "important": false
+    },
+    {
+      "id": "log-mur8m63x-llf6w4",
+      "dateISO": "2010-05-21",
+      "minute": 900,
+      "day": 2193,
+      "age": 6,
+      "title": "School event opportunity",
+      "text": "Reading Challenge: register by Tue, May 25, 2010 • event Wed, Jun 2, 2010.",
+      "important": false
+    },
+    {
+      "id": "log-mur8m4ad-48wri0",
+      "dateISO": "2010-05-21",
+      "minute": 900,
+      "day": 2193,
+      "age": 6,
+      "title": "School event opportunity",
+      "text": "School Art Day: register by Tue, May 25, 2010 • event Thu, Jun 3, 2010.",
+      "important": false
+    },
+    {
+      "id": "log-mur8m261-fsy9cf",
+      "dateISO": "2010-05-21",
+      "minute": 900,
+      "day": 2193,
+      "age": 6,
+      "title": "Asked to join",
+      "text": "You ask to join Chess Club. A caregiver decision is scheduled for tomorrow.",
+      "important": false
+    },
+    {
+      "id": "log-mur8lu4h-zvnykb",
+      "dateISO": "2010-05-21",
+      "minute": 900,
+      "day": 2193,
+      "age": 6,
+      "title": "Activity opportunity",
+      "text": "Chess Club has space. Decide by Tue, May 25, 2010; caregiver approval is required.",
+      "important": false
+    },
+    {
+      "id": "log-mur8l6yx-blcmzr",
+      "dateISO": "2010-05-21",
+      "minute": 900,
+      "day": 2193,
+      "age": 6,
+      "title": "School day",
+      "text": "You make it in a few minutes before the bell. Group work in English / Language is chaotic, but your group finishes. Mia spends lunch telling you about a new game.",
+      "important": false
+    },
+    {
+      "id": "log-mur8l4u9-7cnsw0",
+      "dateISO": "2010-05-21",
+      "minute": 390,
+      "day": 2193,
+      "age": 6,
+      "title": "Slept",
+      "text": "9h 30m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8l4u9-0kxxvo",
+      "dateISO": "2010-05-21",
+      "minute": 0,
+      "day": 2193,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Grandmother notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8l3ld-h22pvm",
+      "dateISO": "2010-05-20",
+      "minute": 1260,
+      "day": 2192,
+      "age": 6,
+      "title": "Could not go",
+      "text": "Your caregiver does not approve the plan this time.",
+      "important": false
+    },
+    {
+      "id": "log-mur8kriw-ixblg6",
+      "dateISO": "2010-05-20",
+      "minute": 1260,
+      "day": 2192,
+      "age": 6,
+      "title": "Geography homework submitted",
+      "text": "You finish the last question and put it in your bag. One less thing to worry about.",
+      "important": false
+    },
+    {
+      "id": "log-mur8kriw-7ty3kd",
+      "dateISO": "2010-05-20",
+      "minute": 1260,
+      "day": 2192,
+      "age": 6,
+      "title": "Past bedtime",
+      "text": "Mom finds you still awake. \"It's way past your bedtime.\" You get sent to bed.",
+      "important": false
+    },
+    {
+      "id": "log-mur8kr54-p5ecde",
+      "dateISO": "2010-05-20",
+      "minute": 1200,
+      "day": 2192,
+      "age": 6,
+      "title": "Geography homework",
+      "text": "Progress 50% • Due in 4 days",
+      "important": false
+    },
+    {
+      "id": "log-mur8kp69-c80ine",
+      "dateISO": "2010-05-20",
+      "minute": 1140,
+      "day": 2192,
+      "age": 6,
+      "title": "Technology homework submitted",
+      "text": "You finish the last question and put it in your bag. One less thing to worry about.",
+      "important": false
+    },
+    {
+      "id": "log-mur8knqh-sx34ab",
+      "dateISO": "2010-05-20",
+      "minute": 1080,
+      "day": 2192,
+      "age": 6,
+      "title": "Music homework submitted",
+      "text": "Done before the deadline — Ms. Nguyen will notice.",
+      "important": false
+    },
+    {
+      "id": "log-mur8kmzs-lsowfs",
+      "dateISO": "2010-05-20",
+      "minute": 1020,
+      "day": 2192,
+      "age": 6,
+      "title": "Technology homework",
+      "text": "Progress 50% • Due in 4 days",
+      "important": false
+    },
+    {
+      "id": "log-mur8kmc9-0zfom8",
+      "dateISO": "2010-05-20",
+      "minute": 960,
+      "day": 2192,
+      "age": 6,
+      "title": "Music homework",
+      "text": "Progress 50% • Due in 4 days",
+      "important": false
+    },
+    {
+      "id": "log-mur8jleo-5lhl2s",
+      "dateISO": "2010-05-20",
+      "minute": 900,
+      "day": 2192,
+      "age": 6,
+      "title": "Gift reaction",
+      "text": "Said thank you after receiving $25 birthday cash. The giver may remember that reaction.",
+      "important": false
+    },
+    {
+      "id": "log-mur8jbrc-aw3mxv",
+      "dateISO": "2010-05-20",
+      "minute": 900,
+      "day": 2192,
+      "age": 6,
+      "title": "Found money",
+      "text": "You pick up $2.",
+      "important": false
+    },
+    {
+      "id": "log-mur8j8jl-xuo82l",
+      "dateISO": "2010-05-20",
+      "minute": 900,
+      "day": 2192,
+      "age": 6,
+      "title": "School day (late)",
+      "text": "The hallway is already empty when you get there. You walk in mid-sentence. History drags a little, but one explanation finally clicks. You and Mia trade snacks at lunch.",
+      "important": false
+    },
+    {
+      "id": "log-mur8j7kl-jg6d51",
+      "dateISO": "2010-05-20",
+      "minute": 600,
+      "day": 2192,
+      "age": 6,
+      "title": "Birthday celebration",
+      "text": "You celebrate with people close to you.",
+      "important": true
+    },
+    {
+      "id": "log-mur8j7kl-73zssw",
+      "dateISO": "2010-05-20",
+      "minute": 600,
+      "day": 2192,
+      "age": 6,
+      "title": "Hygiene reminder",
+      "text": "Dad notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8j39u-vqyrwh",
+      "dateISO": "2010-05-20",
+      "minute": 0,
+      "day": 2192,
+      "age": 6,
+      "title": "🎂 Birthday",
+      "text": "You turn 6. You also receive $25 in birthday money.",
+      "important": true
+    },
+    {
+      "id": "log-mur8j39m-ggqx47",
+      "dateISO": "2010-01-01",
+      "minute": 0,
+      "day": 2053,
+      "age": 5,
+      "title": "🎆 New Year",
+      "text": "A new calendar year begins. Plans, school/work and family routines keep moving.",
+      "important": false
+    },
+    {
+      "id": "log-mur8izjh-aaj11h",
+      "dateISO": "2009-05-22",
+      "minute": 45,
+      "day": 1829,
+      "age": 5,
+      "title": "Went to Playground",
+      "text": "caregiver drives / walks with you",
+      "important": false
+    },
+    {
+      "id": "log-mur8izjh-eepqhu",
+      "dateISO": "2009-05-22",
+      "minute": 0,
+      "day": 1829,
+      "age": 5,
+      "title": "Hygiene reminder",
+      "text": "Grandmother notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8izat-kgi2oy",
+      "dateISO": "2009-05-21",
+      "minute": 1395,
+      "day": 1828,
+      "age": 5,
+      "title": "Went to Restaurant",
+      "text": "caregiver drives / walks with you",
+      "important": false
+    },
+    {
+      "id": "log-mur8izat-fsj7oo",
+      "dateISO": "2009-05-21",
+      "minute": 1395,
+      "day": 1828,
+      "age": 5,
+      "title": "Hygiene reminder",
+      "text": "Grandmother notices you need to wash up.",
+      "important": false
+    },
+    {
+      "id": "log-mur8iz1h-hv0cjj",
+      "dateISO": "2009-05-21",
+      "minute": 1275,
+      "day": 1828,
+      "age": 5,
+      "title": "Went to Beach",
+      "text": "caregiver drives / walks with you",
+      "important": false
+    },
+    {
+      "id": "log-mur8iz1h-f3g6fb",
+      "dateISO": "2009-05-21",
+      "minute": 1275,
+      "day": 1828,
+      "age": 5,
+      "title": "Past bedtime",
+      "text": "Mom finds you still awake. \"It's way past your bedtime.\" You get sent to bed with a sigh and a glass of water.",
+      "important": false
+    },
+    {
+      "id": "log-mur8iypl-h1mtb7",
+      "dateISO": "2009-05-21",
+      "minute": 1035,
+      "day": 1828,
+      "age": 5,
+      "title": "Went to Supermarket",
+      "text": "caregiver drives / walks with you",
+      "important": false
+    },
+    {
+      "id": "log-mur8iyg4-pewv3b",
+      "dateISO": "2009-05-21",
+      "minute": 945,
+      "day": 1828,
+      "age": 5,
+      "title": "Went to Library",
+      "text": "caregiver drives / walks with you",
+      "important": false
+    },
+    {
+      "id": "log-mur8iy64-2ntmyr",
+      "dateISO": "2009-05-21",
+      "minute": 825,
+      "day": 1828,
+      "age": 5,
+      "title": "Outing denied",
+      "text": "A caregiver says no to Park right now.",
+      "important": false
+    },
+    {
+      "id": "log-mur8ix6s-ugiw8j",
+      "dateISO": "2009-05-21",
+      "minute": 825,
+      "day": 1828,
+      "age": 5,
+      "title": "Listened to radio music",
+      "text": "No screen required • Fun +9",
+      "important": false
+    },
+    {
+      "id": "log-mur8iwss-7no5lx",
+      "dateISO": "2009-05-21",
+      "minute": 795,
+      "day": 1828,
+      "age": 5,
+      "title": "Watched TV",
+      "text": "Caregiver-approved screen time",
+      "important": false
+    },
+    {
+      "id": "log-mur8iwss-7um1y1",
+      "dateISO": "2009-05-21",
+      "minute": 735,
+      "day": 1828,
+      "age": 5,
+      "title": "Permission granted",
+      "text": "Dad says yes to using the TV today.",
+      "important": false
+    },
+    {
+      "id": "log-mur8iwh9-ig2ciw",
+      "dateISO": "2009-05-21",
+      "minute": 735,
+      "day": 1828,
+      "age": 5,
+      "title": "Played",
+      "text": "Fun +14",
+      "important": false
+    },
+    {
+      "id": "log-mur8iw7h-gcj2f9",
+      "dateISO": "2009-05-21",
+      "minute": 675,
+      "day": 1828,
+      "age": 5,
+      "title": "Ate with family",
+      "text": "Hunger improved • family closeness +2",
+      "important": false
+    },
+    {
+      "id": "log-mur8ivt8-w9virv",
+      "dateISO": "2009-05-21",
+      "minute": 630,
+      "day": 1828,
+      "age": 5,
+      "title": "Exercise",
+      "text": "Fitness +4 • Stress -5",
+      "important": false
+    },
+    {
+      "id": "log-mur8ivj9-ps5fae",
+      "dateISO": "2009-05-21",
+      "minute": 585,
+      "day": 1828,
+      "age": 5,
+      "title": "Used a computer",
+      "text": "Caregiver-approved household/school computer time",
+      "important": false
+    },
+    {
+      "id": "log-mur8ivj9-m5bccb",
+      "dateISO": "2009-05-21",
+      "minute": 525,
+      "day": 1828,
+      "age": 5,
+      "title": "Permission granted",
+      "text": "Dad says yes to using the shared electronic device today.",
+      "important": false
+    },
+    {
+      "id": "log-mur8iv79-xd5vq6",
+      "dateISO": "2009-05-21",
+      "minute": 525,
+      "day": 1828,
+      "age": 5,
+      "title": "Created art",
+      "text": "Creative growth • Fun +12",
+      "important": false
+    },
+    {
+      "id": "log-mur8iuud-h5sbvh",
+      "dateISO": "2009-05-21",
+      "minute": 465,
+      "day": 1828,
+      "age": 5,
+      "title": "Read with some help",
+      "text": "Fun +7 • Stress -3",
+      "important": false
+    },
+    {
+      "id": "log-mur8ir6p-siv5bq",
+      "dateISO": "2009-05-21",
+      "minute": 420,
+      "day": 1828,
+      "age": 5,
+      "title": "Slept",
+      "text": "11h 0m • You woke once in the dark and took a while to drift off again.",
+      "important": false
+    },
+    {
+      "id": "log-mur8ibbo-il0rxq",
+      "dateISO": "2009-05-20",
+      "minute": 420,
+      "day": 1827,
+      "age": 5,
+      "title": "Gift reaction",
+      "text": "Said thank you after receiving Art supplies. The giver may remember that reaction.",
+      "important": false
+    },
+    {
+      "id": "log-mur8i43x-p9l8d7",
+      "dateISO": "2009-05-20",
+      "minute": 0,
+      "day": 1827,
+      "age": 5,
+      "title": "🎂 Birthday",
+      "text": "You turn 5.",
+      "important": true
+    },
+    {
+      "id": "log-mur8i43r-14wqrb",
+      "dateISO": "2009-01-01",
+      "minute": 0,
+      "day": 1688,
+      "age": 4,
+      "title": "🎆 New Year",
+      "text": "A new calendar year begins. Plans, school/work and family routines keep moving.",
+      "important": false
+    },
+    {
+      "id": "log-mur8i43q-tsdoi4",
+      "dateISO": "2008-12-25",
+      "minute": 0,
+      "day": 1681,
+      "age": 4,
+      "title": "🎄 Christmas present",
+      "text": "You receive Art supplies. You decide how honestly to show your reaction.",
+      "important": false
+    },
+    {
+      "id": "log-mur8i1yl-muujp0",
+      "dateISO": "2008-05-21",
+      "minute": 420,
+      "day": 1463,
+      "age": 4,
+      "title": "Slept",
+      "text": "11h 0m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8hrlw-eal19j",
+      "dateISO": "2008-05-20",
+      "minute": 420,
+      "day": 1462,
+      "age": 4,
+      "title": "Gift reaction",
+      "text": "Hugged giver after receiving Sweater. The giver may remember that reaction.",
+      "important": false
+    },
+    {
+      "id": "log-mur8gm1x-nk5pg3",
+      "dateISO": "2008-05-20",
+      "minute": 0,
+      "day": 1462,
+      "age": 4,
+      "title": "🎂 Birthday",
+      "text": "You turn 4.",
+      "important": true
+    },
+    {
+      "id": "log-mur8gm1r-whv971",
+      "dateISO": "2008-01-01",
+      "minute": 0,
+      "day": 1322,
+      "age": 3,
+      "title": "🎆 New Year",
+      "text": "A new calendar year begins. Plans, school/work and family routines keep moving.",
+      "important": false
+    },
+    {
+      "id": "log-mur8gm1r-olvajx",
+      "dateISO": "2007-12-25",
+      "minute": 0,
+      "day": 1315,
+      "age": 3,
+      "title": "🎄 Christmas present",
+      "text": "You receive Sweater. You decide how honestly to show your reaction.",
+      "important": false
+    },
+    {
+      "id": "log-mur8gl79-rkhjh5",
+      "dateISO": "2007-05-23",
+      "minute": 605,
+      "day": 1099,
+      "age": 3,
+      "title": "Family conversation",
+      "text": "Closeness +4 • tension eased",
+      "important": false
+    },
+    {
+      "id": "log-mur8ghnl-v0qyps",
+      "dateISO": "2007-05-23",
+      "minute": 585,
+      "day": 1099,
+      "age": 3,
+      "title": "Family / approved trip",
+      "text": "A caregiver decides destination, transport and timing. ",
+      "important": true
+    },
+    {
+      "id": "log-mur8gcsp-ntxh03",
+      "dateISO": "2007-05-22",
+      "minute": 585,
+      "day": 1098,
+      "age": 3,
+      "title": "Learning through play",
+      "text": "Social skills development 74%",
+      "important": false
+    },
+    {
+      "id": "log-mur8gc8o-dg5yj9",
+      "dateISO": "2007-05-22",
+      "minute": 540,
+      "day": 1098,
+      "age": 3,
+      "title": "Learning through play",
+      "text": "Movement development 87%",
+      "important": false
+    },
+    {
+      "id": "log-mur8gb9x-9iksk5",
+      "dateISO": "2007-05-22",
+      "minute": 495,
+      "day": 1098,
+      "age": 3,
+      "title": "Learning through play",
+      "text": "Numbers & patterns development 91%",
+      "important": false
+    },
+    {
+      "id": "log-mur8ga94-0x0iv7",
+      "dateISO": "2007-05-22",
+      "minute": 450,
+      "day": 1098,
+      "age": 3,
+      "title": "Learning through play",
+      "text": "Language & stories development 80%",
+      "important": false
+    },
+    {
+      "id": "log-mur8fpip-judehi",
+      "dateISO": "2007-05-22",
+      "minute": 405,
+      "day": 1098,
+      "age": 3,
+      "title": "Slept",
+      "text": "11h 15m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8fpip-aifrsu",
+      "dateISO": "2007-05-22",
+      "minute": 0,
+      "day": 1098,
+      "age": 3,
+      "title": "Kindergarten decision",
+      "text": "Your caregivers decide you will attend. Your preference mattered, but schedules, money and parenting style mattered too.",
+      "important": true
+    },
+    {
+      "id": "log-mur8ff9l-j4kibs",
+      "dateISO": "2007-05-21",
+      "minute": 398,
+      "day": 1097,
+      "age": 3,
+      "title": "Slept",
+      "text": "11h 8m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8fbht-akz71j",
+      "dateISO": "2007-05-20",
+      "minute": 420,
+      "day": 1096,
+      "age": 3,
+      "title": "Your kindergarten preference",
+      "text": "You say you want to go.",
+      "important": false
+    },
+    {
+      "id": "log-mur8evcl-zwvt4f",
+      "dateISO": "2007-05-20",
+      "minute": 0,
+      "day": 1096,
+      "age": 3,
+      "title": "🎂 Birthday",
+      "text": "You turn 3.",
+      "important": true
+    },
+    {
+      "id": "log-mur8evcl-j54cv4",
+      "dateISO": "2007-05-20",
+      "minute": 0,
+      "day": 1096,
+      "age": 3,
+      "title": "Kindergarten becomes a question",
+      "text": "Your family starts discussing preschool/kindergarten, childcare, money, schedules and your preferences.",
+      "important": false
+    },
+    {
+      "id": "log-mur8evcg-aplwtz",
+      "dateISO": "2007-01-01",
+      "minute": 0,
+      "day": 957,
+      "age": 2,
+      "title": "🎆 New Year",
+      "text": "A new calendar year begins. Plans, school/work and family routines keep moving.",
+      "important": false
+    },
+    {
+      "id": "log-mur8es4w-o2jz2f",
+      "dateISO": "2006-05-20",
+      "minute": 0,
+      "day": 731,
+      "age": 2,
+      "title": "🎂 Birthday",
+      "text": "You turn 2.",
+      "important": true
+    },
+    {
+      "id": "log-mur8es4r-o2fsom",
+      "dateISO": "2006-01-01",
+      "minute": 0,
+      "day": 592,
+      "age": 1,
+      "title": "🎆 New Year",
+      "text": "A new calendar year begins. Plans, school/work and family routines keep moving.",
+      "important": false
+    },
+    {
+      "id": "log-mur8eopk-9kd4io",
+      "dateISO": "2005-05-20",
+      "minute": 700,
+      "day": 366,
+      "age": 1,
+      "title": "Caregiver toileting",
+      "text": "Grandmother takes care of your diaper/toileting needs.",
+      "important": false
+    },
+    {
+      "id": "log-mur8eoe9-f14duw",
+      "dateISO": "2005-05-20",
+      "minute": 690,
+      "day": 366,
+      "age": 1,
+      "title": "Fed by caregiver",
+      "text": "Dad feeds you safely. hunger -16",
+      "important": false
+    },
+    {
+      "id": "log-mur8ens1-d8zbcv",
+      "dateISO": "2005-05-20",
+      "minute": 660,
+      "day": 366,
+      "age": 1,
+      "title": "Took a nap",
+      "text": "Energy +26",
+      "important": false
+    },
+    {
+      "id": "log-mur8enih-gj5ibr",
+      "dateISO": "2005-05-20",
+      "minute": 540,
+      "day": 366,
+      "age": 1,
+      "title": "Caregiver toileting",
+      "text": "Dad takes care of your diaper/toileting needs.",
+      "important": false
+    },
+    {
+      "id": "log-mur8en9t-g5ehkw",
+      "dateISO": "2005-05-20",
+      "minute": 530,
+      "day": 366,
+      "age": 1,
+      "title": "Played",
+      "text": "Fun +14",
+      "important": false
+    },
+    {
+      "id": "log-mur8empl-28vh84",
+      "dateISO": "2005-05-20",
+      "minute": 470,
+      "day": 366,
+      "age": 1,
+      "title": "Bath with caregiver",
+      "text": "Grandmother handles safety and washing.",
+      "important": false
+    },
+    {
+      "id": "log-mur8emh5-7s1zsx",
+      "dateISO": "2005-05-20",
+      "minute": 450,
+      "day": 366,
+      "age": 1,
+      "title": "Fed by caregiver",
+      "text": "Dad feeds you safely. hunger -57",
+      "important": false
+    },
+    {
+      "id": "log-mur8eikh-dcabsq",
+      "dateISO": "2005-05-20",
+      "minute": 420,
+      "day": 366,
+      "age": 1,
+      "title": "Gift reaction",
+      "text": "Said thank you after receiving Toy. The giver may remember that reaction.",
+      "important": false
+    },
+    {
+      "id": "log-mur8e18q-ebnxpo",
+      "dateISO": "2005-05-20",
+      "minute": 0,
+      "day": 366,
+      "age": 1,
+      "title": "🎂 Birthday",
+      "text": "You turn 1.",
+      "important": true
+    },
+    {
+      "id": "log-mur8e18j-79cwy0",
+      "dateISO": "2005-01-01",
+      "minute": 0,
+      "day": 227,
+      "age": 0,
+      "title": "🎆 New Year",
+      "text": "A new calendar year begins. Plans, school/work and family routines keep moving.",
+      "important": false
+    },
+    {
+      "id": "log-mur8e18j-gz1e6t",
+      "dateISO": "2004-12-25",
+      "minute": 0,
+      "day": 220,
+      "age": 0,
+      "title": "🎄 Christmas present",
+      "text": "You receive Toy. You decide how honestly to show your reaction.",
+      "important": false
+    },
+    {
+      "id": "log-mur8e01d-3a0e0j",
+      "dateISO": "2004-05-23",
+      "minute": 534,
+      "day": 4,
+      "age": 0,
+      "title": "Slept",
+      "text": "13h 24m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8dymd-ne2qb7",
+      "dateISO": "2004-05-22",
+      "minute": 500,
+      "day": 3,
+      "age": 0,
+      "title": "Slept",
+      "text": "12h 50m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8dt82-uygxui",
+      "dateISO": "2004-05-21",
+      "minute": 494,
+      "day": 2,
+      "age": 0,
+      "title": "Slept",
+      "text": "12h 44m • You slept through the night.",
+      "important": false
+    },
+    {
+      "id": "log-mur8cr91-q3pns7",
+      "dateISO": "2004-05-20",
+      "minute": 480,
+      "day": 1,
+      "age": 0,
+      "title": "Life begins",
+      "text": "At first, almost everything happens through caregivers. Your independence will grow with age, skills, trust and circumstances.",
+      "important": true
+    }
+  ],
+  "milestones": [
+    {
+      "dateISO": "2010-05-22",
+      "age": 6,
+      "title": "Joined Chess Club",
+      "text": "It is a real commitment now: sessions every week at 3:30 PM, led by Ms. Garcia. Showing up matters."
+    },
+    {
+      "dateISO": "2010-05-20",
+      "age": 6,
+      "title": "Birthday celebration",
+      "text": "You celebrate with people close to you."
+    },
+    {
+      "dateISO": "2010-05-20",
+      "age": 6,
+      "title": "🎂 Birthday",
+      "text": "You turn 6. You also receive $25 in birthday money."
+    },
+    {
+      "dateISO": "2009-05-20",
+      "age": 5,
+      "title": "🎂 Birthday",
+      "text": "You turn 5."
+    },
+    {
+      "dateISO": "2008-05-20",
+      "age": 4,
+      "title": "🎂 Birthday",
+      "text": "You turn 4."
+    },
+    {
+      "dateISO": "2007-05-23",
+      "age": 3,
+      "title": "Family / approved trip",
+      "text": "A caregiver decides destination, transport and timing. "
+    },
+    {
+      "dateISO": "2007-05-22",
+      "age": 3,
+      "title": "Kindergarten decision",
+      "text": "Your caregivers decide you will attend. Your preference mattered, but schedules, money and parenting style mattered too."
+    },
+    {
+      "dateISO": "2007-05-20",
+      "age": 3,
+      "title": "🎂 Birthday",
+      "text": "You turn 3."
+    },
+    {
+      "dateISO": "2006-05-20",
+      "age": 2,
+      "title": "🎂 Birthday",
+      "text": "You turn 2."
+    },
+    {
+      "dateISO": "2005-05-20",
+      "age": 1,
+      "title": "🎂 Birthday",
+      "text": "You turn 1."
+    },
+    {
+      "dateISO": "2004-05-20",
+      "age": 0,
+      "title": "Life begins",
+      "text": "At first, almost everything happens through caregivers. Your independence will grow with age, skills, trust and circumstances."
+    }
+  ],
+  "flags": {
+    "holiday-christmas-2004-12-25": true,
+    "holiday-newyear-2005-01-01": true,
+    "holiday-christmas-2005-12-25": true,
+    "holiday-newyear-2006-01-01": true,
+    "holiday-christmas-2006-12-25": true,
+    "holiday-newyear-2007-01-01": true,
+    "holiday-christmas-2007-12-25": true,
+    "holiday-newyear-2008-01-01": true,
+    "holiday-christmas-2008-12-25": true,
+    "holiday-newyear-2009-01-01": true,
+    "need-toilet-2009-05-21": true,
+    "bedtime-2009-05-21": true,
+    "need-hygiene-2009-05-21": true,
+    "need-toilet-2009-05-22": true,
+    "need-hygiene-2009-05-22": true,
+    "holiday-christmas-2009-12-25": true,
+    "holiday-newyear-2010-01-01": true,
+    "need-toilet-2010-05-20": true,
+    "need-hygiene-2010-05-20": true,
+    "bedtime-2010-05-20": true,
+    "need-toilet-2010-05-21": true,
+    "need-hygiene-2010-05-21": true,
+    "need-hunger-2010-05-21": true,
+    "need-hygiene-2010-05-22": true,
+    "need-hunger-2010-05-22": true,
+    "need-toilet-2010-05-22": true,
+    "bedtime-2010-05-22": true,
+    "need-hunger-2010-05-23": true,
+    "need-hygiene-2010-05-23": true,
+    "need-hygiene-2010-05-24": true,
+    "need-hygiene-2010-05-25": true,
+    "bedtime-2010-05-26": true,
+    "need-toilet-2010-05-27": true,
+    "need-hunger-2010-05-27": true,
+    "bedtime-2010-05-27": true,
+    "need-hunger-2010-05-28": true,
+    "need-toilet-2010-05-28": true,
+    "need-hygiene-2010-05-28": true,
+    "bedtime-2010-05-28": true,
+    "need-hunger-2010-05-29": true,
+    "need-hygiene-2010-05-29": true,
+    "need-toilet-2010-05-29": true,
+    "need-toilet-2010-05-31": true,
+    "bedtime-2010-05-31": true,
+    "need-toilet-2010-06-01": true
+  },
+  "weather": {
+    "type": "Sunny",
+    "temp": 33,
+    "humidity": 56,
+    "forecast": [
+      {
+        "dateISO": "2010-06-03",
+        "type": "Cool",
+        "temp": 19
+      },
+      {
+        "dateISO": "2010-06-04",
+        "type": "Sunny",
+        "temp": 36
+      },
+      {
+        "dateISO": "2010-06-05",
+        "type": "Hot",
+        "temp": 35
+      },
+      {
+        "dateISO": "2010-06-06",
+        "type": "Windy",
+        "temp": 17
+      },
+      {
+        "dateISO": "2010-06-07",
+        "type": "Windy",
+        "temp": 30
+      }
+    ]
+  },
+  "homeAmenities": {
+    "fan": true,
+    "ac": true,
+    "fireplace": true,
+    "tv": true,
+    "radio": true,
+    "sharedComputer": true
+  },
+  "inventory": {
+    "umbrella": 0,
+    "raincoat": 0,
+    "sweater": 0,
+    "firewood": 0,
+    "sunglasses": 0,
+    "waterBottle": 0
+  },
+  "inventoryItems": [
+    {
+      "id": "item-mur8e18j-t0ti8b",
+      "key": "toy",
+      "name": "Toy",
+      "category": "Toys",
+      "condition": 100,
+      "originalPrice": 25,
+      "currentValue": 16,
+      "acquiredDate": "2004-12-25",
+      "source": "Christmas gift",
+      "sentimental": 35,
+      "equipped": false,
+      "stored": false
+    },
+    {
+      "id": "item-mur8i43q-40e91i",
+      "key": "artSupplies",
+      "name": "Art supplies",
+      "category": "Hobbies",
+      "condition": 100,
+      "originalPrice": 25,
+      "currentValue": 16,
+      "acquiredDate": "2008-12-25",
+      "source": "Christmas gift",
+      "sentimental": 35,
+      "equipped": false,
+      "stored": false
+    }
+  ],
+  "possessions": [
+    "toy",
+    "artSupplies"
+  ],
+  "phone": {
+    "owned": false,
+    "model": null,
+    "price": 600,
+    "condition": 100,
+    "appsUnlocked": [
+      "Messages",
+      "Calls",
+      "Camera",
+      "Photos",
+      "Music",
+      "Games",
+      "Maps",
+      "Shopping",
+      "School portal"
+    ]
+  },
+  "finance": {
+    "savings": 0,
+    "parentSavings": 0,
+    "debt": 0,
+    "investments": 0
+  },
+  "permissions": {
+    "stand": null,
+    "yardSale": null,
+    "dailyAccess": {
+      "dateISO": "2010-05-28",
+      "tv": false,
+      "sharedDevice": true,
+      "phone": false,
+      "stove": false
+    }
+  },
+  "stall": null,
+  "purchaseHistory": [
+    {
+      "dateISO": "2008-12-25",
+      "minute": 0,
+      "key": "artSupplies",
+      "source": "Christmas gift",
+      "price": 0
+    },
+    {
+      "dateISO": "2007-12-25",
+      "minute": 0,
+      "key": "sweater",
+      "source": "Christmas gift",
+      "price": 0
+    },
+    {
+      "dateISO": "2004-12-25",
+      "minute": 0,
+      "key": "toy",
+      "source": "Christmas gift",
+      "price": 0
+    }
+  ],
+  "giftRequests": [],
+  "giftHistory": [
+    {
+      "id": "gift-mur8j39t-lq0n45",
+      "dateISO": "2010-05-20",
+      "age": 6,
+      "item": "$25 birthday cash",
+      "occasion": "Birthday",
+      "reaction": "Said thank you"
+    },
+    {
+      "id": "gift-mur8i43q-6pv01c",
+      "dateISO": "2008-12-25",
+      "age": 4,
+      "item": "Art supplies",
+      "occasion": "Christmas",
+      "reaction": "Said thank you",
+      "requested": false
+    },
+    {
+      "id": "gift-mur8gm1r-tquci1",
+      "dateISO": "2007-12-25",
+      "age": 3,
+      "item": "Sweater",
+      "occasion": "Christmas",
+      "reaction": "Hugged giver",
+      "requested": false
+    },
+    {
+      "id": "gift-mur8e18j-pyjx9a",
+      "dateISO": "2004-12-25",
+      "age": 0,
+      "item": "Toy",
+      "occasion": "Christmas",
+      "reaction": "Said thank you",
+      "requested": false
+    }
+  ],
+  "traditions": {
+    "christmas": true,
+    "lunarNewYear": false,
+    "newYear": true
+  },
+  "familyEvents": [
+    {
+      "dateISO": "2010-05-24",
+      "text": "Attended a relative’s baby shower."
+    },
+    {
+      "dateISO": "2010-05-20",
+      "text": "A family member starts a new hobby."
+    },
+    {
+      "dateISO": "2009-05-20",
+      "text": "A family member starts a new hobby."
+    }
+  ],
+  "choresDone": 0,
+  "career": {
+    "job": null,
+    "applications": [],
+    "skills": 0,
+    "reputation": 0,
+    "performance": 50,
+    "retired": false
+  },
+  "healthState": {
+    "fitness": 54,
+    "sleep": 99,
+    "illness": null
+  },
+  "social": {
+    "followers": 0,
+    "reputation": 48,
+    "posts": 0,
+    "fame": 0
+  },
+  "romance": {
+    "status": "Single",
+    "partner": null,
+    "history": []
+  },
+  "travel": {
+    "trips": 1,
+    "lastTrip": "2007-05-22",
+    "passport": false
+  },
+  "current": {
+    "id": "ctx-mura0802-n9vxwa",
+    "sourceType": "daily",
+    "sourceId": null,
+    "createdAt": {
+      "dateISO": "2010-06-02",
+      "minute": 900
+    },
+    "expiresAt": null,
+    "priority": 0,
+    "title": "Wednesday afternoon",
+    "text": "Nothing else is scheduled today. Your time is your own.",
+    "actions": []
+  },
+  "archive": {
+    "pending": [
+      {
+        "createdDate": "2007-05-20",
+        "type": "kindergarten",
+        "title": "Kindergarten decision",
+        "resolveDate": "2007-05-22",
+        "status": "Enrolled",
+        "payload": {
+          "preference": true
+        },
+        "autoDecideDate": "2007-06-03",
+        "detail": "Your caregivers will decide by Tue, May 22, 2007.",
+        "id": "pending-mur8evcl-s83w5c",
+        "resolved": true,
+        "expiresDate": "2010-05-20",
+        "minAge": 3,
+        "maxAge": 5,
+        "resolvedDate": "2007-05-22",
+        "resolutionReason": "Family decided",
+        "supersededBy": null
+      }
+    ],
+    "calendar": [],
+    "events": [],
+    "exams": [],
+    "homework": []
+  },
+  "followUps": [
+    {
+      "id": "fu-mur8okdj-af5su4",
+      "type": "absenceNotice",
+      "payload": {
+        "dateISO": "2010-05-24",
+        "count": 1
+      },
+      "dateISO": "2010-05-24",
+      "minute": 1050,
+      "status": "Triggered",
+      "createdDate": "2010-05-24",
+      "triggeredDate": "2010-05-24"
+    }
+  ],
+  "schoolHistory": []
+}

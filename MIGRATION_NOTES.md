@@ -51,3 +51,12 @@ The original legacy browser key is not silently deleted during migration. Restar
 - **Phone:** the phone inventory item becomes canonical; `S.phone.condition/model/owned/battery` are re-derived from it, and an active phone is chosen (`S.phone.activeItemId`). An owned phone with no item record gets one.
 - The stale stored `currentValue` field is removed; value is computed live.
 - `S.skills` and `S.practiceLog` are added with zeros. Nothing is deleted from ownership history.
+
+
+## v7.2 phase 3
+- `S.education.graduations` is added. Saves aged 6+ that attended kindergarten get a kindergarten graduation (year of the 6th birthday) as a milestone.
+- School names that do not match the current stage are renamed (e.g. a primary pupil at "Sunrise Secondary School" → "Sunrise Primary School"). Clubs and teachers carry over only within the same school.
+- Open future assessments that share a date are spread to separate school days.
+- Registered school-day contests still at the old 10:00 slot move to the 13:00 in-school slot before they start.
+- `S.calendarProfile` (region + per-holiday overrides) and `S.holidayLog` are added. Old `holiday-*` flags still prevent re-triggering.
+- UI preferences (sub-tab per screen, log drawer open) live under a separate localStorage key `lifeSim_ui`, not in the save.

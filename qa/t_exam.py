@@ -26,7 +26,7 @@ async def main():
     notes=[n for n in s['notifications'] if n.get('sourceId')==m['id']]
     check('51 after: notification resolved', notes and all(n['status']=='Resolved' for n in notes), [n['status'] for n in notes])
     sd=[c for c in s['calendar'] if c['type']=='schoolDay' and c['dateISO']==m['dateISO']][0]
-    check('51 after: taking exam counted as attending school', sd['status']=='Attended', sd['status'])
+    check('51 after: taking the exam checked you in at school (day continues)', sd['status'] in ('Attending','Attended') and s['location']=='School', (sd['status'],s['location']))
     score=e['score']; await T(pg,f"takeExam('{m['id']}')"); s=await st(pg)
     e2=[x for x in s['exams'] if x['id']==m['id']][0]
     check('51: cannot take twice', e2['score']==score and e2['status']=='Completed')

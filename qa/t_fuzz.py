@@ -5,7 +5,8 @@ INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,no
  const exOpen=e=>['Scheduled','Due','In progress'].includes(e.status);
  for(const c of S.calendar){if(c.type==='exam'){const e=S.exams.find(x=>x.id===c.payload.examId);if(e&&!exOpen(e)&&!term.includes(c.status))bad.push('exam terminal but calendar '+c.status);if(e&&exOpen(e)&&term.includes(c.status))bad.push('exam open but calendar '+c.status)}
    if(!term.includes(c.status)&&c.dateISO<today)bad.push('past calendar still '+c.status+' '+c.type+' '+c.dateISO);
-   if(c.status==='Attending')bad.push('dangling Attending '+c.type)}
+   if(c.status==='Attending'&&!(c.type==='schoolDay'&&c.dateISO===today&&S.clock.minute<900&&S.location==='School'))bad.push('dangling Attending '+c.type+' '+c.dateISO+' '+S.clock.minute+' '+S.location)}
+ for(const e of S.events)if(['friendInvite','schoolSocial','parentSchool'].includes(e.type)&&e.dateISO===today&&(e.minute<390||e.minute>=1290))bad.push('NPC event at night '+e.type+' '+e.minute);
  for(const e of S.exams){if(e.status==='In progress')bad.push('exam stuck in progress');if(exOpen(e)&&e.dateISO<today)bad.push('open exam in the past')}
  if(S.age>=6&&S.pendingDecisions.some(p=>p.type==='kindergarten'&&!p.resolved))bad.push('active kindergarten at '+S.age);
  for(const e of S.events)if(e.status==='Open'&&e.expiresAt&&(e.expiresAt.dateISO+'T'+String(e.expiresAt.minute).padStart(4,'0'))<now)bad.push('open event past expiry '+e.type);

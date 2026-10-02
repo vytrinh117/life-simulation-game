@@ -51,7 +51,9 @@ async def main():
     while not await T(pg,f"call('isSchoolDay','{d2.isoformat()}')"): d2+=dt.timedelta(days=1)
     await T(pg,f"setClock('{d2.isoformat()}',560)"); await T(pg,"attendSchool()"); s=await st(pg)
     sd=[c for c in s['calendar'] if c['type']=='schoolDay' and c['dateISO']==d2.isoformat()][0]
-    check('8: 9:20 arrival = tardy', sd['status']=='Attended' and sd['attendanceStatus']=='Tardy' and s['clock']['minute']==900, (sd['attendanceStatus'],s['clock']['minute']))
+    check('8: 9:20 arrival = tardy, time keeps running from 9:20', sd['status']=='Attending' and sd['attendanceStatus']=='Tardy' and s['clock']['minute']==560, (sd['attendanceStatus'],s['clock']['minute']))
+    await T(pg,"advanceMinutes(400)"); s=await st(pg); sd=[c for c in s['calendar'] if c['type']=='schoolDay' and c['dateISO']==d2.isoformat()][0]
+    check('8: dismissal at 3 PM finalizes attendance', sd['status']=='Attended' and s['location']=='Home', sd['status'])
     check('8: absence produced a delayed parent notice', any(f['type']=='absenceNotice' for f in s['followUps']) or any('Absence notice' in l['title'] for l in s['log']))
     check('8: no JS errors', not pg.errs, pg.errs); await pg.close()
 

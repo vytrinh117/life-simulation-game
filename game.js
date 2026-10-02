@@ -204,7 +204,6 @@ function gradeLabel(age){const g=Math.max(1,age-5);return age<=11?`Grade ${g}`:a
 function subjectNames(age){const base=['Mathematics','English / Language','Science','History','Geography','Art','Music','Physical Education','Technology'];if(age>=13)base.push('Elective');return base}
 function teacherName(subject){return `${rand(['Ms.','Mr.','Mx.'])} ${rand(['Morgan','Lee','Nguyen','Kim','Patel','Garcia','Smith','Tan','Brown'])}`}
 function makeSubject(name,i){return {name,score:68+Math.floor(Math.random()*22),skill:50+Math.floor(Math.random()*20),prep:0,trend:i%3===0?'↑':'→',teacher:{name:teacherName(name),rel:50+Math.floor(Math.random()*20)},homework:{status:'None',progress:0,dueDate:null},lastStudyDate:null}}
-function buildSchool(age,carry=null){if(age>=3&&age<=5&&S.development.kindergarten.enrolled)return {name:carry?.name||rand(['Little Steps Kindergarten','Sunflower Early Learning','Neighborhood Kindergarten']),grade:'Kindergarten',className:rand(['Sun','Moon','Rainbow','Bears']),attendance:96,behavior:72,gpa:null,rank:null,subjects:[makeSubject('Language & stories',0),makeSubject('Numbers & patterns',1),makeSubject('Movement',2),makeSubject('Social skills',3)],clubs:[],activityOffers:[],contests:[],friends:[],rivals:[],yearStarted:currentDate()};if(age>=6&&age<=18){const same=carry&&carry.grade!=='Kindergarten';return {name:same?carry.name:rand(['Riverside Academy','Central International School','Westside School','Sunrise Secondary School']),grade:gradeLabel(age),className:`${Math.max(1,age-5)}-${String.fromCharCode(65+Math.floor(Math.random()*4))}`,attendance:carry?.attendance??96,behavior:carry?.behavior??70,gpa:age>=12?(carry?.gpa??3.1):null,rank:age>=12?(carry?.rank??Math.floor(8+Math.random()*22)):null,subjects:subjectNames(age).map((n,i)=>{const old=carry?.subjects?.find(s=>s.name===n);return old?Object.assign(makeSubject(n,i),old,{prep:0,homework:{status:'None',progress:0,dueDate:null}}):makeSubject(n,i)}),clubs:(carry?.clubs||[]).filter(c=>c.status==='Active'),activityOffers:[],contests:[],friends:carry?.friends||[],rivals:carry?.rivals||[],yearStarted:currentDate()}}return null}
 function studySubject(name,minutes=60,mode='solo'){const sub=S.school?.subjects?.find(x=>x.name===name);if(!sub){toast('Subject not found.');return}minutes=[30,60,180].includes(Number(minutes))?Number(minutes):60;let gain=minutes===30?4:minutes===60?7:13;if(mode==='friend'){const p=bestNonFamily();if(p){p.rel=clamp(p.rel+2);p.trust=clamp(p.trust+1);rememberPerson(p,`You studied ${sub.name} together.`)}gain+=2;S.needs.social=clamp(S.needs.social+7)}if(mode==='teacher'){sub.teacher.rel=clamp(sub.teacher.rel+3);gain+=3}if(findUsable('deskLamp'))gain=Math.round(gain*1.2);sub.prep=clamp(sub.prep+gain);sub.skill=clamp(sub.skill+Math.ceil(gain*.55));sub.score=clamp(sub.score+Math.max(1,Math.floor(gain*.18)));sub.lastStudyDate=currentDate();S.energy=clamp(S.energy-(minutes/30)*3);S.stress=clamp(S.stress+(minutes===180?6:2));advanceTime(minutes);feedback(`Studied ${sub.name}`,`Preparation +${gain} • Skill ${Math.round(sub.skill)}%${mode==='friend'?' • studied with a friend':''}`,minutes)}
 function hireTutor(name){const sub=S.school?.subjects?.find(x=>x.name===name);if(!sub)return;const cost=35;if(['Struggling','Modest'].includes(S.wealth)&&S.age<18&&!caregiverApproval(-10)){toast('Your household cannot justify a tutor right now.');return}if(S.age>=18&&!spendOwn(cost)){toast('Not enough money.');return}sub.prep=clamp(sub.prep+15);sub.skill=clamp(sub.skill+9);advanceTime(90);feedback('Tutor session',`${sub.name} preparation +15${S.age>=18?` • ${money(cost)}`:' • household paid'}`,90)}
 function activityOptions(){return S.age<10?['Art Club','Reading Club','Music Group','Sports Club','Nature Club','Chess Club']:S.age<15?['Art Club','Science Club','Football','Drama','Coding Club','Music','Chess Club']:['Art Club','Debate','Science Club','Football','Drama','Coding Club','Music','Photography']}
@@ -236,7 +235,7 @@ function npcSchoolInitiative(){const p=rand(S.people.filter(x=>x.role==='friend'
 // ---------- Events / cooldowns ----------
 function eligibleEventDefs(){return D.eventDefs.filter(e=>S.age>=e.minAge&&S.age<=e.maxAge&&(!e.school||S.school)&&(!e.weather||e.weather.includes(S.weather.type))&&(!S.eventCooldowns[e.id]||daysBetween(S.eventCooldowns[e.id],currentDate())>=e.cooldown))}
 function weightedPick(items){const total=items.reduce((a,x)=>a+(x.weight||1),0);let r=Math.random()*total;for(const x of items){r-=x.weight||1;if(r<=0)return x}return items[0]}
-function maybeRandomEvent(force=false){if(!force&&!chance(16))return;if(S.events.filter(e=>e.status==='Open').length>=2)return;const defs=eligibleEventDefs();if(!defs.length)return;const d=weightedPick(defs);S.eventCooldowns[d.id]=currentDate();queueEvent({type:d.id,title:d.title,text:d.text,choices:d.choices.map((x,i)=>({id:String(i),label:x}))})}
+function maybeRandomEvent(force=false){if(!force&&!chance(16))return;if(currentMinute()<390||currentMinute()>=1290)return;if(atSchool()&&!force)return;if(S.events.filter(e=>e.status==='Open').length>=2)return;const defs=eligibleEventDefs();if(!defs.length)return;const d=weightedPick(defs);S.eventCooldowns[d.id]=currentDate();queueEvent({type:d.id,title:d.title,text:d.text,choices:d.choices.map((x,i)=>({id:String(i),label:x}))})}
 function resolveEventChoice(eventId,choiceId){
  const e=S.events.find(x=>x.id===eventId);if(!e||e.status!=='Open'){toast('That moment has already passed.');render();return}
  if(eventExpired(e)){expireEvent(e);toast('Too late — that moment has passed.');save();render();return}
@@ -312,8 +311,8 @@ function negotiateYardSale(strategy='counter'){const st=S.stall;if(!st?.active||
 // ---------- Travel / outside ----------
 function travelMode(){if(S.age<3)return {kind:'caregiver',label:'Caregiver outing',note:'A caregiver chooses and handles everything.'};if(S.age<8)return {kind:'family',label:'Family outing',note:'A caregiver decides destination, transport and timing.'};if(S.age<13)return {kind:'ask',label:'Ask about a trip',note:'You suggest it; caregivers control permission and logistics.'};if(S.age<16)return {kind:'permission',label:'Ask permission for a trip',note:'Trips require an adult-approved plan.'};if(S.age<18)return {kind:'supervised',label:'Plan a trip with permission',note:'You can help plan and contribute money, but caregiver approval is required.'};return {kind:'independent',label:'Plan a trip',note:'You control destination, budget and transport.'}}
 function localTransport(){if(S.age<8)return 'caregiver drives / walks with you';if(S.age<13)return ownsItem('bicycle')?'bike or caregiver':'school bus / caregiver';if(S.age<16)return 'bus, bike, caregiver or walking';if(S.age<18)return 'bus, train, ride with permission';return 'walk, bike, transit, taxi/ride-share or car where available'}
-function visitPlace(placeId){const p=D.placesOutside.find(x=>x.id===placeId);if(!p)return;if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(S.age<p.minAge||p.maxAge&&S.age>p.maxAge){toast('That place is not relevant at this age.');return}if(S.age<13&&!caregiverApproval(p.id==='friend'?5:12)){log('Outing denied',`A caregiver says no to ${p.name} right now.`);return}if(S.age<18&&S.age>=13&&!caregiverApproval(10)){log('Permission denied',`Household rules or timing prevent the ${p.name} plan.`);return}let cost=p.cost;if(S.age<13)cost=0;else if(S.age<18&&chance(55))cost=Math.round(cost*.5);if(S.money<cost&&cost>0){toast(`You need ${money(cost)} for this outing.`);return}S.money-=cost;S.location=p.name;let mins=p.minutes;mins=applyWeatherGear(p,mins);S.needs.fun=clamp(S.needs.fun+8);S.needs.social=clamp(S.needs.social+(p.id==='friend'?15:3));advanceTime(mins);feedback(`Went to ${p.name}`,`${localTransport()}${cost?` • spent ${money(cost)}`:''}`,mins);S.location='Home';if(chance(22))maybeRandomEvent(true)}
-function takeTrip(){const m=travelMode();if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(['caregiver','family','ask','permission','supervised'].includes(m.kind)&&!caregiverApproval(m.kind==='caregiver'?15:0)){log('Trip does not happen','Your caregivers decide against the trip because of time, cost, safety or other obligations.');return}const adult=S.age>=18,cost=adult?80+Math.floor(Math.random()*180):S.age>=16?30+Math.floor(Math.random()*80):0;if(adult&&S.money<cost){toast(`The trip costs about ${money(cost)}.`);return}if(S.age>=16&&S.age<18&&S.money<Math.round(cost*.4)&&!['Wealthy','Extremely wealthy'].includes(S.wealth)){toast('The trip is approved, but your contribution is not ready yet.');return}if(adult)S.money-=cost;else if(S.age>=16){const share=Math.min(S.money,Math.round(cost*.4));S.money-=share}S.travel.trips++;S.travel.lastTrip=currentDate();const days=adult?1+Math.floor(Math.random()*3):1;SIM.excuse=S.age<18?'Away on a family-approved trip':null;try{advanceTime(days*1440,{skipNeeds:true,silent:true})}finally{SIM.excuse=null}S.needs.fun=clamp(S.needs.fun+25);S.happiness=clamp(S.happiness+8);log(m.kind==='independent'?'Independent trip':'Family / approved trip',`${m.note} ${cost?`Approximate cost ${money(cost)}.`:''}`,true);if(chance(28))maybeRandomEvent(true)}
+function visitPlace(placeId){const p=D.placesOutside.find(x=>x.id===placeId);if(!p)return;if(atSchool()){toast(`You are at school until ${timeLabel(SCHOOL_DAY.end)}.`);return}if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(S.age<p.minAge||p.maxAge&&S.age>p.maxAge){toast('That place is not relevant at this age.');return}if(S.age<13&&!caregiverApproval(p.id==='friend'?5:12)){log('Outing denied',`A caregiver says no to ${p.name} right now.`);return}if(S.age<18&&S.age>=13&&!caregiverApproval(10)){log('Permission denied',`Household rules or timing prevent the ${p.name} plan.`);return}let cost=p.cost;if(S.age<13)cost=0;else if(S.age<18&&chance(55))cost=Math.round(cost*.5);if(S.money<cost&&cost>0){toast(`You need ${money(cost)} for this outing.`);return}S.money-=cost;S.location=p.name;let mins=p.minutes;mins=applyWeatherGear(p,mins);S.needs.fun=clamp(S.needs.fun+8);S.needs.social=clamp(S.needs.social+(p.id==='friend'?15:3));advanceTime(mins);feedback(`Went to ${p.name}`,`${localTransport()}${cost?` • spent ${money(cost)}`:''}`,mins);S.location='Home';if(chance(22))maybeRandomEvent(true)}
+function takeTrip(){const m=travelMode();if(atSchool()){toast('You are at school right now.');return}if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(['caregiver','family','ask','permission','supervised'].includes(m.kind)&&!caregiverApproval(m.kind==='caregiver'?15:0)){log('Trip does not happen','Your caregivers decide against the trip because of time, cost, safety or other obligations.');return}const adult=S.age>=18,cost=adult?80+Math.floor(Math.random()*180):S.age>=16?30+Math.floor(Math.random()*80):0;if(adult&&S.money<cost){toast(`The trip costs about ${money(cost)}.`);return}if(S.age>=16&&S.age<18&&S.money<Math.round(cost*.4)&&!['Wealthy','Extremely wealthy'].includes(S.wealth)){toast('The trip is approved, but your contribution is not ready yet.');return}if(adult)S.money-=cost;else if(S.age>=16){const share=Math.min(S.money,Math.round(cost*.4));S.money-=share}S.travel.trips++;S.travel.lastTrip=currentDate();const days=adult?1+Math.floor(Math.random()*3):1;SIM.excuse=S.age<18?'Away on a family-approved trip':null;try{advanceTime(days*1440,{skipNeeds:true,silent:true})}finally{SIM.excuse=null}S.needs.fun=clamp(S.needs.fun+25);S.happiness=clamp(S.happiness+8);log(m.kind==='independent'?'Independent trip':'Family / approved trip',`${m.note} ${cost?`Approximate cost ${money(cost)}.`:''}`,true);if(chance(28))maybeRandomEvent(true)}
 
 // ---------- Daily-life actions / validation ----------
 function canAction(id){if(!S)return {ok:false,reason:'No active life.'};
@@ -347,7 +346,7 @@ function healthAction(kind){if(kind==='checkup'){const cost=S.age<18?0:25;if(cos
 // ---------- Pending resolver override ----------
 
 // ---------- Action router ----------
-function act(id,arg){if(!S)return;const gate=canAction(id);if(!gate.ok){toast(gate.reason);return}try{
+function act(id,arg){if(!S)return;if(atSchoolBlocks(id))return;const gate=canAction(id);if(!gate.ok){toast(gate.reason);return}try{
  if(id==='eat')basicAction('eat');else if(id==='snack')basicAction('snack');else if(id==='drink')basicAction('drink');else if(id==='toilet')basicAction('toilet');else if(id==='shower')basicAction('shower');else if(id==='bath')basicAction('bath');else if(id==='brush')basicAction('brush');else if(id==='washHands')basicAction('washHands');else if(id==='washFace')basicAction('washFace');else if(id==='dress')basicAction('dress');else if(id==='sleep')basicAction('sleep');else if(id==='nap')basicAction('nap');else if(id==='rest')basicAction('rest');
  else if(id==='familyMeal')familyMeal();else if(id==='cook')cook();else if(id==='familyTalk')familyTalk();else if(id==='babyPlay')hobbyAction('babyPlay');else if(id==='toyPlay')hobbyAction('toyPlay');else if(id==='story')hobbyAction('story');else if(id==='babble')hobbyAction('babble');else if(id==='play')hobbyAction(S.age<5?'toyPlay':'game');else if(id==='read')hobbyAction('read');else if(id==='radioMusic'||id==='music')hobbyAction('radioMusic');else if(id==='radioNews')hobbyAction('radioNews');else if(id==='draw')hobbyAction('draw');else if(id==='journal')hobbyAction('journal');else if(id==='tv')hobbyAction('tv');else if(id==='computer')hobbyAction('computer');else if(id==='game')hobbyAction('game');else if(id==='exercise')hobbyAction('exercise');
  else if(id==='school')attendSchool();else if(id==='exploreClub')exploreSchoolActivity();else if(id==='exploreContest')exploreSchoolEvent();else if(id==='saveMoney')saveMoney(arg||25);else if(id==='invest')invest();else if(id==='workShift')workShift();else if(id==='careerSkill')buildCareerSkill();else if(id==='quitJob')quitJob();else if(id==='retire')retire();else if(id==='trip')takeTrip();else if(id==='socialPost')socialPost();else if(id==='healthCheck')healthAction('checkup');else if(id==='mentalCare')healthAction('mental');else if(id==='comfort')homeComfort(arg);else if(id==='kindergartenYes')setKindergartenPreference(true);else if(id==='kindergartenNo')setKindergartenPreference(false);else if(id==='giftThank')giftReaction('thank');else if(id==='giftExcited')giftReaction('excited');else if(id==='giftHide')giftReaction('hide');else if(id==='giftComplain')giftReaction('complain');else if(id==='giftHug')giftReaction('hug');else if(id==='ageUp')ageUp();else if(id==='nextDay')nextDay();
@@ -431,7 +430,8 @@ function processCalendar(){
   if(isTerminal(ev.status))continue;normalizeCalendarEvent(ev);
   if(now<stamp(ev.dateISO,ev.startMinute))continue;
   if(SIM.skipping){simulateObligation(ev);continue}
-  if(ev.status==='Attending')continue;
+  if(ev.type==='schoolEvent'&&ev.status==='Scheduled'&&isSchoolDay(ev.dateISO)&&ev.startMinute===600&&now<stamp(ev.dateISO,ev.graceMinute)){Object.assign(ev,contestSlot(ev.dateISO));ev.minute=ev.startMinute;continue}
+  if(ev.status==='Attending'){if(ev.type==='schoolDay'&&now>=stamp(ev.dateISO,ev.endMinute))finishSchoolDay(ev);continue}
   if(now>stamp(ev.dateISO,ev.graceMinute)){missObligation(ev);continue}
   if(ev.status==='Scheduled'){setCalendarStatus(ev,'Due','Window opened');onObligationDue(ev)}
  }
@@ -493,7 +493,7 @@ function addExamRecord(exam){normalizeExam(exam);S.exams.push(exam);createCalend
 function scheduleExams(){
  if(!needsFormalSchool())return;const offsets=[8,15,24,34,48,62];
  S.school.subjects.slice(0,6).forEach((sub,i)=>{const dateISO=nextSchoolDay(addDays(currentDate(),offsets[i]||20+i*7));addExamRecord({id:uid('exam'),subject:sub.name,dateISO,minute:540,type:S.age<=11?'Class assessment':i%3===0?'Midterm':i%3===1?'Quiz':'Project / final',score:null,status:'Scheduled',prep:0})});
- syncExamCalendar()
+ spreadExamDates();syncExamCalendar()
 }
 function ensureRollingAssessments(){
  if(!needsFormalSchool())return;if(S.exams.filter(examIsOpen).length>=2)return;
@@ -590,7 +590,7 @@ function takeExam(examId,cheat=false){
  if(exam.dateISO>currentDate()){toast(`${exam.subject} is in ${daysBetween(currentDate(),exam.dateISO)} days.`);return}
  if(exam.dateISO<currentDate()||currentMinute()>exam.graceMinute){processCalendar();toast('The assessment window has closed.');return}
  const sd=schoolDayEvent();
- if(exam.minute<SCHOOL_DAY.end&&sd&&!isTerminal(sd.status)&&sd.status!=='Attending'){attendSchool({cheatExamId:cheat?exam.id:null});return}
+ if(exam.minute<SCHOOL_DAY.end&&sd&&!isTerminal(sd.status)&&sd.status!=='Attending'){attendSchool(cheat?{cheatExamId:exam.id}:{examId:exam.id});return}
  if(currentMinute()<exam.minute){if(exam.minute-currentMinute()>240){toast(`It starts at ${timeLabel(exam.minute)}.`);return}advanceTime(exam.minute-currentMinute(),{silent:true})}
  performExam(exam,{cheat,lateMinutes:Math.max(0,currentMinute()-exam.minute)})
 }
@@ -632,37 +632,6 @@ function schoolDayStory(tardy,examLines){
  const middle=rand([`${s2} drags a little, but one explanation finally clicks.`,`There is a surprise question in ${s2}; you get it ${chance(55)?'right':'half right'}.`,`${t} goes off on a tangent that turns out to be the most interesting part of the day.`,`Group work in ${s2} is chaotic, but your group finishes.`]);
  const social=friend?rand([`At lunch, ${fn} saves you a seat.`,`${fn} spends lunch telling you about ${rand(['a strange dream','their weekend','a new game','a rumor about a teacher'])}.`,`You and ${fn} trade snacks at lunch.`]):rand(['Lunch is quiet.','You spend lunch people-watching.']);
  return [opening,...examLines,middle,social].filter(Boolean).join(' ')
-}
-function attendSchool(opts={}){
- if(!S.school){toast('You are not currently enrolled in school.');return}
- if(S.school.grade==='Kindergarten'){
-  if(!isSchoolDay()){toast(isWeekend(currentDate())?'Kindergarten is closed on weekends.':'Kindergarten is on break.');return}
-  const m=currentMinute();if(m<420||m>=900){toast(m<420?'Kindergarten opens at 8:00 AM.':'Kindergarten has finished for today.');return}
-  if(m<480)advanceTime(480-m,{silent:true});const mins=Math.max(60,Math.min(240,900-currentMinute()));advanceTime(mins,{silent:true});S.school.attendance=clamp(S.school.attendance+.05);S.needs.fun=clamp(S.needs.fun+10);S.needs.social=clamp(S.needs.social+12);
-  feedback('Kindergarten day',rand(['Circle time, a story about a lost bear, and a long turn on the slide.','You paint something that is mostly blue and very proud of it.','A classmate shares their blocks with you after some negotiation.']),mins);return
- }
- if(!isSchoolDay()){toast(isWeekend(currentDate())?'There is no school on weekends.':'School is on break today.');return}
- const ev=ensureSchoolDayObligation();if(!ev){toast('No school day is scheduled.');return}
- if(ev.status==='Attended'){toast('You already went to school today.');return}
- if(isTerminal(ev.status)){toast(ev.status==='Excused'?'You are marked as staying home today.':`You were marked absent after ${timeLabel(SCHOOL_DAY.cutoff)}.`);return}
- let m=currentMinute();
- if(m<300){toast('It is the middle of the night. School starts at 8:00 AM — sleep first.');return}
- if(m>SCHOOL_DAY.cutoff){processCalendar();toast(m>=SCHOOL_DAY.end?'School is finished for today — you were marked absent.':`The attendance cutoff (${timeLabel(SCHOOL_DAY.cutoff)}) has passed.`);return}
- setCalendarStatus(ev,'Attending','Leaving for school');
- if(m<SCHOOL_DAY.start)advanceTime(SCHOOL_DAY.start-m,{silent:true});
- m=currentMinute();const tardy=m>SCHOOL_DAY.tardyAfter;S.location='School';
- const examLines=[];
- for(const exam of S.exams.filter(e=>examIsOpen(e)&&e.dateISO===currentDate()&&e.minute<SCHOOL_DAY.end).sort((a,b)=>a.minute-b.minute)){
-  if(currentMinute()>exam.graceMinute)continue;if(currentMinute()<exam.minute)advanceTime(exam.minute-currentMinute(),{silent:true});
-  const late=Math.max(0,currentMinute()-exam.minute);performExam(exam,{lateMinutes:late,cheat:opts.cheatExamId===exam.id});
-  if(exam.status==='Completed')examLines.push(`You sit the ${exam.subject} ${exam.type.toLowerCase()} (${exam.score}%).`);
- }
- for(const sub of [...S.school.subjects].sort(()=>Math.random()-.5).slice(0,2)){sub.skill=clamp(sub.skill+1+Math.random());sub.prep=clamp(sub.prep+1)}
- if(currentMinute()<SCHOOL_DAY.end)advanceTime(SCHOOL_DAY.end-currentMinute(),{silent:true});
- markSchoolAttendance(ev,{tardy});S.location='Home';
- S.energy=clamp(S.energy-(equippedIn('bag')?7:10));S.needs.social=clamp(S.needs.social+7);if(chance(40))generateHomework(false);
- const story=schoolDayStory(tardy,examLines);log(tardy?'School day (late)':'School day',story);toast(tardy?'School • marked tardy':'School day complete');
- if(chance(22))maybeRandomEvent(true)
 }
 
 // ---------- Homework ----------
@@ -779,10 +748,13 @@ function excuseClubSession(clubId){const c=clubById(clubId),ev=c&&clubSessionEve
 
 // ---------- Contests require attendance ----------
 function contestById(id){return S.school?.contests?.find(x=>x.id===id)||null}
-function registerContest(c){c.status='Registered';createCalendarEvent({id:`contest-${c.id}`,type:'schoolEvent',title:c.name,dateISO:c.eventDate,startMinute:600,endMinute:780,graceMinute:690,payload:{contestId:c.id},source:'school'});log('Registered • '+c.name,`The event is ${formatDate(c.eventDate)} at ${timeLabel(600)}. You need to actually show up — preparation now matters.`)}
+function contestSlot(dateISO){return isSchoolDay(dateISO)?{startMinute:780,endMinute:900,graceMinute:810,location:'School hall (during school)'}:{startMinute:600,endMinute:780,graceMinute:690,location:'School hall'}}
+function contestCalendar(c){return createCalendarEvent(Object.assign({id:`contest-${c.id}`,type:'schoolEvent',title:c.name,dateISO:c.eventDate,payload:{contestId:c.id},source:'school'},contestSlot(c.eventDate)))}
+function registerContest(c){c.status='Registered';const ev=contestCalendar(c);log('Registered • '+c.name,`The event is ${formatDate(c.eventDate)} at ${timeLabel(ev.startMinute)}${isSchoolDay(c.eventDate)?' in the school hall, during the school day — you will miss class to go':''}. You need to actually show up — preparation now matters.`)}
 function contestEvent(c){return S.calendar.find(e=>e.type==='schoolEvent'&&e.payload?.contestId===c.id&&!isTerminal(e.status))||null}
 function attendContest(contestId){
- const c=contestById(contestId);if(!c||c.status!=='Registered')return;const ev=contestEvent(c)||createCalendarEvent({id:`contest-${c.id}`,type:'schoolEvent',title:c.name,dateISO:c.eventDate,startMinute:600,endMinute:780,graceMinute:690,payload:{contestId:c.id},source:'school'});
+ const c=contestById(contestId);if(!c||c.status!=='Registered')return;const ev=contestEvent(c)||contestCalendar(c);
+ if(ev.dateISO===currentDate()&&isSchoolDay(ev.dateISO)&&ev.startMinute<SCHOOL_DAY.end){const sd=schoolDayEvent();if(sd&&isTerminal(sd.status)&&sd.status!=='Attended'){toast('You are absent from school today, so you cannot take part.');return}if(sd&&sd.status!=='Attending'&&sd.status!=='Attended'){if(currentMinute()>SCHOOL_DAY.cutoff){toast('Too late to check in at school.');return}checkInToSchool()}}
  if(ev.dateISO>currentDate()){toast(`${c.name} is on ${formatDate(ev.dateISO)}.`);return}
  if(currentMinute()>ev.graceMinute){processCalendar();toast('Check-in has closed.');return}
  if(currentMinute()<ev.startMinute){if(ev.startMinute-currentMinute()>180){toast(`Check-in opens at ${timeLabel(ev.startMinute)}.`);return}advanceTime(ev.startMinute-currentMinute(),{silent:true})}
@@ -802,6 +774,7 @@ function resolveContestAttendance(ev,status,{simulated=false}={}){
  const c=contestById(ev.payload?.contestId);setCalendarStatus(ev,status,status==='No-show'?'Did not check in':'Withdrew');if(!c)return;
  c.status=status;c.result=status==='No-show'?'Did not attend':'Withdrew';
  if(SIM.summary)SIM.summary.contests.push({name:c.name,result:c.result});
+ if(status==='No-show'&&sessionEvent()){S.stress=clamp(S.stress+1);if(!simulated)log(`Missed • ${c.name}`,`You stay in class while ${c.name} goes on in the hall without you. The organizers cross your name off.`);return}
  if(status==='No-show'){S.social.reputation=clamp(S.social.reputation-2);S.stress=clamp(S.stress+3);if(S.age<13)S.family.tension=clamp(S.family.tension+2);if(!simulated)log(`No-show • ${c.name}`,`Your name is called at check-in and nobody answers. The organizers move on, and ${S.age<13?'your caregiver, who signed the form, is not thrilled':'a teacher mentions it the next day'}.`)}
  else if(!simulated)log(`Withdrew • ${c.name}`,'You could not take part this time.')
 }
@@ -901,6 +874,8 @@ function runFollowUp(f){
  const cg=caregiverPerson(),name=cg?firstName(cg):'Your caregiver',quiet=SIM.skipping||S.age>=18;
  if(f.type==='absenceNotice'){const n=f.payload.count||1;if(quiet){if(S.age<18)S.family.tension=clamp(S.family.tension+(n>=3?3:1));return}if(n<=1){S.family.tension=clamp(S.family.tension+1);log('Absence notice',`The school sends home a routine note about ${formatDate(f.payload.dateISO)}. ${name} frowns at it, but lets it go — this time.`);return}queueEvent({type:'absenceTalk',title:`${name} heard from school`,text:n>=5?`This is your ${ordinal(n)} unexplained absence this year. ${name} is not asking casually anymore.`:`The school called about your absence on ${formatDate(f.payload.dateISO)}. ${name} wants to know what happened.`,payload:{count:n},participants:cg?[cg.id]:[],priority:4,expiresDays:1,choices:[{id:'apologize',label:'Apologize'},{id:'lie',label:'Make up an excuse'},{id:'argue',label:'Argue'},{id:'explain',label:'Explain what really happened'}]});return}
  if(f.type==='missedExamParent'||f.type==='cheatingParent'){if(quiet){S.family.tension=clamp(S.family.tension+2);return}const exam=S.exams.find(x=>x.id===f.payload.examId);queueEvent({type:f.type==='cheatingParent'?'cheatTalk':'examTalk',title:f.type==='cheatingParent'?`${name} got a note from school`:`${name} found out about ${exam?.subject||'the assessment'}`,text:f.type==='cheatingParent'?'The note says you were caught cheating. The kitchen goes very quiet.':`A message from school says you missed the ${exam?.subject||''} ${String(exam?.type||'assessment').toLowerCase()}.`,participants:cg?[cg.id]:[],priority:4,expiresDays:1,choices:[{id:'apologize',label:'Apologize'},{id:'lie',label:'Make up an excuse'},{id:'argue',label:'Argue'},{id:'explain',label:'Explain what really happened'}]});return}
+ if(f.type==='npcInitiative'){if(!SIM.skipping&&currentMinute()>=420&&currentMinute()<1290&&!atSchool())npcInitiative();return}
+ if(f.type==='npcSchool'){if(atSchool())npcSchoolInitiative();return}
  if(f.type==='teammateComment'){const c=clubById(f.payload.clubId);if(!c||c.status!=='Active'||quiet)return;const m=rand(c.members||[])||'A teammate';log(`${m} noticed`,rand([`"Where were you yesterday? ${c.leader} asked about you."`,`${m} mentions ${c.name} felt short-handed without you.`,`"We could have used you at ${c.name}," ${m} says — half joking.`]));return}
  if(f.type==='homeworkNote'){if(quiet){S.family.tension=clamp(S.family.tension+2);return}queueEvent({type:'homeworkTalk',title:`A note about missing homework`,text:`Three assignments are now recorded as missing. ${name} has the teacher's email open on their phone.`,participants:cg?[cg.id]:[],priority:3,expiresDays:1,choices:[{id:'apologize',label:'Apologize and catch up'},{id:'lie',label:'Say it was a mistake'},{id:'argue',label:'Argue'},{id:'explain',label:'Explain what is going on'}]});return}
  if(f.type==='parentTeacherMeeting'){if(quiet){S.family.tension=clamp(S.family.tension+5);if(SIM.summary)SIM.summary.notable.push('Parent–teacher meeting about missing homework');return}queueEvent({type:'ptMeeting',title:'Parent–teacher meeting',text:`Six missing assignments. ${name} and your teachers sit across the table from you. Everyone is waiting for you to say something.`,participants:cg?[cg.id]:[],priority:5,expiresDays:1,choices:[{id:'plan',label:'Commit to a homework plan'},{id:'promise',label:'Promise to do better'},{id:'blame',label:'Blame the teachers'},{id:'silent',label:'Stay quiet'}]});return}
@@ -910,6 +885,8 @@ function runFollowUp(f){
 function handleLifecycleEventChoice(e,id,label){
  if(e.type==='newPhone')return handlePhoneChoice(e,id);
  const cg=personById(e.participants?.[0])||caregiverPerson(),name=cg?firstName(cg):'Your caregiver',strict=familyRules().strictness;
+ if(INVITE_TYPES.includes(e.type)&&/Accept|Go/i.test(label)&&atSchool()){const p=personById(e.participants?.[0]);if(p){p.rel=clamp(p.rel+1);rememberPerson(p,'You agreed to meet after school.')}log('After school, then',`You are in school until ${timeLabel(SCHOOL_DAY.end)}, so you tell ${p?firstName(p):'them'} you will catch up after.`);return true}
+ if(INVITE_TYPES.includes(e.type)&&/Accept|Go/i.test(label)&&S.age<16&&(currentMinute()<360||currentMinute()>=1290)){log('Too late',`It is ${timeLabel(currentMinute())}. Your caregivers are not letting you go out now.`);return true}
  if(INVITE_TYPES.includes(e.type)&&/Accept|Go/i.test(label)&&isGrounded()){const p=personById(e.participants?.[0]);if(p){p.rel=clamp(p.rel-1);rememberPerson(p,'You had to cancel because you were grounded.')}log('Grounded',`You want to go, but you are grounded until ${formatDate(S.family.restrictions.groundedUntil)}. You tell ${p?firstName(p):'them'} you cannot make it.`);return true}
  if(e.type==='missedExam'){
   const exam=S.exams.find(x=>x.id===e.payload?.examId),sub=examSubject(exam),t=ensureTeacher(sub);if(!exam||!t){log('Missed assessment','The moment passes.');return true}
@@ -954,8 +931,10 @@ function contextIsActive(c){
  if(c.sourceType==='exam'){const e=S.exams.find(x=>x.id===c.sourceId);return examIsOpen(e)&&e.dateISO===currentDate()&&currentMinute()<=e.graceMinute}
  if(c.sourceType==='event'){const e=S.events.find(x=>x.id===c.sourceId);return !!e&&e.status==='Open'&&!eventExpired(e)}
  if(c.sourceType==='calendar'){const e=S.calendar.find(x=>x.id===c.sourceId);return !!e&&!isTerminal(e.status)&&e.dateISO===currentDate()&&currentMinute()<=e.graceMinute}
+ if(c.sourceType==='schoolSession'){const p=periodAt();return atSchool()&&!!p&&c.title.includes(p.kind==='lunch'?'Lunch':p.subject)}
  if(c.sourceType==='schoolDay'){const e=schoolDayEvent();return !!e&&!isTerminal(e.status)&&e.status!=='Attending'&&currentMinute()<=SCHOOL_DAY.cutoff}
  if(c.sourceType==='daily')return false;
+ if(c.sourceType==='holiday'){const x=holidayWindow().find(w=>w.h.id===c.sourceId);return !!x&&availableActivities(x).length>0&&x.days<=0}
  return true
 }
 function examContext(exam){return {sourceType:'exam',sourceId:exam.id,priority:5,title:`${exam.subject.toUpperCase()} ${exam.type.toUpperCase()}`,text:currentMinute()<exam.minute?`Today at ${timeLabel(exam.minute)}. Preparation, sleep and stress will all matter.`:currentMinute()<=exam.endMinute?'The assessment is happening right now.':`It started at ${timeLabel(exam.minute)}. You can still sit it late until ${timeLabel(exam.graceMinute)}, with less time.`,expiresAt:{dateISO:exam.dateISO,minute:exam.graceMinute}}}
@@ -964,9 +943,11 @@ function partOfDay(m=currentMinute()){return m<300?'Late night':m<720?'Morning':
 function computeNextContext(){
  const today=currentDate(),m=currentMinute();
  const exam=S.exams.filter(e=>examIsOpen(e)&&e.dateISO===today&&m<=e.graceMinute).sort((a,b)=>a.minute-b.minute)[0];if(exam)return examContext(exam);
+ const live=sessionEvent();if(live&&m<SCHOOL_DAY.end){const p=periodAt(m),{contests}=dueAtSchoolNow();if(contests.length)return calendarContext(contests[0]);return {sourceType:'schoolSession',sourceId:live.id,priority:4,title:p?(p.kind==='lunch'?'Lunch break':`${p.label} • ${p.subject}`):'At school',text:p?(p.kind==='lunch'?'Eat, see friends, study in the library or visit a teacher.':`${ensureTeacher(S.school.subjects.find(s=>s.name===p.subject))?.name||'Class'} until ${timeLabel(p.end)}. How do you spend it?`):'Between classes.',expiresAt:{dateISO:today,minute:SCHOOL_DAY.end}}}
  const due=S.calendar.filter(ev=>!isTerminal(ev.status)&&ev.dateISO===today&&['clubSession','schoolEvent'].includes(ev.type)&&m>=ev.startMinute-90&&m<=ev.graceMinute).sort((a,b)=>b.importance-a.importance)[0];if(due)return calendarContext(due);
  const e=(S.events||[]).filter(x=>x.status==='Open'&&!eventExpired(x)).sort((a,b)=>(b.priority||3)-(a.priority||3))[0];if(e)return {sourceType:'event',sourceId:e.id,priority:e.priority||3,title:e.title,text:e.text,expiresAt:e.expiresAt};
  const sd=schoolDayEvent();if(sd&&!isTerminal(sd.status)&&sd.status!=='Attending'&&m<=SCHOOL_DAY.cutoff&&m>=300)return {sourceType:'schoolDay',sourceId:sd.id,priority:2,title:m<=SCHOOL_DAY.tardyAfter?'School day':'You are late for school',text:m<SCHOOL_DAY.start?`Classes start at ${timeLabel(SCHOOL_DAY.start)}. The attendance cutoff is ${timeLabel(SCHOOL_DAY.cutoff)}.`:m<=SCHOOL_DAY.tardyAfter?'The bell is about to ring.':`You can still go and be marked tardy until ${timeLabel(SCHOOL_DAY.cutoff)}.`,expiresAt:{dateISO:today,minute:SCHOOL_DAY.cutoff}};
+ const hol=holidaysOn(today).find(x=>availableActivities(Object.assign({},x,{days:-(x.day-1)})).length);if(hol&&m>=420&&m<1320)return {sourceType:'holiday',sourceId:hol.h.id,priority:1,title:`${hol.h.icon} ${hol.h.name}`,text:hol.day>1?`Day ${hol.day}. There is still time to celebrate.`:'Celebrate however feels right — nothing is required.',expiresAt:endOfDay()};
  const next=todayAgenda().find(a=>!a.done&&a.minute>=m);
  const vacation=S.school&&!isSchoolDay(today)&&!isWeekend(today)?' • school break':'';
  return {sourceType:'daily',sourceId:null,priority:0,title:`${weekday()} ${partOfDay(m).toLowerCase()}${vacation}`,text:next?`Nothing urgent right now. Next: ${next.title} at ${timeLabel(next.minute)}.`:m>=1200?'The day is winding down. Sleep will carry you into tomorrow.':'Nothing else is scheduled today. Your time is your own.',expiresAt:null}
@@ -982,6 +963,7 @@ function todayAgenda(dateISO=currentDate()){
  for(const ev of S.calendar.filter(e=>e.dateISO===dateISO)){const d=obDef(ev.type);items.push({id:ev.id,type:ev.type,icon:d.icon,minute:ev.startMinute??ev.minute??0,title:ev.type==='schoolDay'?'School':ev.title,status:ev.status,done:isTerminal(ev.status),required:ev.required})}
  if(needsFormalSchool())for(const s of S.school.subjects){const hw=s.homework;if(hw&&HW_OPEN.includes(hw.status)&&hw.dueDate===dateISO)items.push({id:hw.id,type:'homework',icon:'📒',minute:480,title:`${s.name} homework due`,status:`${hw.progress||0}% done`,done:false,required:true})}
  for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.resolveDate===dateISO))items.push({id:p.id,type:'decision',icon:'⏳',minute:1080,title:p.title,status:p.status,done:false})
+ for(const x of holidaysOn(dateISO))items.push({id:'hol-'+x.h.id,type:'holiday',icon:x.h.icon,minute:0,title:x.h.name,status:'',done:false});
  if(sameMonthDay(S.dob,dateISO))items.push({id:'bday',type:'birthday',icon:'🎂',minute:0,title:'Your birthday',status:'',done:false});
  return items.sort((a,b)=>a.minute-b.minute)
 }
@@ -989,7 +971,7 @@ function todayAgenda(dateISO=currentDate()){
 // ---------- Reconciliation ----------
 function reconcileState(reason='tick'){
  if(!S)return;ensureLifecycleContainers();
- reconcileSchoolStage();
+ reconcileSchoolStage();reconcileEducationHistory();
  for(const p of S.pendingDecisions){normalizePending(p);pendingLifecycleCheck(p)}
  if(needsFormalSchool()){ensureSchoolRecord();ensureSchoolDayObligation(currentDate())}
  reconcileExams();reconcileCalendar();expireEvents();reconcileNotifications();reconcileOffers();archiveOldRecords();clearCurrentContextIfSourceResolved()
@@ -1000,15 +982,16 @@ function closeSchoolYear(old,{leaving=false}={}){
  for(const exam of S.exams||[]){if(examIsOpen(exam)){exam.status='Cancelled';exam.reason=leaving?'Left school':'School year ended';for(const ev of examCalendarEvents(exam))setCalendarStatus(ev,'Cancelled',exam.reason)}}
  S.archive.exams.unshift(...(S.exams||[]).map(compactExam));if(S.archive.exams.length>150)S.archive.exams.length=150;S.exams=[];
  for(const ev of S.calendar)if(['schoolDay'].includes(ev.type)&&!isTerminal(ev.status)&&ev.dateISO>currentDate())setCalendarStatus(ev,'Cancelled','School year ended');
- if(rec&&old.grade!=='Kindergarten')S.schoolHistory.unshift({grade:old.grade,school:old.name,endedDate:currentDate(),average:Math.round(old.subjects?.reduce((a,s)=>a+safeNum(s.score,0),0)/Math.max(1,old.subjects?.length||1)),attendance:Math.round(old.attendance||0),record:rec});
+ if(old.grade==='Kindergarten'&&S.development?.kindergarten)S.development.kindergarten.schoolName=old.name;
+ if(rec||old.grade==='Kindergarten')S.schoolHistory.unshift({grade:old.grade,school:old.name,endedDate:currentDate(),average:Math.round(old.subjects?.reduce((a,s)=>a+safeNum(s.score,0),0)/Math.max(1,old.subjects?.length||1)),attendance:Math.round(old.attendance||0),record:rec});
  if(S.schoolHistory.length>20)S.schoolHistory.length=20
 }
 function progressSchoolForAge(){
  ensureLifecycleContainers();const carry=S.school;
  if(S.age===3&&!S.development.kindergarten.asked){S.development.kindergarten.asked=true;createPending({type:'kindergarten',title:'Kindergarten decision',resolveDate:null,status:'Waiting for your preference',payload:{preference:null},autoDecideDate:addDays(currentDate(),14),detail:'Your caregivers want to hear whether you want to attend before they decide. If you do not answer, they will decide within two weeks.'});log('Kindergarten becomes a question','Your family starts discussing preschool/kindergarten, childcare, money, schedules and your preferences.')}
  if(S.age>=3&&S.age<=5){if(S.development.kindergarten.decision&&S.development.kindergarten.enrolled)S.school=buildSchool(S.age,carry);else S.school=null;return}
- if(S.age>=6&&S.age<=18){closeSchoolYear(carry);S.school=buildSchool(S.age,carry);S.school.record=freshSchoolRecord();S.school.clubs.forEach(c=>{ensureClub(c);if(!clubSessionEvent(c))scheduleClubSession(c,nextSchoolDay(addDays(currentDate(),3)))});scheduleExams();generateHomework(true)}
- else{if(carry)closeSchoolYear(carry,{leaving:true});S.school=null}
+ if(S.age>=6&&S.age<=18){closeSchoolYear(carry);const fromStage=stageOfSchool(carry),toStage=stageForAge(S.age);if(carry&&fromStage&&fromStage!==toStage)recordGraduation(fromStage,carry.name);S.school=buildSchool(S.age,carry);S.school.record=freshSchoolRecord();S.school.clubs.forEach(c=>{ensureClub(c);if(!clubSessionEvent(c))scheduleClubSession(c,nextSchoolDay(addDays(currentDate(),3)))});scheduleExams();generateHomework(true)}
+ else{if(carry){closeSchoolYear(carry,{leaving:true});if(S.age>18&&stageOfSchool(carry)==='high')recordGraduation('high',carry.name)}S.school=null}
 }
 function reconcileSchoolStage(){
  const k=S.development?.kindergarten;
@@ -1030,7 +1013,7 @@ function reconcileExams(){
   if(exam.status==='In progress'&&!examCalendarEvents(exam).some(e=>e.status==='Attending'))exam.status=exam.dateISO===currentDate()?'Due':'Scheduled';
   if(!isSchoolDay(exam.dateISO)&&!exam.makeupOf){const d=nextSchoolDay(exam.dateISO);if(d!==exam.dateISO){exam.dateISO=d;exam.days=daysBetween(currentDate(),d)}}
  }
- if(S.school)syncExamCalendar();else for(const exam of S.exams)for(const ev of examCalendarEvents(exam)){const t=calStatusForExam(exam);if(t&&ev.status!==t)setCalendarStatus(ev,t,'Synced')}
+ if(S.school){spreadExamDates();syncExamCalendar()}else for(const exam of S.exams)for(const ev of examCalendarEvents(exam)){const t=calStatusForExam(exam);if(t&&ev.status!==t)setCalendarStatus(ev,t,'Synced')}
 }
 function reconcileCalendar(){
  const seen=new Set();S.calendar=(S.calendar||[]).filter(e=>{if(!e||!e.id||seen.has(e.id))return false;seen.add(e.id);return true});
@@ -1171,14 +1154,14 @@ function advanceTime(minutes,{skipNeeds=false,silent=false,skipRoutine=false}={}
 }
 function dailyTick({skipRoutine=false}={}){
  setWeather();ageSync();itemDailyTick();schoolDailyTick(skipRoutine);schoolActivityTick();holidayTick();
- if(!skipRoutine){worldTick();npcInitiative();applyNeedConsequences(true);if(S.stall?.active&&chance(35))runStall(false)}
+ if(!skipRoutine){worldTick();const sd=needsFormalSchool()&&isSchoolDay();scheduleFollowUp('npcInitiative',{},{minute:(sd?940:600)+Math.floor(Math.random()*(sd?200:540))});applyNeedConsequences(true);if(S.stall?.active&&chance(35))runStall(false)}
  reconcileState('daily')
 }
 function schoolDailyTick(skipRoutine=false){
  if(!S.school)return;normalizeSchool();if(S.school.grade==='Kindergarten')return;
  ensureSchoolRecord();ensureSchoolDayObligation(currentDate());processHomeworkDeadlines();ensureRollingAssessments();
  if(isSchoolDay()&&chance(SIM.skipping?35:25))generateHomework(false);
- if(!skipRoutine&&isSchoolDay()&&chance(18))npcSchoolInitiative()
+ if(!skipRoutine&&isSchoolDay()&&chance(18))scheduleFollowUp('npcSchool',{},{minute:690+Math.floor(Math.random()*20)})
 }
 function normalizeSchool(){
  if(!S.school)return;ensureLifecycleContainers();
@@ -1202,17 +1185,15 @@ function enterGame(){migrate();schoolActivityTick();processCalendar();reconcileS
 // ---------- v7.2 UI: hero, upcoming, panels ----------
 function upcomingEvents(limit=7,{includeRoutine=false}={}){
  const today=currentDate(),now=nowStamp(),arr=[];
- arr.push({id:'birthday',title:`${S.name}'s birthday`,dateISO:nextBirthday(),type:'birthday'});
- if(S.traditions.christmas)arr.push({id:'christmas',title:'Christmas',dateISO:nextOccurrence(12,25),type:'holiday'});
- if(S.traditions.newYear)arr.push({id:'newyear',title:'New Year',dateISO:nextOccurrence(1,1),type:'holiday'});
- if(S.traditions.lunarNewYear)arr.push({id:'lunar',title:'Lunar New Year period',dateISO:nextOccurrence(2,1),type:'holiday'});
+ arr.push({id:'birthday',title:`${S.name}'s birthday`,dateISO:nextBirthday(),type:'birthday',icon:'🎂'});
+ for(const x of upcomingHolidays(4))arr.push({id:'hol-'+x.h.id,title:x.h.name,dateISO:x.dateISO,type:'holiday',icon:x.h.icon});
  for(const e of S.calendar){if(isTerminal(e.status))continue;if(!includeRoutine&&e.type==='schoolDay')continue;if(e.dateISO<today)continue;if(e.dateISO===today&&stamp(e.dateISO,e.graceMinute??e.minute??0)<now)continue;arr.push(e)}
  if(needsFormalSchool())for(const s of S.school.subjects){const hw=s.homework;if(hw&&HW_OPEN.includes(hw.status)&&hw.dueDate>=today)arr.push({id:hw.id,title:`${s.name} homework`,dateISO:hw.dueDate,minute:480,type:'homework',status:homeworkLabel(hw)})}
  for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.resolveDate&&x.resolveDate>=today))arr.push({id:p.id,title:p.title,dateISO:p.resolveDate,type:'decision'});
  return arr.sort((a,b)=>a.dateISO.localeCompare(b.dateISO)||(a.minute||0)-(b.minute||0)).slice(0,limit)
 }
 function typeIcon(t){return ({decision:'⏳',birthday:'🎂',exam:'📝',homework:'📒',holiday:'🎉',schoolDay:'🏫',clubSession:'🎨',schoolEvent:'🏆',party:'🎉'})[t]||'🗓️'}
-function renderUpcomingCompact(){const host=$('upcoming-strip');if(!host)return;const list=upcomingEvents(6);host.innerHTML=list.length?list.map(e=>{const d=daysBetween(currentDate(),e.dateISO),now=e.status==='Due';return `<div class="upcoming-chip ${now?'is-now':d===0?'is-today':''}"><span>${typeIcon(e.type)}</span><b>${esc(e.title)}</b><small>${now?'Now':d===0?(e.minute!=null&&e.type!=='homework'?timeLabel(e.minute):'Today'):d===1?'Tomorrow':d+'d'}</small></div>`}).join(''):'<span class="muted-text">No upcoming deadlines.</span>'}
+function renderUpcomingCompact(){const host=$('upcoming-strip');if(!host)return;const list=upcomingEvents(6);host.innerHTML=list.length?list.map(e=>{const d=daysBetween(currentDate(),e.dateISO),now=e.status==='Due';return `<div class="upcoming-chip ${now?'is-now':d===0?'is-today':''}"><span>${e.icon||typeIcon(e.type)}</span><b>${esc(e.title)}</b><small>${now?'Now':d===0?(e.minute!=null&&e.type!=='homework'?timeLabel(e.minute):'Today'):d===1?'Tomorrow':d+'d'}</small></div>`}).join(''):'<span class="muted-text">No upcoming deadlines.</span>'}
 function meter(label,value,inverse=false){const v=Math.round(clamp(value)),good=inverse?v<=35:v>=65,bad=inverse?v>=65:v<=35;return `<div class="hero-stat ${good?'good':bad?'bad':''}"><span>${esc(label)}</span><b>${v}%</b><i><em style="width:${v}%"></em></i></div>`}
 function heroParts(c){
  const agenda=()=>{const a=todayAgenda().filter(x=>x.type!=='birthday').slice(0,4);return a.length?`<div class="hero-agenda">${a.map(x=>`<div class="${x.done?'done':''}"><span>${x.icon}</span><b>${esc(x.title)}</b><small>${x.done?esc(x.status):x.type==='homework'?esc(x.status):timeLabel(x.minute)}</small></div>`).join('')}</div>`:''};
@@ -1223,7 +1204,9 @@ function heroParts(c){
  if(c.sourceType==='calendar'){const ev=S.calendar.find(x=>x.id===c.sourceId);if(!ev)return {detail:'',actions:''};
   if(ev.type==='clubSession'){const cl=clubById(ev.payload?.clubId);return {detail:`<div class="hero-when">${currentMinute()<ev.startMinute?`Starts ${timeLabel(ev.startMinute)}`:`Started ${timeLabel(ev.startMinute)} • arrive by ${timeLabel(ev.graceMinute)}`}</div><div class="hero-stats">${meter('Attendance',clubAttendanceRate(cl||{}))}${meter('Club skill',cl?.skill||0)}${meter('Energy',S.energy)}</div>`,actions:`<button class="primary" data-club-attend="${cl?.id}">Attend session</button><button class="ghost" data-club-skip="${cl?.id}">Skip</button>${currentMinute()<ev.startMinute?`<button class="ghost" data-club-excuse="${cl?.id}">Tell ${esc(cl?.leader||'the leader')} you can't come</button>`:''}`}}
   const ct=contestById(ev.payload?.contestId);return {detail:`<div class="hero-when urgent">Check-in ${timeLabel(ev.startMinute)}–${timeLabel(ev.graceMinute)}</div><div class="hero-stats">${meter('Preparation',ct?.prep||0)}${meter('Energy',S.energy)}${meter('Stress',S.stress,true)}</div>`,actions:`<button class="primary" data-contest-attend="${ct?.id}">Go to the event</button>`}}
+ if(c.sourceType==='schoolSession'){const p=periodAt(),sd=sessionEvent(),sub=bestPrepSubject()?.name||'';if(p?.kind==='lunch')return {detail:'',actions:`${sd&&!sd.ateLunch?'<button class="primary" data-lunch="eat">Eat in the cafeteria</button>':''}<button data-lunch="friend">Sit with friends</button><button class="ghost" data-lunch="library" data-arg="${esc(sub)}">Library</button><button class="ghost" data-tab-jump="school">More school options</button>`};return {detail:`<div class="hero-stats">${meter('Energy',S.energy)}${meter('Sleep',S.needs.sleep)}${meter('Social',S.needs.social)}</div>`,actions:'<button class="primary" data-class="attend">Pay attention</button><button data-class="participate">Participate</button><button class="ghost" data-class="chat">Chat</button><button class="ghost" data-school-skip="1">Skip to dismissal</button>'}}
  if(c.sourceType==='schoolDay')return {detail:`<div class="hero-when">${timeLabel(SCHOOL_DAY.start)}–${timeLabel(SCHOOL_DAY.end)} • attendance cutoff ${timeLabel(SCHOOL_DAY.cutoff)}</div>${agenda()}`,actions:`<button class="primary" data-act="school">Go to school</button>`};
+ if(c.sourceType==='holiday'){const x=holidayWindow().find(w=>w.h.id===c.sourceId),acts=x?availableActivities(x).slice(0,4):[];return {detail:agenda(),actions:acts.map((a,i)=>`<button class="${i?'':'primary'}" data-holiday-act="${x.h.id}:${a.id}">${esc(a.label)}</button>`).join('')+(x?'<button class="ghost" data-tab-jump="home">All holiday options</button>':'')}}
  const evening=currentMinute()>=Math.min(1200,bedtimeMinute()-60)||currentMinute()<300;
  return {detail:agenda(),actions:evening?`<button data-act="sleep">Go to sleep</button>`:''}
 }
@@ -1234,9 +1217,8 @@ function pendingHtml(){const p=pendingOpen();if(!p.length)return '<p class="mute
 function eventHtml(){const shown=S.current?.sourceType==='event'?S.current.sourceId:null,list=S.events.filter(x=>x.status==='Open'&&x.id!==shown&&!eventExpired(x));if(!list.length)return `<p class="muted-text">${shown?'The current moment is shown at the top of the page.':'No major interruption right now. Ordinary life is still moving.'}</p>`;return list.slice(0,3).map(e=>`<div class="event-card"><div class="event-kicker">WAITING FOR YOU${e.expiresAt?` • RESPOND BY ${esc(timeLabel(e.expiresAt.minute))}${e.expiresAt.dateISO!==currentDate()?' '+esc(formatDate(e.expiresAt.dateISO)):''}`:''}</div><h3>${esc(e.title)}</h3><p>${esc(e.text)}</p><div class="event-actions">${e.choices.map(c=>`<button data-event-id="${e.id}" data-event-choice="${esc(c.id)}">${esc(c.label)}</button>`).join('')}</div></div>`).join('')}
 function notificationsHtml(){const n=activeNotifications().slice(0,6);if(!n.length)return '<p class="muted-text">No active notifications.</p>';return n.map(x=>`<button class="note-row ${x.status==='Unread'?'unread':''}" data-note-open="${x.id}"><b>${esc(x.title)}</b><small>${esc(x.text)} • ${formatDate(x.dateISO)}</small></button>`).join('')+`<div class="inline-actions"><button class="small ghost" data-notes-read="1">Mark all read</button></div>`}
 function agendaHtml(){const a=todayAgenda();if(!a.length)return '<p class="muted-text">Nothing scheduled today.</p>';return a.map(x=>`<div class="agenda-row ${x.done?'done':''}"><span>${x.icon}</span><b>${esc(x.title)}</b><small>${x.type==='homework'||x.type==='birthday'?esc(x.status||''):timeLabel(x.minute)}</small>${x.type!=='homework'&&x.type!=='birthday'&&x.status?statusTag(x.status):''}</div>`).join('')}
-function homePanel(){const q=quickContextActions(),gift=S.giftHistory.find(x=>!x.reaction);return `<div class="dashboard home-dashboard"><section class="card wide"><div class="section-heading"><div><h3>What needs your attention?</h3><p class="muted-text">The game surfaces context instead of making you hunt through menus.</p></div><span class="tag">${esc(S.emotion.current)}</span></div><div class="context-grid">${q.map(x=>`<button class="context-action" data-tab-jump="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join('')}</div></section><section class="card"><h3>Today • ${esc(weekday())}</h3>${agendaHtml()}${isGrounded()?`<p class="urgent-text">Grounded until ${formatDate(S.family.restrictions.groundedUntil)}.</p>`:''}</section><section class="card"><h3>Notifications</h3>${notificationsHtml()}</section><section class="card wide"><h3>What's happening?</h3>${eventHtml()}</section><section class="card"><h3>Right now</h3>${statRow('Location',esc(S.location))}${statRow('Weather',`${weatherIcon(S.weather.type)} ${esc(S.weather.type)} • ${S.weather.temp}°C`)}${statRow('Emotion',esc(S.emotion.current))}<p class="muted-text">${esc(S.emotion.reason||weatherAdvice())}</p></section><section class="card"><h3>Pending decisions</h3>${pendingHtml()}</section>${gift?`<section class="card wide"><h3>🎁 A gift reaction is still yours to choose</h3><p>You received <b>${esc(gift.item)}</b> for ${esc(gift.occasion)}. Your private feeling and outward behavior do not have to match.</p><div class="inline-actions"><button data-act="giftThank">Say thank you</button><button data-act="giftExcited">Act excited</button><button data-act="giftHide">Hide disappointment</button><button data-act="giftHug">Hug giver</button><button class="ghost" data-act="giftComplain">Complain</button></div></section>`:''}</div>`}
+function homePanel(){const q=quickContextActions(),gift=S.giftHistory.find(x=>!x.reaction);return `<div class="dashboard home-dashboard"><section class="card wide"><div class="section-heading"><div><h3>What needs your attention?</h3><p class="muted-text">The game surfaces context instead of making you hunt through menus.</p></div><span class="tag">${esc(S.emotion.current)}</span></div><div class="context-grid">${q.map(x=>`<button class="context-action" data-tab-jump="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join('')}</div></section><section class="card"><h3>Today • ${esc(weekday())}</h3>${agendaHtml()}${isGrounded()?`<p class="urgent-text">Grounded until ${formatDate(S.family.restrictions.groundedUntil)}.</p>`:''}</section><section class="card"><h3>Notifications</h3>${notificationsHtml()}</section>${holidayWindow().length?`<section class="card wide"><h3>Holidays</h3>${holidayHtml()}</section>`:''}<section class="card wide"><h3>What's happening?</h3>${eventHtml()}</section><section class="card"><h3>Right now</h3>${statRow('Location',esc(S.location))}${statRow('Weather',`${weatherIcon(S.weather.type)} ${esc(S.weather.type)} • ${S.weather.temp}°C`)}${statRow('Emotion',esc(S.emotion.current))}<p class="muted-text">${esc(S.emotion.reason||weatherAdvice())}</p></section><section class="card"><h3>Pending decisions</h3>${pendingHtml()}</section>${gift?`<section class="card wide"><h3>🎁 A gift reaction is still yours to choose</h3><p>You received <b>${esc(gift.item)}</b> for ${esc(gift.occasion)}. Your private feeling and outward behavior do not have to match.</p><div class="inline-actions"><button data-act="giftThank">Say thank you</button><button data-act="giftExcited">Act excited</button><button data-act="giftHide">Hide disappointment</button><button data-act="giftHug">Hug giver</button><button class="ghost" data-act="giftComplain">Complain</button></div></section>`:''}</div>`}
 function quickContextActions(){const a=[];const exam=nextExam();if(exam){const d=daysBetween(currentDate(),exam.dateISO);if(d<=3)a.push(['school','📝 '+exam.subject,d<=0?`Assessment today • ${timeLabel(exam.minute)}`:`Assessment in ${d} day${d===1?'':'s'} • prep ${Math.round(examSubject(exam)?.prep||0)}%`])}const sd=schoolDayEvent();if(sd&&!isTerminal(sd.status)&&currentMinute()<=SCHOOL_DAY.cutoff)a.push(['school','🏫 School today',schoolDayStatus()]);if(needsFormalSchool()){const hw=S.school.subjects.find(s=>s.homework?.status==='Late'||(s.homework?.status==='Assigned'&&daysBetween(currentDate(),s.homework.dueDate)<=1));if(hw)a.push(['school','📒 '+hw.name+' homework',homeworkLabel(hw.homework)])}if(S.needs.hunger>=60)a.push(['places','🍽️ Eat',S.age<=1?'Signal caregiver / be fed':'Take care of hunger']);if(S.needs.toilet>=65)a.push(['places','🚽 Bathroom',S.age<=4?'Age-appropriate toileting help':'Relieve yourself']);if(S.needs.sleep<=35||S.energy<=30)a.push(['places','😴 Sleep','You are running low on rest']);if(unreadMessages())a.push(['phone','💬 Messages',`${unreadMessages()} unread`]);if(pendingOpen().length)a.push(['calendar','⏳ Pending decision',`${pendingOpen().length} unresolved`]);if(!a.length)a.push(['places','🧭 Choose an activity','Your immediate needs are stable'],['people','👥 See someone','Relationships keep moving']);return a.slice(0,6)}
-function calendarPanel(){const up=upcomingEvents(15),recent=[...S.calendar].filter(e=>isTerminal(e.status)&&e.type!=='schoolDay').sort((a,b)=>stampOf(b.resolvedAt||{dateISO:b.dateISO}).localeCompare(stampOf(a.resolvedAt||{dateISO:a.dateISO}))).slice(0,8),rec=S.school?.record;return `<div class="dashboard"><section class="card"><h3>Current time</h3>${statRow('Date',formatDate(currentDate()))}${statRow('Time',timeLabel(currentMinute()))}${statRow('Weekday',weekday())}${statRow('Season',season())}${statRow('School',esc(schoolDayStatus()))}${statRow('Bedtime',S.age<18?timeLabel(bedtimeMinute()):'Your choice')}</section><section class="card"><h3>Today</h3>${agendaHtml()}</section><section class="card"><h3>Pending decisions</h3>${pendingHtml()}</section>${rec&&needsFormalSchool()?`<section class="card"><h3>Attendance this year</h3>${statRow('Days attended',rec.daysAttended)}${statRow('Unexcused absences',rec.absences)}${statRow('Excused',rec.excused)}${statRow('Late arrivals',rec.tardies)}${statRow('Missed assessments',rec.examsMissed)}${statRow('Missing homework',rec.missingHomework)}</section>`:''}<section class="card wide"><h3>Upcoming</h3>${up.map(e=>{const d=daysBetween(currentDate(),e.dateISO);return `<div class="calendar-row"><div><b>${typeIcon(e.type)} ${esc(e.title)}</b><small>${formatDate(e.dateISO)}${e.minute!=null&&e.type!=='homework'?` • ${timeLabel(e.minute)}`:''}${e.location?` • ${esc(e.location)}`:''}${e.required?' • required':''}</small></div><div class="inline-actions">${e.status&&e.status!=='Scheduled'?statusTag(e.status):''}<span class="countdown">${d===0?'TODAY':d===1?'TOMORROW':`${d} days`}</span></div></div>`}).join('')||'<p class="muted-text">Nothing scheduled.</p>'}</section><section class="card wide"><h3>Recently resolved</h3>${recent.map(e=>`<div class="calendar-row"><div><b>${typeIcon(e.type)} ${esc(e.title)}</b><small>${formatDate(e.dateISO)}${e.resolutionReason?` • ${esc(e.resolutionReason)}`:''}</small></div>${statusTag(e.status)}</div>`).join('')||'<p class="muted-text">Nothing resolved recently.</p>'}</section></div>`}
 function developmentPanel(){const k=S.development.kindergarten,p=S.pendingDecisions.find(x=>!x.resolved&&x.type==='kindergarten');return `<div class="dashboard"><section class="card"><h3>Development & autonomy</h3><p class="stage-note"><b>${lifeStage()}</b> • skills grow through actual care routines.</p>${Object.entries(S.development.skills).map(([key,v])=>`<div class="skill-line"><span>${esc(key.replace(/([A-Z])/g,' $1'))}</span><div class="progress"><i style="width:${clamp(v)}%"></i></div><b>${Math.round(v)}%</b></div>`).join('')}</section><section class="card"><h3>Early education</h3>${statRow('Kindergarten',esc(k.decision||(p?p.status:'Not decided')))}${p&&p.status==='Waiting for your preference'?`<p>Your family is discussing kindergarten. Your preference matters, but caregivers still make the final decision${p.autoDecideDate?` — by ${formatDate(p.autoDecideDate)} at the latest`:''}.</p><div class="inline-actions"><button data-act="kindergartenYes">I want to go</button><button class="ghost" data-act="kindergartenNo">I don't want to go</button></div>`:p?`<p class="muted-text">${esc(p.detail)}</p>`:''}<h4>Milestones</h4>${S.development.milestones.slice(0,6).map(x=>`<p>${esc(x)}</p>`).join('')||'<p class="muted-text">Milestones appear as skills develop.</p>'}</section></div>`}
 function examStatusLabel(e){const d=daysBetween(currentDate(),e.dateISO);if(e.status==='Completed')return `${e.score}%`;if(e.status==='Replaced by make-up')return 'Replaced';if(e.status==='Make-up scheduled'){const mk=S.exams.find(x=>x.id===e.makeupId);return mk?`Make-up ${formatDate(mk.dateISO)}`:'Make-up'}if(!examIsOpen(e))return e.status;return d===0?`TODAY ${timeLabel(e.minute)}`:`${d} day${d===1?'':'s'}`}
 function schoolPanel(){
@@ -1252,10 +1234,10 @@ function schoolPanel(){
  const clubHtml=clubs.length?clubs.map(c=>{ensureClub(c);const def=D.clubDefs[c.name]||{actions:[['practice','Practice',60],['special','Special activity',90],['social','Talk with members',45]]},ev=clubSessionEvent(c),today=ev&&ev.dateISO===currentDate(),open=today&&currentMinute()<=ev.graceMinute,before=ev&&(ev.dateISO>currentDate()||(today&&currentMinute()<ev.startMinute));
   return `<div class="commitment-card club-card"><div><b>${esc(c.name)} <span class="tag">${esc(c.position)}</span>${c.warnings?' <span class="tag bad">Warning</span>':''}</b><small>Led by ${esc(c.leader)} · relationship ${Math.round(c.leaderRel)}% • attendance ${clubAttendanceRate(c)}% (${c.attended} attended, ${c.missedSessions} missed${c.excusedSessions?`, ${c.excusedSessions} excused`:''}) • skill ${Math.round(c.skill||0)}%</small><small>${ev?`Next session ${today?'<b>today</b>':formatDate(ev.dateISO)} ${timeLabel(ev.startMinute)}–${timeLabel(ev.endMinute)}${ev.status==='Due'?' • happening now':''}`:'No session scheduled'}</small><div class="progress"><i style="width:${clamp(c.skill||0)}%"></i></div></div><div class="inline-actions">${open?`<button class="small primary" data-club-attend="${c.id}">Attend session</button><button class="small ghost" data-club-skip="${c.id}">Skip</button>`:''}${before?`<button class="small ghost" data-club-excuse="${c.id}">Tell leader you can't come</button>`:''}${def.actions.map(a=>`<button class="small ghost" data-club-action="${c.id}" data-kind="${a[0]}">${esc(a[1])}</button>`).join('')}<button class="small ghost" data-club-action="${c.id}" data-kind="leave">Leave</button></div></div>`}).join(''):'<p class="muted-text">You have not joined a club yet.</p>';
  const eventHtml=events.length?events.map(c=>{const d=daysBetween(currentDate(),c.eventDate);if(c.status==='Open')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Register by ${formatDate(c.decisionDate)} • event ${formatDate(c.eventDate)}</small></div><div class="inline-actions"><button class="small" data-contest-enter="${c.id}">${S.age<13?'Ask to enter':'Register'}</button><button class="small ghost" data-contest-decline="${c.id}">Decline</button></div></div>`;if(c.status==='Waiting')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Waiting for caregiver approval</small></div>${statusTag('Waiting')}</div>`;if(c.status==='Registered'){const ev=contestEvent(c),live=ev&&ev.dateISO===currentDate()&&currentMinute()<=ev.graceMinute;return `<div class="commitment-card"><div><b>${esc(c.name)}</b><small>${d<=0?`Today • check-in ${timeLabel(ev?.startMinute??600)}–${timeLabel(ev?.graceMinute??690)}`:`Event in ${d} day${d===1?'':'s'} • ${formatDate(c.eventDate)}`} • preparation ${Math.round(c.prep||0)}%</small><div class="progress"><i style="width:${clamp(c.prep||0)}%"></i></div></div><div class="inline-actions">${live?`<button class="small primary" data-contest-attend="${c.id}">Go to the event</button>`:''}<button class="small ghost" data-contest-practice="${c.id}">Prepare 75m</button></div></div>`}return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>${esc(c.result||c.status)}</small></div>${statusTag(c.status)}</div>`}).join(''):'<p class="muted-text">No current event opportunities.</p>';
- return `<div class="dashboard"><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Grade',esc(S.school.grade))}${statRow('Class',esc(S.school.className))}${statRow('Academic average',Math.round(schoolAverage())+'%')}${statRow('Attendance',Math.round(S.school.attendance)+'%')}${statRow('Behavior',Math.round(S.school.behavior)+'%')}${!primary&&S.school.gpa!=null?statRow('GPA',Number(S.school.gpa).toFixed(2)):''}</section><section class="card"><h3>School day</h3>${statRow('Today',esc(schoolDayStatus()))}${statRow('Hours',`${timeLabel(SCHOOL_DAY.start)}–${timeLabel(SCHOOL_DAY.end)}`)}${statRow('This year',`${rec.daysAttended} days • ${rec.absences} absent • ${rec.tardies} late`)}${sdOpen?actionButton('school','🎓 Go to school',currentMinute()>SCHOOL_DAY.tardyAfter?'You will be marked tardy':'Classes, assessments and classmates'):`<p class="muted-text">${isSchoolDay()?'The school day is not open for attendance right now.':'No classes today.'}</p>`}<p class="muted-text">Arrive by ${timeLabel(SCHOOL_DAY.tardyAfter)} to be on time. After ${timeLabel(SCHOOL_DAY.cutoff)} you are marked absent.</p></section><section class="card wide"><h3>Subjects, teachers & homework</h3><div class="subject-grid">${subjectHtml}</div></section><section class="card wide"><h3>Assessments</h3>${examHtml}</section><section class="card wide"><div class="section-heading"><div><h3>Clubs & activities</h3><p class="muted-text">Sessions are weekly commitments. Missing them has consequences; telling the leader beforehand is understood.</p></div><button class="small" data-act="exploreClub">Explore activities</button></div><h4>Offers</h4>${offerHtml}<h4>Your commitments</h4>${clubHtml}${removed.length?`<p class="muted-text">Removed: ${removed.map(c=>esc(c.name)).join(', ')}</p>`:''}</section><section class="card wide"><div class="section-heading"><div><h3>Competitions & school events</h3><p class="muted-text">Registering is not enough — you have to show up on the day.</p></div><button class="small" data-act="exploreContest">Find event</button></div>${eventHtml}</section></div>`
+ return `<div class="dashboard"><section class="card wide"><h3>Today at school</h3>${schoolSessionHtml()}<p class="muted-text">On time by ${timeLabel(SCHOOL_DAY.tardyAfter)}, absent after ${timeLabel(SCHOOL_DAY.cutoff)}. This year: ${rec.daysAttended} days • ${rec.absences} absent • ${rec.tardies} late${rec.classesSkipped?` • ${rec.classesSkipped} classes skipped`:''}.</p></section><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Grade',esc(S.school.grade))}${statRow('Class',esc(S.school.className))}${statRow('Academic average',Math.round(schoolAverage())+'%')}${statRow('Attendance',Math.round(S.school.attendance)+'%')}${statRow('Behavior',Math.round(S.school.behavior)+'%')}${!primary&&S.school.gpa!=null?statRow('GPA',Number(S.school.gpa).toFixed(2)):''}</section><section class="card"><h3>Education history</h3>${educationHistoryHtml()}</section><section class="card wide"><h3>Subjects, teachers & homework</h3><div class="subject-grid">${subjectHtml}</div></section><section class="card wide"><h3>Assessments</h3>${examHtml}</section><section class="card wide"><div class="section-heading"><div><h3>Clubs & activities</h3><p class="muted-text">Sessions are weekly commitments. Missing them has consequences; telling the leader beforehand is understood.</p></div><button class="small" data-act="exploreClub">Explore activities</button></div><h4>Offers</h4>${offerHtml}<h4>Your commitments</h4>${clubHtml}${removed.length?`<p class="muted-text">Removed: ${removed.map(c=>esc(c.name)).join(', ')}</p>`:''}</section><section class="card wide"><div class="section-heading"><div><h3>Competitions & school events</h3><p class="muted-text">Registering is not enough — you have to show up on the day.</p></div><button class="small" data-act="exploreContest">Find event</button></div>${eventHtml}</section></div>`
 }
 function handleLifecycleClick(b){
- if(handleInventoryClick(b))return true;
+ if(handleInventoryClick(b))return true;if(handleSchoolClick(b))return true;if(handleUIClick(b))return true;
  const d=b.dataset;
  if(d.nextDayConfirm){performNextDay();return true}
  if(d.closeModal){closeChoiceModal();render();return true}
@@ -1389,6 +1371,7 @@ function performItemUse(itemId,useId){
  if(use.outdoor&&S.weather.type==='Stormy'){toast('It is storming outside — not now.');return}
  if(use.battery&&(it.battery??100)<use.battery){toast(`${it.name} needs charging first.`);return}
  if(S.energy<12&&(use.effects?.energy||0)<0){toast('You are too tired for that right now.');return}
+ if(atSchool()&&!['book','comicBook','notebook','workbook','sketchbook'].includes(it.key)){toast('You are at school — that will have to wait.');return}
  if(d.permission&&!householdAccess(d.permission))return;
  if(it.lifecycleType==='finite'||(it.lifecycleType==='progress'&&(it.quantity||1)>1))it=openOne(it);
  let rereading=false;if(it.lifecycleType==='progress'&&it.progress>=100){it.progress=0;it.rereading=true}rereading=!!it.rereading;
@@ -1490,7 +1473,7 @@ function giveInventoryItem(itemId,personId){
  else if(d.personal){rel+=1;trust=4;story=`${firstName(p)} reads what you wrote twice. "You actually mean this," they say quietly.`}
  else if(worn){rel=1;story=`${firstName(p)} thanks you, though the ${gift.name.toLowerCase()} has clearly seen better days.`}
  else if(gift.sentimental>=35&&gift.origin){rel+=3;trust=3;story=`You tell ${firstName(p)} where the ${gift.name.toLowerCase()} came from. Knowing it mattered to you makes it mean more to them.`}
- else story=rand([`${firstName(p)} lights up when they see it.`,`${firstName(p)} grins. "For me? Really?"`,`${firstName(p)} is surprised — in a good way.`]);
+ else{const wrap=findUsable('giftWrap');if(wrap){const u=openOne(wrap);u.remaining=clamp(u.remaining-20);if(u.remaining<=.5)removeItem(u.id);rel+=1.5}story=rand([`${firstName(p)} lights up when they see it.`,`${firstName(p)} grins. "For me? Really?"`,`${firstName(p)} is surprised — in a good way.`])+(wrap?' The wrapping makes it feel special.':'')}
  p.rel=clamp(p.rel+rel);p.trust=clamp(p.trust+trust);rememberPerson(p,`You gave them ${gift.name.toLowerCase()}.`,2);
  if(gift.sentimental>=35&&gift.origin){S.happiness=clamp(S.happiness+(rel>0?1:-2))}
  advanceTime(10);closeChoiceModal();log(`Gave ${gift.name.toLowerCase()} to ${firstName(p)}`,`${story} (Closeness ${rel>=0?'+':''}${Math.round(rel)})`);toast(`Gift given to ${firstName(p)}`)
@@ -1597,12 +1580,12 @@ function inventoryHtml(){
  return `${worn?`<div class="slot-row">${worn}</div>`:''}<div class="filter-row">${groups.map(g=>`<button class="filter-chip ${invFilter===g?'active':''}" data-inv-filter="${esc(g)}">${esc(g)}</button>`).join('')}</div><div class="item-grid">${shown.map(inventoryCard).join('')||'<p class="muted-text">Nothing here.</p>'}</div>`
 }
 function storeHtml(){
- const visible=Object.entries(D.catalog).filter(([,d])=>S.age>=Math.max(0,d.minAge-3)),cats=['All',...new Set(visible.map(([,d])=>d.category))];if(!cats.includes(shopCat))shopCat='All';
+ const seasonOpen=d=>!d.seasonal||unitCount(Object.keys(D.catalog).find(k=>D.catalog[k]===d))>0||upcomingHolidays(8).some(x=>d.seasonal.includes(x.h.id)&&daysBetween(currentDate(),x.dateISO)<=21),visible=Object.entries(D.catalog).filter(([,d])=>S.age>=Math.max(0,d.minAge-3)&&seasonOpen(d)),cats=['All',...new Set(visible.map(([,d])=>d.category))];if(!cats.includes(shopCat))shopCat='All';
  const list=visible.filter(([,d])=>shopCat==='All'||d.category===shopCat);
  return `<div class="filter-row">${cats.map(c=>`<button class="filter-chip ${shopCat===c?'active':''}" data-shop-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div><div class="product-grid">${list.map(([key,d])=>{
   const owned=unitCount(key),relevant=S.age>=d.minAge,tone=CAT_TONE[d.category]||'misc',qty=d.stackable&&d.price<=20;
   const perm=S.age<18&&d.price>=d.permissionPrice?'<small class="perm-note">Needs caregiver OK</small>':'';
-  return `<article class="product-card tone-${tone} ${relevant?'':'is-later'}"><div class="product-art" aria-hidden="true">${d.icon||'📦'}</div><div class="product-body"><div class="product-head"><b>${esc(d.name)}</b><strong>${money(d.price)}</strong></div><p>${esc(d.description)}</p><div class="fx-row">${effectChips(d)}</div><small class="product-type">${esc(productTypeLabel(d))}${owned?` · <b>Owned ×${owned}</b>`:''}</small>${!relevant?`<small class="perm-note">More relevant around age ${d.minAge}</small>`:d.phone&&S.age<D.ageRules.phone?'<small class="perm-note">Can own now • independent use later</small>':perm}${relevant?`<div class="product-actions">${qty?`<select class="qty-select" data-qty-for="${key}" aria-label="Quantity">${[1,2,3,4,5].map(n=>`<option>${n}</option>`).join('')}</select>`:''}<button class="small primary" data-shop-own="${key}">${S.age<18?'Buy with my money':'Buy'}</button>${S.age<18?`<button class="small" data-shop-parent="${key}">Ask caregiver</button><button class="small ghost" data-shop-birthday="${key}">Birthday wish</button>${S.traditions.christmas?`<button class="small ghost" data-shop-christmas="${key}">Christmas wish</button>`:''}`:''}</div>`:''}</div></article>`}).join('')}</div>`
+  return `<article class="product-card tone-${tone} ${relevant?'':'is-later'}"><div class="product-art" aria-hidden="true">${d.icon||'📦'}</div><div class="product-body"><div class="product-head"><b>${esc(d.name)}</b><strong>${money(d.price)}</strong></div><p>${esc(d.description)}</p><div class="fx-row">${effectChips(d)}</div>${d.seasonal?'<small class="perm-note">Seasonal • optional</small>':''}<small class="product-type">${esc(productTypeLabel(d))}${owned?` · <b>Owned ×${owned}</b>`:''}</small>${!relevant?`<small class="perm-note">More relevant around age ${d.minAge}</small>`:d.phone&&S.age<D.ageRules.phone?'<small class="perm-note">Can own now • independent use later</small>':perm}${relevant?`<div class="product-actions">${qty?`<select class="qty-select" data-qty-for="${key}" aria-label="Quantity">${[1,2,3,4,5].map(n=>`<option>${n}</option>`).join('')}</select>`:''}<button class="small primary" data-shop-own="${key}">${S.age<18?'Buy with my money':'Buy'}</button>${S.age<18?`<button class="small" data-shop-parent="${key}">Ask caregiver</button><button class="small ghost" data-shop-birthday="${key}">Birthday wish</button>${S.traditions.christmas?`<button class="small ghost" data-shop-christmas="${key}">Christmas wish</button>`:''}`:''}</div>`:''}</div></article>`}).join('')}</div>`
 }
 function businessPanel(){
  const openReq=S.giftRequests.filter(r=>!r.resolved),pending=pendingOpen().filter(p=>/purchase/i.test(p.type)||p.type==='conditionalPurchase');
@@ -1630,6 +1613,441 @@ function handleInventoryClick(b){
  if(d.shopOwn){const sel=document.querySelector(`[data-qty-for="${d.shopOwn}"]`);buyWithOwnMoney(d.shopOwn,sel?Number(sel.value):1);save();render();return true}
  return false
 }
+
+// =====================================================================
+// v7.2 SCHOOL STAGES, GRADUATION & THE INTERACTIVE SCHOOL DAY
+// Checking in records attendance; time then runs period by period and
+// the player chooses what to do in each one.
+// =====================================================================
+const SCHOOL_NAMES={primary:['Riverside Primary School','Maple Grove Elementary','Sunrise Primary School','Westside Elementary','Lakeview Primary School'],middle:['Riverside Middle School','Central Middle School','Sunrise Junior High','Westside Middle School'],high:['Riverside High School','Central International High School','Sunrise Secondary School','Westside High School']};
+const STAGE_LABEL={kindergarten:'kindergarten',primary:'primary school',middle:'middle school',high:'high school'};
+function stageForAge(age){return age<=5?'kindergarten':age<=11?'primary':age<=14?'middle':'high'}
+function stageOfSchool(sc){if(!sc)return null;if(sc.grade==='Kindergarten')return 'kindergarten';if(/Middle/.test(sc.grade))return 'middle';if(/High/.test(sc.grade))return 'high';return 'primary'}
+function nameMatchesStage(name,stage){if(stage==='primary')return !/Secondary|High|Middle|Junior/i.test(name);if(stage==='middle')return /Middle|Junior/i.test(name);if(stage==='high')return /High|Secondary/i.test(name);return true}
+function schoolNameFor(stage,prev=null){const base=prev?String(prev).split(' ')[0]:null,pool=SCHOOL_NAMES[stage]||SCHOOL_NAMES.primary;return pool.find(n=>base&&n.startsWith(base))||rand(pool)}
+function buildSchool(age,carry=null){
+ if(age>=3&&age<=5&&S.development.kindergarten.enrolled)return {name:carry?.grade==='Kindergarten'?carry.name:rand(['Little Steps Kindergarten','Sunflower Early Learning','Neighborhood Kindergarten']),grade:'Kindergarten',className:carry?.className||rand(['Sun','Moon','Rainbow','Bears']),attendance:carry?.attendance??96,behavior:72,gpa:null,rank:null,subjects:[makeSubject('Language & stories',0),makeSubject('Numbers & patterns',1),makeSubject('Movement',2),makeSubject('Social skills',3)],clubs:[],activityOffers:[],contests:[],friends:[],rivals:[],yearStarted:currentDate(),startedDate:carry?.startedDate||currentDate()};
+ if(age<6||age>18)return null;
+ const stage=stageForAge(age),same=!!carry&&stageOfSchool(carry)===stage;
+ return {name:same?carry.name:schoolNameFor(stage,carry&&carry.grade!=='Kindergarten'?carry.name:null),grade:gradeLabel(age),className:`${Math.max(1,age-5)}-${String.fromCharCode(65+Math.floor(Math.random()*4))}`,attendance:carry?.attendance??96,behavior:carry?.behavior??70,gpa:age>=12?(carry?.gpa??3.1):null,rank:age>=12?(carry?.rank??Math.floor(8+Math.random()*22)):null,
+  subjects:subjectNames(age).map((n,i)=>{const old=carry?.subjects?.find(s=>s.name===n);if(!old)return makeSubject(n,i);const s=Object.assign(makeSubject(n,i),old,{prep:0,homework:{status:'None',progress:0,dueDate:null}});if(!same)s.teacher={name:teacherName(n),rel:50+Math.floor(Math.random()*15)};return s}),
+  clubs:same?(carry?.clubs||[]).filter(c=>c.status==='Active'):[],activityOffers:[],contests:[],friends:carry?.friends||[],rivals:carry?.rivals||[],yearStarted:currentDate(),startedDate:same?(carry.startedDate||currentDate()):currentDate(),stage}
+}
+function recordGraduation(stage,schoolName,{year=null,silent=false}={}){
+ S.education=S.education||{graduations:[]};if(S.education.graduations.some(g=>g.stage===stage))return;
+ const y=year||parseISO(currentDate()).getUTCFullYear(),g={stage,school:schoolName||STAGE_LABEL[stage],year:y,age:S.age,dateISO:currentDate()};S.education.graduations.push(g);
+ const title=`🎓 Finished ${STAGE_LABEL[stage]}`,text=`You graduated from ${g.school} in ${y}.`;
+ S.development.milestones=S.development.milestones||[];S.development.milestones.unshift(`${title} — ${g.school}, ${y}`);
+ if(silent){S.milestones.unshift({dateISO:currentDate(),age:S.age,title,text})}else log(title,text+(stage==='kindergarten'?' Next stop: real school, with a timetable and homework.':stage==='high'?' A whole new part of life begins.':' A new school, new hallways and new people are next.'),true)
+}
+function reconcileEducationHistory(){
+ S.education=Object.assign({graduations:[]},S.education||{});
+ const k=S.development?.kindergarten;
+ if(S.age>=6&&k?.enrolled&&!S.education.graduations.some(g=>g.stage==='kindergarten')){const y=parseISO(sixthBirthday()).getUTCFullYear();recordGraduation('kindergarten',k.schoolName||'kindergarten',{year:y,silent:true})}
+ if(S.school&&S.school.grade!=='Kindergarten'){const st=stageForAge(S.age);S.school.stage=st;if(!nameMatchesStage(S.school.name,st)){const old=S.school.name;S.school.name=schoolNameFor(st,old);for(const e of S.calendar)if(e.type==='schoolDay'&&!isTerminal(e.status))e.title=`School • ${S.school.name}`}}
+}
+
+// ---------- Timetable ----------
+const SCHOOL_PERIODS=[{id:'p1',start:480,end:540,label:'Period 1'},{id:'p2',start:540,end:600,label:'Period 2'},{id:'p3',start:600,end:660,label:'Period 3'},{id:'lunch',start:660,end:720,label:'Lunch'},{id:'p4',start:720,end:780,label:'Period 4'},{id:'p5',start:780,end:840,label:'Period 5'},{id:'p6',start:840,end:900,label:'Period 6'}];
+function weekdayIndex(dateISO){return (parseISO(dateISO).getUTCDay()+6)%7}
+function timetableFor(dateISO=currentDate()){
+ const subs=S.school?.subjects||[];if(!subs.length)return [];const w=weekdayIndex(dateISO);let k=0;
+ return SCHOOL_PERIODS.map(p=>p.id==='lunch'?{...p,kind:'lunch'}:{...p,kind:'class',subject:subs[(w*6+(k++))%subs.length].name})
+}
+function periodAt(m=currentMinute()){return timetableFor().find(p=>m>=p.start&&m<p.end)||null}
+function atSchool(){const sd=schoolDayEvent();return !!sd&&sd.status==='Attending'&&currentMinute()<SCHOOL_DAY.end&&S.location==='School'}
+function sessionEvent(){const sd=schoolDayEvent();return sd&&sd.status==='Attending'?sd:null}
+function dueAtSchoolNow(){const m=currentMinute(),today=currentDate();const exams=S.exams.filter(e=>examIsOpen(e)&&e.dateISO===today&&e.minute<SCHOOL_DAY.end&&m>=e.minute-5&&m<=e.graceMinute);const contests=S.calendar.filter(e=>e.type==='schoolEvent'&&e.dateISO===today&&!isTerminal(e.status)&&e.startMinute<SCHOOL_DAY.end&&m>=e.startMinute-5&&m<=e.graceMinute);return {exams,contests}}
+
+// ---------- Session flow ----------
+function checkInToSchool(opts={}){
+ const ev=ensureSchoolDayObligation();if(!ev)return false;
+ let m=currentMinute();if(m<SCHOOL_DAY.start)advanceTime(SCHOOL_DAY.start-m,{silent:true});m=currentMinute();
+ const tardy=m>SCHOOL_DAY.tardyAfter;setCalendarStatus(ev,'Attending',tardy?'Arrived late':'Checked in');ev.attendanceStatus=tardy?'Tardy':'Present';ev.checkIn=m;ev.periods=ev.periods||{};S.location='School';
+ const t=ensureTeacher(S.school.subjects[0])?.name||'your homeroom teacher';
+ log(tardy?'Checked in late':'Checked in at school',tardy?rand([`You sign in at the front office at ${timeLabel(m)}. The secretary hands you a late slip without looking up.`,`You slip into homeroom after the bell. ${t} marks you tardy.`]):rand([`You make it in before the bell. ${t} takes attendance.`,`Homeroom. Announcements, attendance, a lot of yawning.`]));
+ toast(tardy?'Checked in • tardy':'Checked in • on time');return true
+}
+function sessionGain(sub,minutes,{focus=1,social=0,teacher=0}={}){const f=minutes/60;sub.skill=clamp(sub.skill+(1.2*focus*f)*Math.max(.2,1-sub.skill/140));sub.prep=clamp(sub.prep+(3*focus*f));if(teacher)ensureTeacher(sub).rel=clamp(sub.teacher.rel+teacher);if(social)S.needs.social=clamp(S.needs.social+social*f)}
+function classAction(kind){
+ const ev=sessionEvent();if(!ev||!atSchool()){toast('You are not at school right now.');return}
+ const p=periodAt();if(!p||p.kind!=='class'){toast('There is no class right now.');return}
+ const {exams}=dueAtSchoolNow();if(exams.length&&kind!=='skip'){toast(`Your ${exams[0].subject} assessment is now — take it first.`);return}
+ const sub=S.school.subjects.find(s=>s.name===p.subject);if(!sub)return;const t=ensureTeacher(sub),mins=Math.max(5,p.end-currentMinute()),friend=bestNonFamily(),fn=firstName(friend);
+ let story;ev.periods[p.id]=kind;
+ if(kind==='attend'){sessionGain(sub,mins,{focus:S.needs.sleep<35?.6:1});story=rand([`${sub.name} with ${t.name}. You take decent notes.`,`You follow along in ${sub.name}. One idea finally makes sense.`,`${t.name} runs ${sub.name} at full speed; you keep up, mostly.`])+(S.needs.sleep<35?' You are tired, so less of it sticks.':'')}
+ else if(kind==='participate'){if(S.energy<15){toast('You are too tired to participate actively.');return}sessionGain(sub,mins,{focus:1.4,teacher:1.5});S.energy=clamp(S.energy-4);const right=chance(40+sub.skill*.5);story=right?`You raise your hand in ${sub.name} and get it right. ${t.name} looks pleased.`:`You answer a question in ${sub.name} and get it wrong, but ${t.name} walks you through it. You remember it now.`}
+ else if(kind==='chat'){sessionGain(sub,mins,{focus:.35,social:10});if(friend){friend.rel=clamp(friend.rel+2);rememberPerson(friend,`You chatted during ${sub.name}.`)}if(chance(t.style==='Strict'?45:22)){t.rel=clamp(t.rel-3);story=`You and ${fn||'a classmate'} whisper through ${sub.name} until ${t.name} stops mid-sentence and stares at you both.`}else story=`You and ${fn||'a classmate'} pass notes through ${sub.name}. Fun — but you missed most of the lesson.`}
+ else if(kind==='skip'){ev.skipped=(ev.skipped||0)+1;S.needs.fun=clamp(S.needs.fun+6);S.stress=clamp(S.stress+2);const rec=ensureSchoolRecord();rec.classesSkipped=(rec.classesSkipped||0)+1;
+  if(chance(30+ev.skipped*15)){t.rel=clamp(t.rel-5);S.school.behavior=clamp(S.school.behavior-3);story=`You hide out in the stairwell during ${sub.name}. A hall monitor finds you. ${t.name} will hear about it.`;if(S.age<18)scheduleFollowUp('absenceNotice',{dateISO:currentDate(),count:Math.max(2,rec.absences+1)},{minute:1050})}else story=`You skip ${sub.name} and wander the empty corridors. Nobody notices — this time.`;}
+ advanceTime(mins,{silent:true});log(`${p.label} • ${sub.name}`,story)
+}
+function lunchAction(kind,arg){
+ const ev=sessionEvent();if(!ev||!atSchool()){toast('You are not at school right now.');return}
+ const p=periodAt();if(!p||p.kind!=='lunch'){toast('It is not lunch time.');return}
+ const friend=bestNonFamily(),fn=firstName(friend);let mins=25,story;
+ if(kind==='eat'){if(ev.ateLunch){toast('You already ate.');return}ev.ateLunch=true;S.needs.hunger=clamp(S.needs.hunger-50);S.energy=clamp(S.energy+5);story=rand(['Cafeteria lunch: pasta that is better than it looks.','You eat quickly so you have time for other things.','The lunch line is long, but the food is warm.']);mins=20}
+ else if(kind==='friend'){if(friend){friend.rel=clamp(friend.rel+4);friend.fun=clamp(friend.fun+3);rememberPerson(friend,'You spent lunch together.')}S.needs.social=clamp(S.needs.social+16);if(!ev.ateLunch){ev.ateLunch=true;S.needs.hunger=clamp(S.needs.hunger-40)}story=friend?rand([`You and ${fn} share lunch and a long, ridiculous conversation.`,`${fn} saves you a seat. You talk about everything except school.`]):'You sit with some classmates and slowly join the conversation.'}
+ else if(kind==='library'){const sub=S.school.subjects.find(s=>s.name===arg)||bestPrepSubject();if(!sub)return;sub.prep=clamp(sub.prep+(findUsable('deskLamp')?6:5));sub.skill=clamp(sub.skill+1);sub.lastStudyDate=currentDate();story=`You spend lunch in the library working on ${sub.name}. Quiet, focused, a little lonely.`;mins=30}
+ else if(kind==='teacher'){const sub=S.school.subjects.find(s=>s.name===arg)||bestPrepSubject();if(!sub)return;const t=ensureTeacher(sub);t.rel=clamp(t.rel+3);sub.prep=clamp(sub.prep+6);story=`You visit ${t.name} at lunch with questions about ${sub.name}. ${t.style==='Warm'?'They are delighted.':t.style==='Strict'?'They seem surprised, then genuinely helpful.':'They take the time to explain.'}`;mins=20}
+ mins=Math.min(mins,p.end-currentMinute());advanceTime(Math.max(5,mins),{silent:true});log(`Lunch • ${kind==='eat'?'cafeteria':kind==='friend'?'with friends':kind==='library'?'library':'teacher visit'}`,story)
+}
+function finishSchoolDay(ev,{early=false,quiet=false}={}){
+ if(!ev||ev.status!=='Attending')return;const tardy=ev.attendanceStatus==='Tardy',rec=ensureSchoolRecord();
+ const done=Object.keys(ev.periods||{}).length,skipped=ev.skipped||0;
+ if(early){rec.leftEarly=(rec.leftEarly||0)+1;S.school.attendance=clamp(S.school.attendance-.6)}
+ markSchoolAttendance(ev,{tardy});if(early)ev.attendanceStatus=tardy?'Tardy, left early':'Left early';
+ S.location='Home';S.energy=clamp(S.energy-(equippedIn('bag')?5:7));if(chance(40))generateHomework(false);
+ if(!quiet)log(early?'Left school early':'School day over',early?`You leave before the final bell at ${timeLabel(currentMinute())}.${S.age<18?' The school will note it.':''}`:`The final bell rings. ${done?`You went through ${done} part${done===1?'':'s'} of the day yourself`:'The day passed in a blur'}${skipped?`, skipped ${skipped} class${skipped===1?'':'es'}`:''}${tardy?', and arrived late':''}.`);
+ if(early&&S.age<18&&chance(45))scheduleFollowUp('absenceNotice',{dateISO:currentDate(),count:Math.max(2,rec.absences+1)},{minute:Math.max(currentMinute()+60,1050)});
+ clearCurrentContextIfSourceResolved()
+}
+function skipToDismissal(){
+ const ev=sessionEvent();if(!ev||!atSchool()){toast('You are not at school right now.');return}
+ const {exams}=dueAtSchoolNow();if(exams.length){toast(`Take your ${exams[0].subject} assessment first, or skip it explicitly.`);return}
+ for(const p of timetableFor()){if(p.end<=currentMinute())continue;if(ev.periods[p.id])continue;
+  const {exams:ex}=dueAtSchoolNow();if(ex.length)break;
+  if(p.kind==='class'){const sub=S.school.subjects.find(s=>s.name===p.subject);if(sub)sessionGain(sub,Math.max(5,p.end-Math.max(p.start,currentMinute())),{focus:.8});ev.periods[p.id]='auto'}
+  else{if(!ev.ateLunch){ev.ateLunch=true;S.needs.hunger=clamp(S.needs.hunger-45)}ev.periods[p.id]='auto'}
+  advanceTime(Math.max(1,p.end-currentMinute()),{silent:true});if(sessionEvent()==null)break;
+  const nx=dueAtSchoolNow();if(nx.exams.length||nx.contests.length)break
+ }
+ const left=sessionEvent();if(left&&currentMinute()>=SCHOOL_DAY.end)finishSchoolDay(left)
+}
+function leaveSchoolEarly(){const ev=sessionEvent();if(!ev){toast('You are not at school.');return}if(S.age<10){toast('A young child cannot just walk out of school.');return}finishSchoolDay(ev,{early:true})}
+function attendSchool(opts={}){
+ if(!S.school){toast('You are not currently enrolled in school.');return}
+ if(S.school.grade==='Kindergarten'){
+  if(!isSchoolDay()){toast(isWeekend(currentDate())?'Kindergarten is closed on weekends.':'Kindergarten is on break.');return}
+  const m=currentMinute();if(m<420||m>=900){toast(m<420?'Kindergarten opens at 8:00 AM.':'Kindergarten has finished for today.');return}
+  if(m<480)advanceTime(480-m,{silent:true});const mins=Math.max(60,Math.min(240,900-currentMinute()));advanceTime(mins,{silent:true});S.school.attendance=clamp(S.school.attendance+.05);S.needs.fun=clamp(S.needs.fun+10);S.needs.social=clamp(S.needs.social+12);
+  feedback('Kindergarten day',rand(['Circle time, a story about a lost bear, and a long turn on the slide.','You paint something that is mostly blue and very proud of it.','A classmate shares their blocks with you after some negotiation.']),mins);return
+ }
+ if(!isSchoolDay()){toast(isWeekend(currentDate())?'There is no school on weekends.':'School is on break today.');return}
+ const ev=ensureSchoolDayObligation();if(!ev){toast('No school day is scheduled.');return}
+ if(ev.status==='Attending'){if(opts.cheatExamId){const e=S.exams.find(x=>x.id===opts.cheatExamId);if(e)performExam(e,{cheat:true,lateMinutes:Math.max(0,currentMinute()-e.minute)})}else toast('You are already at school.');return}
+ if(ev.status==='Attended'){toast('You already went to school today.');return}
+ if(isTerminal(ev.status)){toast(ev.status==='Excused'?'You are marked as staying home today.':`You were marked absent after ${timeLabel(SCHOOL_DAY.cutoff)}.`);return}
+ const m=currentMinute();
+ if(m<300){toast('It is the middle of the night. School starts at 8:00 AM — sleep first.');return}
+ if(m>SCHOOL_DAY.cutoff){processCalendar();toast(m>=SCHOOL_DAY.end?'School is finished for today — you were marked absent.':`The attendance cutoff (${timeLabel(SCHOOL_DAY.cutoff)}) has passed.`);return}
+ checkInToSchool(opts);
+ if(opts.cheatExamId){const e=S.exams.find(x=>x.id===opts.cheatExamId);if(e&&currentMinute()<e.minute)advanceTime(e.minute-currentMinute(),{silent:true});if(e)performExam(e,{cheat:true,lateMinutes:Math.max(0,currentMinute()-e.minute)})}
+ if(opts.examId){const e=S.exams.find(x=>x.id===opts.examId);if(e&&examIsOpen(e)){if(currentMinute()<e.minute){advanceTime(e.minute-currentMinute(),{silent:true})}if(examIsOpen(e))performExam(e,{lateMinutes:Math.max(0,currentMinute()-e.minute)})}}
+}
+const SCHOOL_ALLOWED_ACTS=['eat','snack','drink','toilet','washHands','washFace','rest','school','nextDay','ageUp','giftThank','giftExcited','giftHide','giftComplain','giftHug'];
+function atSchoolBlocks(id){if(!atSchool())return false;if(SCHOOL_ALLOWED_ACTS.includes(id))return false;toast(`You are at school until ${timeLabel(SCHOOL_DAY.end)}. Use the school options — or leave early.`);return true}
+
+// ---------- Session UI ----------
+function schoolSessionHtml(){
+ if(!needsFormalSchool())return '';const sd=schoolDayEvent(),m=currentMinute(),tt=isSchoolDay()?timetableFor():[];
+ if(!isSchoolDay())return `<p class="muted-text">${isWeekend(currentDate())?'Weekend — no classes.':'School break — no classes.'}</p>`;
+ const ttHtml=`<ol class="timetable">${tt.map(p=>{const exam=S.exams.find(e=>e.dateISO===currentDate()&&e.minute>=p.start&&e.minute<p.end&&e.minute<SCHOOL_DAY.end),contest=S.calendar.find(e=>e.type==='schoolEvent'&&e.dateISO===currentDate()&&e.startMinute>=p.start&&e.startMinute<p.end),now=m>=p.start&&m<p.end&&sd?.status==='Attending',past=m>=p.end,did=sd?.periods?.[p.id];
+  return `<li class="${now?'is-now':''} ${past?'is-past':''}"><span class="tt-time">${timeLabel(p.start)}</span><b>${p.kind==='lunch'?'Lunch':esc(p.subject)}</b>${exam?`<em class="tt-flag">${esc(exam.type)}${examIsOpen(exam)?'':' • '+esc(exam.status==='Completed'?exam.score+'%':exam.status)}</em>`:''}${contest?`<em class="tt-flag">${esc(contest.title)}</em>`:''}${did?`<small>${did==='auto'?'attended':did==='skip'?'skipped':did}</small>`:''}</li>`}).join('')}</ol>`;
+ if(!sd||!['Attending'].includes(sd.status)){
+  const can=sd&&!isTerminal(sd.status)&&m<=SCHOOL_DAY.cutoff&&m>=300;
+  return `<div class="session-card"><div class="session-head"><div><b>${esc(schoolDayStatus())}</b><small>${can?(m>SCHOOL_DAY.tardyAfter?`You can still check in late until ${timeLabel(SCHOOL_DAY.cutoff)}.`:`Check in by ${timeLabel(SCHOOL_DAY.tardyAfter)} to be on time.`):sd?.status==='Attended'?`Attendance: ${esc(sd.attendanceStatus||'Present')}`:''}</small></div>${can?`<button class="primary" data-act="school">${m<SCHOOL_DAY.start?'Go to school':'Check in now'}</button>`:''}</div>${ttHtml}</div>`
+ }
+ const p=periodAt(),{exams,contests}=dueAtSchoolNow(),btn=(attrs,label,cls='')=>`<button class="${cls}" ${attrs}>${esc(label)}</button>`;let now='',actions=[];
+ if(exams.length){const e=exams[0];now=`<b>${esc(e.subject)} ${esc(e.type)}</b><small>${m<=e.endMinute?`Now • until ${timeLabel(e.endMinute)}`:`Late sitting allowed until ${timeLabel(e.graceMinute)}`}</small>`;actions.push(btn(`data-exam-take="${e.id}"`,'Take assessment','primary'),btn(`data-exam-cheat="${e.id}"`,'Attempt cheat','ghost'))}
+ else if(contests.length){const c=contests[0],ct=contestById(c.payload?.contestId);now=`<b>${esc(c.title)}</b><small>In the hall • check in by ${timeLabel(c.graceMinute)}. Going means missing class.</small>`;actions.push(btn(`data-contest-attend="${ct?.id}"`,'Go to the event','primary'))}
+ if(p&&p.kind==='class'&&!exams.length){now+=`${now?'<hr>':''}<b>${esc(p.label)} • ${esc(p.subject)}</b><small>${esc(ensureTeacher(S.school.subjects.find(s=>s.name===p.subject))?.name||'')} • until ${timeLabel(p.end)}</small>`;actions.push(btn('data-class="attend"','Pay attention',contests.length?'':'primary'),btn('data-class="participate"','Participate'),btn('data-class="chat"','Chat with a friend','ghost'),btn('data-class="skip"','Skip this class','ghost'))}
+ if(p&&p.kind==='lunch'){now+=`${now?'<hr>':''}<b>Lunch break</b><small>Until ${timeLabel(p.end)}${sd.ateLunch?' • you have eaten':''}</small>`;const sub=bestPrepSubject()?.name||'';actions.push(...(sd.ateLunch?[]:[btn('data-lunch="eat"','Eat in the cafeteria','primary')]),btn('data-lunch="friend"','Sit with friends'),btn(`data-lunch="library" data-arg="${esc(sub)}"`,`Library: study ${sub}`,'ghost'),btn(`data-lunch="teacher" data-arg="${esc(sub)}"`,`Visit ${sub} teacher`,'ghost'))}
+ return `<div class="session-card is-live"><div class="session-head"><div class="session-now">${now||'<b>Between classes</b>'}</div><span class="tag ok">At school • ${esc(sd.attendanceStatus||'Present')}</span></div><div class="session-actions">${actions.join('')}</div><div class="session-foot"><button class="small ghost" data-school-skip="1">Skip ahead to dismissal</button>${S.age>=10?'<button class="small ghost" data-school-leave="1">Leave school early</button>':''}</div>${ttHtml}</div>`
+}
+function handleSchoolClick(b){
+ const d=b.dataset;
+ if(d.class){classAction(d.class);save();render();return true}
+ if(d.lunch){lunchAction(d.lunch,d.arg);save();render();return true}
+ if(d.schoolSkip){skipToDismissal();save();render();return true}
+ if(d.schoolLeave){leaveSchoolEarly();save();render();return true}
+ return false
+}
+function spreadExamDates(){
+ const byDate={};for(const e of S.exams.filter(x=>examIsOpen(x)&&!x.makeupOf&&x.dateISO>currentDate()).sort((a,b)=>a.dateISO.localeCompare(b.dateISO))){let d=e.dateISO;while((byDate[d]||0)>=1)d=nextSchoolDay(addDays(d,1));if(d!==e.dateISO)e.dateISO=d;byDate[d]=(byDate[d]||0)+1}
+}
+
+// ---------- v7.2 navigation: numbered sub-tabs instead of long scrolling pages ----------
+// UI preferences are stored separately from the simulation save.
+const UI_KEY='lifeSim_ui';
+function loadUI(){try{return Object.assign({subTab:{},logOpen:false,theme:'auto'},JSON.parse(localStorage.getItem(UI_KEY)||'{}'))}catch(e){return {subTab:{},logOpen:false,theme:'auto'}}}
+let UI=loadUI();
+function saveUI(){try{localStorage.setItem(UI_KEY,JSON.stringify(UI))}catch(e){}}
+const PANEL_TABS={
+ home:[['now','Now'],['today','Today'],['inbox','Inbox']],
+ places:[['care','Care'],['activities','Activities'],['things','Your things'],['out','Go out']],
+ school:[['today','Today'],['subjects','Subjects'],['exams','Assessments'],['activities','Clubs & events']],
+ business:[['things','Your things'],['shop','Shop'],['money','Money & chores'],['selling','Selling']],
+ calendar:[['month','Month'],['today','Today'],['upcoming','Upcoming'],['history','History']],
+ world:[['world','World'],['journal','Journal']]
+};
+const SECTION_RULES={
+ home:[[/attention|happening|gift|holiday/i,'now'],[/today|right now/i,'today'],[/notification|pending/i,'inbox']],
+ places:[[/daily life/i,'care'],[/use your things|skills/i,'things'],[/go out|weather/i,'out'],[/.*/,'activities']],
+ school:[[/assessment/i,'exams'],[/subjects/i,'subjects'],[/clubs|competitions/i,'activities'],[/.*/,'today']],
+ business:[[/your things/i,'things'],[/^shop/i,'shop'],[/money|pending|chores/i,'money'],[/business|yard/i,'selling']],
+ calendar:[[/^(?:[A-Z][a-z]+ \d{4})|month/i,'month'],[/upcoming/i,'upcoming'],[/recently|attendance|holidays this year/i,'history'],[/.*/,'today']],
+ world:[[/journal|milestone|education|life log/i,'journal'],[/.*/,'world']]
+};
+function subTabBadges(panel){
+ const b={};
+ if(panel==='home'){const n=activeNotifications().filter(x=>x.status==='Unread').length+pendingOpen().length;if(n)b.inbox=n}
+ if(panel==='school'&&S.school){if(sessionEvent()||S.exams.some(e=>examIsOpen(e)&&e.dateISO===currentDate()))b.today='!';const n=S.exams.filter(e=>examIsOpen(e)&&daysBetween(currentDate(),e.dateISO)<=3).length;if(n)b.exams=n;const h=S.school.subjects.filter(s=>HW_OPEN.includes(s.homework?.status)).length;if(h)b.subjects=h}
+ if(panel==='places'){const n=Object.entries(S.needs).filter(([k,v])=>needDisplayValue(k,v)<=30).length;if(n)b.care=n}
+ if(panel==='business'){const n=S.inventoryItems.filter(i=>(hasCondition(i.lifecycleType)&&i.condition<20)||isSpoiled(i)).length;if(n)b.things=n}
+ if(panel==='calendar'){const n=todayAgenda().filter(a=>!a.done).length;if(n)b.today=n}
+ return b
+}
+function applySubTabs(){
+ const tabs=PANEL_TABS[active],host=$('panel-host');if(!tabs||!host)return;
+ const rules=SECTION_RULES[active]||[],secs=[...host.querySelectorAll('.dashboard > section, .dashboard > .person-card')];
+ for(const s of secs){if(s.dataset.sub)continue;const h=(s.querySelector('h3,h4')?.textContent||'').trim();const r=rules.find(([re])=>re.test(h));s.dataset.sub=r?r[1]:tabs[0][0]}
+ const present=tabs.filter(([id])=>secs.some(s=>s.dataset.sub===id));if(present.length<2)return;
+ let cur=UI.subTab[active];if(!present.some(t=>t[0]===cur))cur=present[0][0];
+ const badges=subTabBadges(active),bar=document.createElement('nav');bar.className='subtabs';bar.setAttribute('aria-label','Sections');
+ bar.innerHTML=present.map(([id,label],i)=>`<button class="subtab ${id===cur?'active':''}" data-subtab="${id}" aria-pressed="${id===cur}"><kbd>${i+1}</kbd><span>${esc(label)}</span>${badges[id]?`<em class="subtab-badge">${badges[id]}</em>`:''}</button>`).join('');
+ host.prepend(bar);for(const s of secs)s.hidden=s.dataset.sub!==cur
+}
+function switchSubTab(id){UI.subTab[active]=id;saveUI();renderPanel();renderHeader();const h=$('panel-host');if(h&&h.getBoundingClientRect().top<0)h.scrollIntoView({block:'start'})}
+function handleUIClick(b){
+ const d=b.dataset;
+ if(d.subtab){switchSubTab(d.subtab);return true}
+ if(d.calMonth){calShift(Number(d.calMonth));render();return true}
+ if(d.calToday){calView=null;calSelected=currentDate();render();return true}
+ if(d.calDay){calSelected=d.calDay;render();return true}
+ if(d.calFilter){calFilter=calFilter===d.calFilter?null:d.calFilter;render();return true}
+ if(d.holidayAct){doHolidayActivity(d.holidayAct,d.arg);save();render();return true}
+ if(d.plannerToggle){document.body.classList.toggle('planner-open');return true}
+ return false
+}
+document.addEventListener('keydown',e=>{
+ if(!S||e.altKey||e.ctrlKey||e.metaKey)return;const tag=(e.target?.tagName||'').toLowerCase();if(['input','select','textarea'].includes(tag))return;
+ if(!$('choice-overlay').classList.contains('hidden')||!$('overlay').classList.contains('hidden'))return;
+ if(/^[1-9]$/.test(e.key)){const btn=document.querySelectorAll('#panel-host .subtab')[Number(e.key)-1];if(btn){e.preventDefault();switchSubTab(btn.dataset.subtab)}}
+ else if(e.key==='n'||e.key==='N'){e.preventDefault();nextDay();save();render()}
+});
+// ---------- Life log drawer (no longer a long list under every page) ----------
+function renderLog(){
+ const host=$('log');if(!host)return;const latest=S.log[0];
+ const sum=$('log-latest');if(sum)sum.textContent=latest?`${latest.title} — ${timeLabel(latest.minute||0)}`:'';
+ host.innerHTML=S.log.slice(0,8).map(e=>`<div class="log-entry"><div class="log-date">${e.dateISO?formatDate(e.dateISO):'DAY '+e.day} • ${timeLabel(e.minute||0)} • AGE ${e.age}</div><b>${esc(e.title)}</b><p>${esc(e.text)}</p></div>`).join('')||'<p class="muted-text">Your life log is empty.</p>';
+ const dr=$('log-drawer');if(dr&&dr.open!==!!UI.logOpen)dr.open=!!UI.logOpen
+}
+function educationHistoryHtml(){
+ const g=(S.education?.graduations||[]).slice().sort((a,b)=>a.year-b.year);const h=S.schoolHistory||[];
+ const now=S.school?`<div class="timeline-entry"><span>Now</span><b>${esc(S.school.grade)} • ${esc(S.school.name)}</b></div>`:'';
+ return `${now}${g.map(x=>`<div class="timeline-entry"><span>${x.year} • age ${x.age}</span><b>🎓 Finished ${esc(STAGE_LABEL[x.stage]||x.stage)}</b><p>${esc(x.school)}</p></div>`).join('')}${h.filter(x=>x.grade!=='Kindergarten').slice(0,6).map(x=>`<div class="timeline-entry"><span>${formatDate(x.endedDate)}</span><b>${esc(x.grade)} • ${esc(x.school)}</b><p>Average ${x.average}% • attendance ${x.attendance}%${x.record?` • ${x.record.absences} absences`:''}</p></div>`).join('')}`||'<p class="muted-text">Education history appears as you move through school.</p>'
+}
+function worldPanel(){
+ const t=travelMode();const weather=S.weather.forecast?.length?S.weather.forecast.map(x=>`<div class="forecast"><span>${weatherIcon(x.type)}</span><b>${esc(x.type)}</b><small>${x.temp}°C<br>${formatDate(x.dateISO)}</small></div>`).join(''):'';
+ return `<div class="dashboard"><section class="card"><h3>Travel</h3>${statRow('Trips / outings',S.travel.trips)}${statRow('Current rule',esc(t.label))}<p class="muted-text">${esc(t.note)}</p><button data-act="trip">${esc(t.label)}</button></section><section class="card"><h3>Weather</h3><div class="weather-big">${weatherIcon(S.weather.type)} ${esc(S.weather.type)} • ${S.weather.temp}°C</div><p class="muted-text">Humidity ${S.weather.humidity}% • ${esc(weatherAdvice())}</p><div class="forecast-row">${weather}</div></section><section class="card"><h3>Milestones</h3>${S.milestones.slice(0,12).map(m=>`<div class="timeline-entry"><span>${formatDate(m.dateISO||currentDate())} • Age ${m.age}</span><b>${esc(m.title)}</b><p>${esc(m.text)}</p></div>`).join('')||'<p class="muted-text">Important milestones will collect here over time.</p>'}</section><section class="card"><h3>Education history</h3>${educationHistoryHtml()}</section><section class="card wide"><h3>Life log</h3><div class="log">${S.log.slice(0,60).map(e=>`<div class="log-entry"><div class="log-date">${e.dateISO?formatDate(e.dateISO):'DAY '+e.day} • ${timeLabel(e.minute||0)} • AGE ${e.age}</div><b>${esc(e.title)}</b><p>${esc(e.text)}</p></div>`).join('')}</div></section></div>`
+}
+function placesPanel(){
+ const places=D.placesOutside.filter(p=>S.age>=p.minAge&&(!p.maxAge||S.age<=p.maxAge)),things=yourThingsHtml();
+ return `<div class="dashboard"><section class="card wide"><div class="section-heading"><div><h3>Daily Life • ${lifeStage()}</h3><p class="muted-text">Core physiological actions stay accessible; the method changes with age and development.</p></div><span class="tag">${timeLabel(currentMinute())}</span></div>${careCards()}</section><section class="card wide">${personalCards()}</section><section class="card wide">${things||'<h3>Use your things</h3><p class="muted-text">Items you own (books, art supplies, a bike, a ball…) add better versions of everyday activities here.</p>'}</section><section class="card"><h3>Skills & hobbies</h3>${skillsHtml()}</section><section class="card wide"><h3>Go out</h3><p class="muted-text">Transport: ${esc(localTransport())}. Children and teens use supervision/permission rules automatically.</p><div class="place-grid">${places.map(p=>`<button class="place-card" data-place="${p.id}"><b>${esc(p.name)}</b><small>${p.minutes>=120?Math.round(p.minutes/60)+'h':p.minutes+' min'}${p.cost?` • about ${money(S.age<13?0:p.cost)}`:' • free'}</small></button>`).join('')}</div></section><section class="card"><h3>Weather comfort</h3><p class="muted-text">${esc(weatherAdvice())}</p><div class="inline-actions">${S.homeAmenities.fan?'<button data-act="comfort" data-arg="fan">Use fan</button>':''}${S.homeAmenities.ac?'<button data-act="comfort" data-arg="ac">Use A/C</button>':''}${S.homeAmenities.fireplace?'<button data-act="comfort" data-arg="fireplace">Use fireplace</button>':''}</div></section></div>`
+}
+
+// =====================================================================
+// v7.2 PHASE 3 — HOLIDAY ENGINE
+// holidayDefinitions + date resolvers + regional calendar profiles.
+// No holiday is hardcoded to a fixed day when its real date moves.
+// =====================================================================
+const LUNAR_NEW_YEAR={1998:'01-28',1999:'02-16',2000:'02-05',2001:'01-24',2002:'02-12',2003:'02-01',2004:'01-22',2005:'02-09',2006:'01-29',2007:'02-18',2008:'02-07',2009:'01-26',2010:'02-14',2011:'02-03',2012:'01-23',2013:'02-10',2014:'01-31',2015:'02-19',2016:'02-08',2017:'01-28',2018:'02-16',2019:'02-05',2020:'01-25',2021:'02-12',2022:'02-01',2023:'01-22',2024:'02-10',2025:'01-29',2026:'02-17',2027:'02-06',2028:'01-26',2029:'02-13',2030:'02-03',2031:'01-23',2032:'02-11',2033:'01-31',2034:'02-19',2035:'02-08',2036:'01-28',2037:'02-15',2038:'02-04',2039:'01-24',2040:'02-12',2041:'02-01',2042:'01-22',2043:'02-10',2044:'01-30',2045:'02-17',2046:'02-06',2047:'01-26',2048:'02-14',2049:'02-02',2050:'01-23'};
+const LUNAR_OVERRIDES={VN:{2007:'02-17'}};
+function lunarNewYearDate(year,region){
+ const md=LUNAR_OVERRIDES[region]?.[year]||LUNAR_NEW_YEAR[year];if(md)return `${year}-${md}`;
+ // Outside the table: second new moon after the December solstice (mean lunation, UTC+8). Accurate to about ±1 day.
+ const ref=Date.UTC(2000,0,6,18,14),syn=29.530588853*86400000,sol=Date.UTC(year-1,11,21,12);
+ let n=Math.ceil((sol-ref)/syn),t=ref+n*syn;if(t<=sol)t+=syn;t+=syn;const d=new Date(t+8*3600000);return isoDate(new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())))
+}
+function easterDate(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return `${y}-${String(mo).padStart(2,'0')}-${String(da).padStart(2,'0')}`}
+function nthWeekday(y,month,weekday,n){const first=new Date(Date.UTC(y,month-1,1)),off=(weekday-first.getUTCDay()+7)%7;return isoDate(new Date(Date.UTC(y,month-1,1+off+(n-1)*7)))}
+function lastWeekday(y,month,weekday){const last=new Date(Date.UTC(y,month,0)),off=(last.getUTCDay()-weekday+7)%7;return isoDate(new Date(Date.UTC(y,month-1,last.getUTCDate()-off)))}
+const fixed=(m,d)=>y=>`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+function regionOf(place){const p=String(place||'');return /Vietnam/i.test(p)?'VN':/Korea/i.test(p)?'KR':/Japan|Tokyo/i.test(p)?'JP':/UK|London|England|Scotland/i.test(p)?'UK':/France|Paris/i.test(p)?'FR':/Canada|Vancouver|Toronto/i.test(p)?'CA':/USA|New York|America/i.test(p)?'US':/Singapore/i.test(p)?'SG':/Thailand|Bangkok/i.test(p)?'TH':/Australia|Sydney/i.test(p)?'AU':/China|Taiwan|Hong Kong/i.test(p)?'CN':'INTL'}
+
+// Activity schema: id, label, minAge, maxAge, minutes, cost, days (available N days before), on (only on the day),
+// fx (fun, social, happiness, stress, family), rel {target, amount}, gives {key,qty}, uses (item key that improves it), text[].
+const HOLIDAYS=[
+ {id:'newYear',name:'New Year',icon:'🎆',resolve:fixed(1,1),regions:'all',observe:()=>true,activities:[
+  {id:'countdown',label:'Stay up for the countdown',minAge:8,minutes:60,fx:{fun:12,happiness:4},sleepCost:true,text:['Ten, nine, eight… the whole room shouts the last three seconds.','You make it to midnight, barely, and the fireworks are worth it.']},
+  {id:'resolution',label:'Make a New Year resolution',minAge:7,minutes:15,fx:{stress:-2},responsibility:3,text:['You write one resolution on a sticky note and put it on your mirror.','"This year I will…" You decide to keep it simple and realistic.']},
+  {id:'family',label:'New Year meal with family',minAge:0,minutes:90,fx:{social:12,fun:6},family:3,text:['Everyone is a bit tired and very happy. Leftovers for days.']}]},
+ {id:'lunarNewYear',name:'Lunar New Year',icon:'🧧',resolve:(y,r)=>lunarNewYearDate(y,r),regions:['VN','KR','SG','CN'],observe:(r,t)=>['VN','KR','SG','CN'].includes(r)||!!t.lunarNewYear,durationDays:3,activities:[
+  {id:'clean',label:'Clean & decorate the home',minAge:4,minutes:60,days:5,fx:{stress:-2},family:3,responsibility:2,text:['You scrub, sweep and hang red decorations. The house feels new.','Your job is the windows. You do a surprisingly good job.']},
+  {id:'newClothes',label:'Wear new clothes',minAge:2,minutes:15,on:true,needsNew:true,fx:{happiness:5},text:['New clothes for a new year. You feel lucky in them.']},
+  {id:'wish',label:'Wish elders a happy new year',minAge:3,minutes:30,on:true,luckyMoney:true,family:3,text:['You bow and say the wishes you practiced. Red envelopes appear.','Grandmother pinches your cheek and presses an envelope into your hand.']},
+  {id:'gathering',label:'Family gathering & traditional meal',minAge:0,minutes:150,on:true,fx:{social:18,fun:8},family:4,drama:15,text:['The table is crowded and loud. Somebody tells the same story as last year.','A huge meal, endless refills, cousins everywhere.']},
+  {id:'visit',label:'Visit relatives',minAge:0,minutes:180,on:true,fx:{social:14},family:3,text:['A day of visits — tea, snacks and the same questions about school at every house.']},
+  {id:'giveMoney',label:'Give lucky money to younger kids',minAge:18,minutes:20,on:true,cost:40,family:3,fx:{happiness:4},text:['Now you are the one handing out red envelopes. The kids are thrilled.']},
+  {id:'photos',label:'Take family photos',minAge:6,minutes:20,on:true,fx:{happiness:3},family:2,memory:true,text:['Everyone squeezes into one photo. Someone blinks. You take ten more.']}]},
+ {id:'valentines',name:"Valentine's Day",icon:'💌',resolve:fixed(2,14),regions:'all',observe:()=>true,activities:[
+  {id:'classCards',label:'Make cards for your class',minAge:5,maxAge:11,minutes:45,days:3,fx:{fun:8,social:6},skills:{art:1},text:['You make a stack of little cards with stickers. One for everyone, so nobody is left out.']},
+  {id:'friendGift',label:'Give a friend a small treat',minAge:6,maxAge:17,minutes:15,on:true,rel:{target:'friend',amount:4},cost:3,text:['You hand over a small chocolate. It is small, but it makes them smile.']},
+  {id:'crushCard',label:'Give a card to your crush',minAge:13,maxAge:17,minutes:15,on:true,crush:true,text:[]},
+  {id:'friends',label:'Hang out with friends instead',minAge:12,minutes:120,on:true,fx:{fun:12,social:14},rel:{target:'friend',amount:3},text:['No romance required: pizza, bad movies and a lot of laughing.']},
+  {id:'date',label:'Valentine date with your partner',minAge:18,minutes:180,on:true,cost:45,partner:true,fx:{happiness:8,fun:10},text:['Dinner somewhere a little nicer than usual. The conversation is the best part.']},
+  {id:'self',label:'Treat yourself',minAge:16,minutes:60,on:true,cost:12,fx:{happiness:5,stress:-5},text:['A quiet evening, your favorite food and zero expectations.']}]},
+ {id:'womensDay',name:"International Women's Day",icon:'🌷',resolve:fixed(3,8),regions:['VN','INTL','FR','CN','KR','UK','AU','SG','TH'],observe:(r)=>['VN','CN','FR','KR','INTL','TH','SG'].includes(r),parentDay:'female',activities:[
+  {id:'card',label:'Make a card for the women in your family',minAge:4,minutes:30,family:3,rel:{target:'mother',amount:4},skills:{art:.5},text:['You draw flowers on the card. Mom puts it on the fridge.']},
+  {id:'help',label:'Do the housework today',minAge:7,minutes:60,family:3,responsibility:3,rel:{target:'mother',amount:3},text:['You take over the dishes and laundry. Nobody has to ask.']},
+  {id:'flowers',label:'Give flowers',minAge:10,minutes:15,uses:'flowers',cost:10,rel:{target:'mother',amount:5},text:['A small bunch of flowers. It goes straight into a vase.']}]},
+ {id:'easter',name:'Easter',icon:'🐣',resolve:y=>easterDate(y),regions:['US','UK','CA','AU','FR'],observe:(r,t)=>['US','UK','CA','AU','FR'].includes(r)&&!!t.christmas,activities:[
+  {id:'eggHunt',label:'Easter egg hunt',minAge:2,maxAge:11,minutes:60,on:true,fx:{fun:16},gives:{key:'snackPack',qty:1},text:['You find eggs under the bench, in a flowerpot and one in a shoe.','A cousin finds more eggs than you. You find the golden one.']},
+  {id:'decorate',label:'Decorate eggs',minAge:3,minutes:45,days:2,fx:{fun:10},skills:{art:1,creativity:1},text:['Dye everywhere, mostly on your hands. The eggs look great anyway.']},
+  {id:'meal',label:'Easter lunch with family',minAge:0,minutes:120,on:true,fx:{social:12},family:3,text:['A long lunch with family and too much dessert.']},
+  {id:'outing',label:'Spring outing',minAge:4,minutes:150,on:true,fx:{fun:10,stress:-5},family:2,outdoor:true,text:['A walk somewhere green. Spring is finally here.']}]},
+ {id:'mothersDay',name:"Mother's Day",icon:'💐',resolve:(y,r)=>r==='UK'?addDays(easterDate(y),-21):r==='FR'?lastWeekday(y,5,0):r==='TH'?`${y}-08-12`:r==='KR'?`${y}-05-08`:nthWeekday(y,5,0,2),regions:'all',observe:()=>true,parentDay:'mother',activities:[
+  {id:'card',label:'Make Mom a card',minAge:3,minutes:30,family:3,rel:{target:'mother',amount:5},skills:{art:.5},text:['It is lopsided and full of glitter. Mom says it is the best card she has ever gotten.']},
+  {id:'breakfast',label:'Make breakfast for Mom',minAge:7,minutes:45,family:4,rel:{target:'mother',amount:6},skills:{},cooking:true,text:['Slightly burnt toast, very proud delivery.','You plan it the night before. Breakfast in bed goes surprisingly well.']},
+  {id:'gift',label:'Give Mom a gift',minAge:6,minutes:15,giftTarget:'mother',text:[]},
+  {id:'call',label:'Call or visit Mom',minAge:18,minutes:60,rel:{target:'mother',amount:6},text:['You talk for an hour about nothing and everything.']}]},
+ {id:'fathersDay',name:"Father's Day",icon:'👔',resolve:(y,r)=>r==='AU'?nthWeekday(y,9,0,1):r==='KR'?`${y}-05-08`:r==='TH'?`${y}-12-05`:nthWeekday(y,6,0,3),regions:'all',observe:(r)=>r!=='KR',parentDay:'father',activities:[
+  {id:'card',label:'Make Dad a card',minAge:3,minutes:30,family:3,rel:{target:'father',amount:5},skills:{art:.5},text:['Dad reads it twice and pretends he is not emotional.']},
+  {id:'together',label:'Spend the day with Dad',minAge:3,minutes:120,family:4,rel:{target:'father',amount:6},fx:{fun:8},text:['You do whatever Dad wants today — which turns out to be fun.']},
+  {id:'gift',label:'Give Dad a gift',minAge:6,minutes:15,giftTarget:'father',text:[]},
+  {id:'call',label:'Call or visit Dad',minAge:18,minutes:60,rel:{target:'father',amount:6},text:['A long call. He tells the same joke as always; you laugh anyway.']}]},
+ {id:'teachersDay',name:"Teachers' Day",icon:'🍎',resolve:(y,r)=>r==='VN'?`${y}-11-20`:r==='KR'?`${y}-05-15`:r==='CN'?`${y}-09-10`:r==='TH'?`${y}-01-16`:r==='SG'?nthWeekday(y,9,5,1):r==='US'?addDays(nthWeekday(y,5,1,1),1):`${y}-10-05`,regions:'all',observe:()=>true,school:true,activities:[
+  {id:'thank',label:'Thank your teachers',minAge:5,maxAge:18,minutes:15,teacher:2,text:['You say thank you on your way out. Your teacher looks genuinely touched.']},
+  {id:'card',label:'Give a teacher a handmade card',minAge:5,maxAge:18,minutes:30,teacher:4,skills:{art:.5},pickTeacher:true,text:['You write what you actually learned this year. Your teacher reads it twice.']},
+  {id:'flowers',label:'Bring flowers to school',minAge:6,maxAge:18,minutes:15,cost:10,teacher:4,regions:['VN','CN','KR','TH'],text:['A small bouquet on the teacher\'s desk. The whole class joins in the thank-you.']},
+  {id:'celebration',label:'Join the school celebration',minAge:6,maxAge:18,minutes:60,fx:{fun:8,social:8},regions:['VN','CN','TH','SG'],text:['Performances, flowers and speeches in the school yard.']}]},
+ {id:'vnWomensDay',name:"Vietnamese Women's Day",icon:'🌺',resolve:fixed(10,20),regions:['VN'],observe:r=>r==='VN',parentDay:'female',activities:[
+  {id:'card',label:'Make a card for Mom & Grandma',minAge:4,minutes:30,family:3,rel:{target:'mother',amount:4},text:['A card with careful handwriting. Grandma keeps it in her wallet.']},
+  {id:'cook',label:'Help cook dinner',minAge:7,minutes:60,family:3,rel:{target:'mother',amount:4},cooking:true,text:['You take over the cooking tonight. Dinner is a little salty and completely appreciated.']}]},
+ {id:'halloween',name:'Halloween',icon:'🎃',resolve:fixed(10,31),regions:['US','CA','UK','AU','INTL'],observe:(r)=>['US','CA','UK','AU'].includes(r),activities:[
+  {id:'decorate',label:'Decorate the house',minAge:3,minutes:60,days:7,uses:'decorations',family:2,fx:{fun:8},text:['Paper bats on every window. One falls on the cat.']},
+  {id:'diyCostume',label:'Make a costume (free)',minAge:4,minutes:90,days:10,makes:'costume',skills:{creativity:2,art:1},text:['Cardboard, tape and determination. It is not perfect; it is yours.']},
+  {id:'trickOrTreat',label:'Go trick-or-treating',minAge:3,maxAge:13,minutes:120,on:true,evening:true,needsCostumeBonus:true,gives:{key:'candyBag',qty:2},fx:{fun:18,social:8},companion:true,text:['Porch lights, doorbells and a pillowcase that gets heavier every house.']},
+  {id:'party',label:'Go to a Halloween party',minAge:13,minutes:180,on:true,evening:true,fx:{fun:16,social:16},rel:{target:'friend',amount:4},text:['Someone came as the vice principal. It was uncanny.']},
+  {id:'movie',label:'Watch a scary movie',minAge:10,minutes:110,on:true,fx:{fun:10},scare:true,text:['You watch half of it through your fingers.']},
+  {id:'giveCandy',label:'Give candy to visitors',minAge:12,minutes:90,on:true,evening:true,uses:'candyBag',fx:{social:6,happiness:4},text:['A parade of tiny superheroes at your door. Very cute.']},
+  {id:'stayHome',label:'Stay home this year',minAge:0,minutes:10,on:true,fx:{stress:-2},text:['A quiet night in. You can hear the trick-or-treaters outside.']}]},
+ {id:'thanksgiving',name:'Thanksgiving',icon:'🦃',resolve:(y,r)=>r==='CA'?nthWeekday(y,10,1,2):nthWeekday(y,11,4,4),regions:['US','CA'],observe:r=>['US','CA'].includes(r),activities:[
+  {id:'dinner',label:'Family dinner',minAge:0,minutes:150,on:true,fx:{social:16},family:4,drama:18,text:['The turkey is late, the pie is perfect, and everyone talks at once.']},
+  {id:'cook',label:'Help prepare the meal',minAge:7,minutes:120,on:true,family:3,cooking:true,text:['You are in charge of the potatoes. They are, frankly, excellent.']},
+  {id:'thankful',label:'Say what you are thankful for',minAge:4,minutes:10,on:true,family:3,fx:{happiness:4},text:['When it is your turn, you mean it more than you expected to.']},
+  {id:'sports',label:'Watch the parade or the game',minAge:3,minutes:120,on:true,fx:{fun:10},family:1,text:['Giant balloons on TV, or a close game — either way, everyone yells.']},
+  {id:'volunteer',label:'Volunteer at a food drive',minAge:12,minutes:180,on:true,fx:{happiness:6},kindness:3,text:['You pack boxes for three hours. It is the most meaningful part of the holiday.']},
+  {id:'friendsgiving',label:'Friendsgiving',minAge:16,minutes:180,days:3,fx:{fun:12,social:14},rel:{target:'friend',amount:4},cost:10,text:['A potluck with friends. Five people brought chips.']}]},
+ {id:'christmas',name:'Christmas',icon:'🎄',resolve:fixed(12,25),regions:'all',observe:(r,t)=>!!t.christmas,gifts:true,activities:[
+  {id:'decorate',label:'Decorate the tree',minAge:2,minutes:60,days:20,uses:'decorations',family:3,fx:{fun:10},text:['Lights tangle, ornaments break, the tree ends up beautiful.']},
+  {id:'wishList',label:'Write a wish list',minAge:4,maxAge:15,minutes:15,days:30,jump:'business',text:['You write your list carefully. Wishes go in the shop as Christmas wishes.']},
+  {id:'makeGift',label:'Make a handmade gift',minAge:5,minutes:60,days:20,makes:'giftBox',skills:{creativity:2,art:1},text:['A handmade present. It took longer than buying one; it means more.']},
+  {id:'giveGifts',label:'Give gifts',minAge:5,minutes:20,on:true,jump:'people',text:['Choose who to give something to in People.']},
+  {id:'meal',label:'Christmas meal with family',minAge:0,minutes:150,on:true,fx:{social:16,fun:8},family:4,drama:10,text:['Candles, too much food and a game afterwards that gets competitive.']},
+  {id:'relatives',label:'Visit relatives',minAge:0,minutes:180,days:1,fx:{social:12},family:3,text:['A long drive, a warm house and cousins you only see once a year.']},
+  {id:'party',label:'Christmas party with friends',minAge:14,minutes:180,days:5,fx:{fun:14,social:14},rel:{target:'friend',amount:3},text:['Secret Santa goes slightly wrong and very funny.']}]}
+];
+const HOLIDAY_STORE={halloween:['costume','candyBag','decorations'],christmas:['decorations','giftWrap','giftBox'],valentines:['greetingCard','flowers'],lunarNewYear:['decorations','tshirt','giftBox'],mothersDay:['flowers','greetingCard'],fathersDay:['greetingCard','giftBox'],teachersDay:['flowers','greetingCard'],womensDay:['flowers','greetingCard']};
+function calendarProfile(){S.calendarProfile=Object.assign({region:regionOf(S.place),observe:{}},S.calendarProfile||{});return S.calendarProfile}
+function holidayObserved(h){const p=calendarProfile();if(p.observe[h.id]!=null)return !!p.observe[h.id];return h.observe(p.region,S.traditions||{})}
+function holidayDate(h,year){return h.resolve(year,calendarProfile().region)}
+function holidaysOn(dateISO){const y=parseISO(dateISO).getUTCFullYear(),out=[];for(const h of HOLIDAYS){if(!holidayObserved(h))continue;for(const yy of [y,y-1]){const d=holidayDate(h,yy);if(!d)continue;const span=(h.durationDays||1)-1;if(dateISO>=d&&dateISO<=addDays(d,span))out.push({h,dateISO:d,day:daysBetween(d,dateISO)+1,year:yy})}}return out}
+function upcomingHolidays(n=6,from=currentDate()){const y=parseISO(from).getUTCFullYear(),list=[];for(const h of HOLIDAYS){if(!holidayObserved(h))continue;for(const yy of [y,y+1]){const d=holidayDate(h,yy);if(d&&d>=from){list.push({h,dateISO:d,year:yy});break}}}return list.sort((a,b)=>a.dateISO.localeCompare(b.dateISO)).slice(0,n)}
+function holidayWindow(){const today=currentDate(),out=[];for(const x of upcomingHolidays(12,addDays(today,-3))){const days=daysBetween(today,x.dateISO),span=(x.h.durationDays||1)-1;const maxBefore=Math.max(0,...x.h.activities.map(a=>a.days||0));if(days<=maxBefore&&days>=-span)out.push(Object.assign({},x,{days}))}return out}
+function holidayFlag(x,a){return `hol-${x.h.id}-${x.year}-${a.id}`}
+function availableActivities(x){const days=x.days,reg=calendarProfile().region;return x.h.activities.filter(a=>S.age>=(a.minAge||0)&&S.age<=(a.maxAge??200)&&(!a.regions||a.regions.includes(reg))&&(a.on?days<=0&&days>=-((x.h.durationDays||1)-1):days<=(a.days||0)&&days>=-((x.h.durationDays||1)-1))&&!S.flags[holidayFlag(x,a)])}
+function relTarget(kind){if(kind==='mother')return S.people.find(p=>p.role==='parent'&&/Mom/.test(p.name))||S.people.find(p=>p.role==='parent');if(kind==='father')return S.people.find(p=>p.role==='parent'&&/Dad/.test(p.name))||S.people.find(p=>p.role==='parent');if(kind==='friend')return bestNonFamily();return null}
+function doHolidayActivity(key,arg){
+ const [hid,aid]=String(key).split(':'),x=holidayWindow().find(w=>w.h.id===hid);if(!x){toast('That holiday is not happening right now.');return}
+ const a=availableActivities(x).find(z=>z.id===aid);if(!a){toast('You already did that, or it is not available now.');return}
+ if(atSchool()){toast('You are at school right now.');return}
+ if(a.evening&&currentMinute()<960){toast('That happens in the evening.');return}
+ if(a.outdoor&&S.weather.type==='Stormy'){toast('A storm cancels outdoor plans today.');return}
+ if(a.cost&&S.age>=13){if(!spendOwn(a.cost)){toast(`You need about ${money(a.cost)}.`);return}}
+ if(a.jump){S.flags[holidayFlag(x,a)]=true;active=a.jump;log(`${x.h.icon} ${a.label}`,rand(a.text));return}
+ if(a.giftTarget){const p=relTarget(a.giftTarget);if(!p){toast('There is no one to give this to.');return}S.flags[holidayFlag(x,a)]=true;openGiftPersonModal(p.id);return}
+ let story=rand(a.text)||'',extra=[];const fx=a.fx||{};
+ if(a.uses){const it=findUsable(a.uses);if(it){if(['finite','consumable'].includes(it.lifecycleType)){const u=openOne(it);u.remaining=clamp(u.remaining-(it.lifecycleType==='finite'?34:100));if(u.remaining<=.5)removeItem(u.id)}else if(it.lifecycleType==='perishable'||catalogItem(it.key)?.gift)removeItem(it.id,true);extra.push(`Your ${it.name.toLowerCase()} made it better.`);S.happiness=clamp(S.happiness+3)}}
+ if(a.needsCostumeBonus){const c=findUsable('costume');if(c){fx.fun=(fx.fun||0)+6;extra.push(`Your ${c.name.toLowerCase()} gets compliments at every door.`);setItemCondition(c,c.condition-8)}else extra.push('You go without a costume; a few neighbors ask what you are supposed to be.')}
+ if(a.needsNew){const recent=S.inventoryItems.find(i=>i.lifecycleType==='wearable'&&daysBetween(i.acquiredDate,currentDate())<=30);if(!recent){toast('You have nothing new to wear — you could buy something in the shop.');return}extra.push(`You wear your new ${recent.name.toLowerCase()}.`)}
+ if(a.luckyMoney){const amt=S.age>=2?10+Math.floor(Math.random()*Math.max(25,Math.min(180,S.age*10+30))):0;if(amt){S.money+=amt;extra.push(`Red envelopes: ${money(amt)}.`)}}
+ if(a.crush){const p=S.people.filter(q=>!isFamilyPerson(q)&&q.age>=S.age-2&&q.age<=S.age+2).sort((m,n)=>n.rel-m.rel)[0];if(!p){story='There is nobody you would give a card to. That is completely fine.'}else{const ok=chance(30+(p.rel-50)*.6+(p.trust-50)*.3);p.rel=clamp(p.rel+(ok?5:-1));rememberPerson(p,ok?'You gave them a Valentine card and they liked it.':'You gave them a Valentine card; it was awkward.',2);story=ok?`You leave a card for ${firstName(p)}. Later they find you and say, a little shyly, "Thanks. I liked it."`:`You give ${firstName(p)} a card. They say thanks, kindly, but it is clear they do not feel the same way. It stings, and it is okay.`;setEmotion(ok?'Excited':'Embarrassed','A Valentine card moment.',55)}}
+ if(a.partner){if(!S.romance?.partner){story='You do not have a partner right now, so you plan something for yourself instead.';fx.fun=6}}
+ if(a.makes){addItem(a.makes,'handmade');const it=S.inventoryItems.filter(i=>i.key===a.makes).pop();if(it){it.origin=`Handmade for ${x.h.name} ${x.year}.`;it.sentimental=45;it.name=a.makes==='costume'?'Homemade costume':'Handmade gift'}}
+ if(a.gives){addItem(a.gives.key,`${x.h.name}`,null,{quantity:a.gives.qty})}
+ for(const [k,v] of Object.entries(fx)){if(['fun','social','comfort'].includes(k))S.needs[k]=clamp(S.needs[k]+v);else if(k==='happiness')S.happiness=clamp(S.happiness+v);else if(k==='stress')S.stress=clamp(S.stress+v)}
+ for(const [k,v] of Object.entries(a.skills||{}))practiceSkill(k,v);
+ if(a.family)S.family.closeness=clamp(S.family.closeness+a.family);if(a.responsibility)S.family.responsibility=clamp((S.family.responsibility||0)+a.responsibility);
+ if(a.cooking)S.development.skills.cooking=clamp(S.development.skills.cooking+3);
+ if(a.kindness)S.social.reputation=clamp(S.social.reputation+a.kindness);
+ if(a.rel){const p=relTarget(a.rel.target);if(p){p.rel=clamp(p.rel+a.rel.amount);rememberPerson(p,`${x.h.name}: ${a.label.toLowerCase()}.`,2)}}
+ if(a.teacher&&S.school?.subjects?.length){const subs=a.pickTeacher?[[...S.school.subjects].sort((m,n)=>ensureTeacher(n).rel-ensureTeacher(m).rel)[0]]:S.school.subjects;subs.forEach(s=>ensureTeacher(s).rel=clamp(s.teacher.rel+a.teacher))}
+ if(a.scare&&S.age<13&&chance(40)){S.needs.sleep=clamp(S.needs.sleep-10);extra.push('You sleep with the light on tonight.')}
+ if(a.sleepCost){S.needs.sleep=clamp(S.needs.sleep-12)}
+ if(a.drama&&chance(a.drama)){S.family.tension=clamp(S.family.tension+4);extra.push(rand(['An old argument resurfaces between two relatives. Dessert is quiet.','Someone asks a nosy question about grades, and the mood dips for a while.']))}
+ if(a.companion&&S.age<9)extra.push(`${primaryCaregiver()} walks with you and holds the flashlight.`);
+ if(a.outdoor&&['Rainy'].includes(S.weather.type)){S.needs.comfort=clamp(S.needs.comfort-8);extra.push('It drizzles the whole time.')}
+ S.flags[holidayFlag(x,a)]=true;S.holidayLog=S.holidayLog||{};const k=`${x.h.id}-${x.year}`;(S.holidayLog[k]=S.holidayLog[k]||[]).push(a.id);
+ advanceTime(a.minutes||30,{silent:true});
+ log(`${x.h.icon} ${a.label}`,[story,...extra].filter(Boolean).join(' '),!!a.memory)
+}
+function holidayTick(){
+ const today=currentDate();
+ for(const x of holidaysOn(today)){
+  const f=`holiday-${x.h.id}-${x.year}`;if(S.flags[f])continue;S.flags[f]=true;
+  if(!SIM.skipping)log(`${x.h.icon} ${x.h.name}`,x.day===1?`${x.h.name} today. ${x.h.activities.some(a=>a.on)?'Check what you want to do — nothing is required.':''}`:`${x.h.name} continues.`);
+  if(x.h.id==='christmas'){resolveFutureGifts('Christmas');if(chance(70)){const options=['book','artSupplies','toy','sweater','headphones','bicycle','boardGame','puzzle'].filter(k=>D.catalog[k]&&S.age>=D.catalog[k].minAge&&!ownsItem(k)),key=rand(options);if(key){addItem(key,'Christmas gift');S.giftHistory.unshift({id:uid('gift'),dateISO:today,age:S.age,item:D.catalog[key].name,occasion:'Christmas',reaction:null,requested:false});log('🎄 Christmas present',`You receive ${D.catalog[key].name}. You decide how honestly to show your reaction.`)}}}
+  if(x.h.id==='lunarNewYear'&&SIM.skipping&&S.age>=2){const amt=10+Math.floor(Math.random()*Math.max(25,Math.min(180,S.age*10+30)));S.money+=amt}
+  if(x.h.id==='newYear')S.familyEvents.unshift({dateISO:today,text:'A new calendar year begins.'});
+  if(x.h.id==='lunarNewYear'&&x.day===1)S.familyEvents.unshift({dateISO:today,text:'Family gathers for Lunar New Year.'});
+ }
+ // The day after a parent holiday: forgetting entirely is noticed (gently).
+ for(const x of holidaysOn(addDays(today,-1))){const h=x.h;if(!h.parentDay||SIM.skipping||S.age<6)continue;const k=`${h.id}-${x.year}`,did=(S.holidayLog?.[k]||[]).length,f=`holiday-forgot-${k}`;if(did||S.flags[f])continue;S.flags[f]=true;const p=relTarget(h.parentDay==='father'?'father':'mother');if(p){p.rel=clamp(p.rel-2);rememberPerson(p,`You forgot ${h.name}.`);log(`Forgot ${h.name}`,`${firstName(p)} does not say much, but you can tell ${h.parentDay==='father'?'he':'she'} noticed nobody did anything yesterday.`)}}
+}
+function holidayHtml(){
+ const w=holidayWindow();if(!w.length)return '';
+ return w.map(x=>{const acts=availableActivities(x),d=x.days,done=(S.holidayLog?.[`${x.h.id}-${x.year}`]||[]).length,shop=(HOLIDAY_STORE[x.h.id]||[]).filter(k=>D.catalog[k]&&S.age>=D.catalog[k].minAge);
+  return `<div class="holiday-card"><div class="holiday-head"><span class="holiday-icon">${x.h.icon}</span><div><b>${esc(x.h.name)}</b><small>${d>0?`in ${d} day${d===1?'':'s'} • ${formatDate(x.dateISO)}`:x.h.durationDays>1?`Day ${1-d} of ${x.h.durationDays}`:'Today'}${done?` • ${done} thing${done===1?'':'s'} done`:''}</small></div></div>${acts.length?`<div class="holiday-acts">${acts.map(a=>`<button class="small ${a.on?'primary':''}" data-holiday-act="${x.h.id}:${a.id}">${esc(a.label)}${a.cost&&S.age>=13?` • ${money(a.cost)}`:''}</button>`).join('')}</div>`:'<p class="muted-text">Nothing else to do for this one right now.</p>'}${shop.length&&d>0?`<small class="muted-text">Seasonal items in the shop: ${shop.map(k=>esc(D.catalog[k].name)).join(', ')} — optional, free options exist.</small>`:''}</div>`}).join('')
+}
+
+// ---------- v7.2 Month calendar, date agenda & Life Planner ----------
+let calView=null,calSelected=null,calFilter=null;
+const CAL_CATS={schoolDay:'School',exam:'Exam',homework:'Homework',clubSession:'Club',schoolEvent:'Competition',party:'Social',holiday:'Holiday',birthday:'Birthday',decision:'Decision',generic:'Other'};
+const CAL_TONE={School:'school',Exam:'exam',Homework:'homework',Club:'club',Competition:'competition',Social:'social',Holiday:'holiday',Birthday:'birthday',Decision:'decision',Other:'other'};
+function calShift(n){const v=calView||currentDate().slice(0,7),[y,m]=v.split('-').map(Number);calView=isoDate(new Date(Date.UTC(y,m-1+n,1))).slice(0,7)}
+function monthLabel(ym){const [y,m]=ym.split('-').map(Number);return new Date(Date.UTC(y,m-1,1)).toLocaleDateString(undefined,{month:'long',year:'numeric',timeZone:'UTC'})}
+function agendaFor(dateISO){
+ const items=[],seen=new Set(),today=currentDate();
+ for(const ev of [...S.calendar,...(S.archive?.calendar||[])].filter(e=>e.dateISO===dateISO)){if(seen.has(ev.id))continue;seen.add(ev.id);const d=obDef(ev.type);items.push({id:ev.id,cat:CAL_CATS[ev.type]||'Other',icon:d.icon,title:ev.type==='schoolDay'?'School day':ev.title,minute:ev.startMinute??ev.minute??null,end:ev.endMinute??null,status:ev.status||'Scheduled',location:ev.location||d.location||'',required:ev.required??d.required,participants:ev.participants||[],type:ev.type,attendance:ev.attendanceStatus||null})}
+ for(const x of holidaysOn(dateISO))items.push({id:'hol-'+x.h.id,cat:'Holiday',icon:x.h.icon,title:x.h.durationDays>1?`${x.h.name} (day ${x.day})`:x.h.name,minute:null,status:dateISO<today?'Passed':'Holiday',type:'holiday',holiday:x});
+ if(sameMonthDay(S.dob,dateISO))items.push({id:'bday',cat:'Birthday',icon:'🎂',title:dateISO.slice(0,4)===S.dob.slice(0,4)?'You were born':`Your ${ordinal(Number(dateISO.slice(0,4))-Number(S.dob.slice(0,4)))} birthday`,minute:null,status:'',type:'birthday'});
+ if(S.school?.subjects)for(const s of S.school.subjects){const hw=s.homework;if(hw?.dueDate===dateISO&&hw.status!=='None')items.push({id:hw.id||s.name,cat:'Homework',icon:'📒',title:`${s.name} homework due`,minute:480,status:HW_OPEN.includes(hw.status)?homeworkLabel(hw):hw.status,type:'homework'})}
+ for(const p of [...S.pendingDecisions,...(S.archive?.pending||[])].filter(x=>x.resolveDate===dateISO||x.resolvedDate===dateISO&&x.resolved))items.push({id:p.id,cat:'Decision',icon:'⏳',title:p.title,minute:null,status:p.resolved?p.status:'Decision due',type:'decision'});
+ // conflicts: two live, timed, non-school-day obligations overlapping (school-internal items are part of the school day)
+ const timed=items.filter(i=>i.minute!=null&&i.end!=null&&!isTerminal(i.status)&&i.type!=='schoolDay'&&i.type!=='homework');
+ for(const a of timed)for(const b of timed)if(a!==b&&a.minute<b.end&&b.minute<a.end){a.conflict=b.title;b.conflict=a.title}
+ return items.sort((a,b)=>(a.minute??-1)-(b.minute??-1))
+}
+function monthGrid(ym,{mini=false}={}){
+ const [y,m]=ym.split('-').map(Number),first=new Date(Date.UTC(y,m-1,1)),lead=(first.getUTCDay()+6)%7,days=new Date(Date.UTC(y,m,0)).getUTCDate(),today=currentDate(),sel=calSelected||today,cells=[];
+ for(let i=0;i<lead;i++)cells.push('<div class="cal-cell is-empty"></div>');
+ for(let d=1;d<=days;d++){const iso=`${ym}-${String(d).padStart(2,'0')}`,ag=agendaFor(iso).filter(i=>i.type!=='schoolDay'&&(!calFilter||i.cat===calFilter)),cats=[...new Set(ag.map(i=>i.cat))].slice(0,mini?3:4),hol=ag.find(i=>i.cat==='Holiday');
+  cells.push(`<button class="cal-cell ${iso===today?'is-today':''} ${iso===sel?'is-selected':''} ${isWeekend(iso)?'is-weekend':''} ${S.school&&!isSchoolDay(iso)&&!isWeekend(iso)?'is-break':''}" data-cal-day="${iso}" aria-label="${formatDate(iso)}${ag.length?`, ${ag.length} item${ag.length===1?'':'s'}`:''}"><span class="cal-num">${d}</span>${!mini&&hol?`<span class="cal-hol">${hol.icon}</span>`:''}<span class="cal-dots">${cats.map(c=>`<i class="dot-${CAL_TONE[c]}"></i>`).join('')}</span>${!mini&&ag.some(i=>i.conflict)?'<span class="cal-warn" title="Schedule conflict">!</span>':''}</button>`)}
+ return `<div class="cal-grid ${mini?'mini':''}">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>`<div class="cal-wd">${mini?w[0]:w}</div>`).join('')}${cells.join('')}</div>`
+}
+function agendaListHtml(dateISO){
+ const ag=agendaFor(dateISO).filter(i=>!calFilter||i.cat===calFilter),d=daysBetween(currentDate(),dateISO);
+ const head=`<div class="agenda-head"><b>${formatDate(dateISO)}</b><small>${d===0?'Today':d===1?'Tomorrow':d===-1?'Yesterday':d>0?`in ${d} days`:`${-d} days ago`}${S.school&&isSchoolDay(dateISO)?' • school day':S.school&&!isWeekend(dateISO)?' • no school':''}</small></div>`;
+ if(!ag.length)return head+'<p class="muted-text">Nothing on this day.</p>';
+ return head+ag.map(i=>`<div class="agenda-item tone-${CAL_TONE[i.cat]}"><span class="agenda-time">${i.minute!=null?timeLabel(i.minute):'All day'}</span><div><b>${i.icon} ${esc(i.title)}</b><small>${esc(i.cat)}${i.location?` • ${esc(i.location)}`:''}${i.required?' • required':i.type==='clubSession'?' • optional (attendance tracked)':''}${i.attendance?` • ${esc(i.attendance)}`:''}${i.participants?.length?` • with ${esc(i.participants.slice(0,3).join(', '))}`:''}</small>${i.conflict?`<small class="urgent-text">⚠ Conflicts with ${esc(i.conflict)} — you can only be at one.</small>`:''}${i.holiday&&d===0?`<div class="holiday-acts">${availableActivities(Object.assign({},i.holiday,{days:0})).slice(0,4).map(a=>`<button class="small" data-holiday-act="${i.holiday.h.id}:${a.id}">${esc(a.label)}</button>`).join('')}</div>`:''}</div>${i.status&&!['Scheduled','Holiday',''].includes(i.status)?statusTag(i.status):''}</div>`).join('')
+}
+function calendarPanel(){
+ const ym=calView||currentDate().slice(0,7),sel=calSelected||currentDate(),up=upcomingEvents(14),rec=S.school?.record;
+ const recent=[...S.calendar].filter(e=>isTerminal(e.status)&&e.type!=='schoolDay').sort((a,b)=>stampOf(b.resolvedAt||{dateISO:b.dateISO}).localeCompare(stampOf(a.resolvedAt||{dateISO:a.dateISO}))).slice(0,10);
+ const y=parseISO(currentDate()).getUTCFullYear(),hols=HOLIDAYS.filter(holidayObserved).map(h=>({h,d:holidayDate(h,y)})).filter(x=>x.d).sort((a,b)=>a.d.localeCompare(b.d));
+ const filters=Object.keys(CAL_TONE).filter(c=>c!=='Other');
+ return `<div class="dashboard"><section class="card wide" data-sub="month"><div class="cal-toolbar"><div class="cal-nav"><button class="small ghost" data-cal-month="-1" aria-label="Previous month">‹</button><h3>${esc(monthLabel(ym))}</h3><button class="small ghost" data-cal-month="1" aria-label="Next month">›</button><button class="small" data-cal-today="1">Today</button></div><div class="filter-row">${filters.map(c=>`<button class="filter-chip ${calFilter===c?'active':''}" data-cal-filter="${c}"><i class="dot-${CAL_TONE[c]}"></i>${c}</button>`).join('')}</div></div><div class="cal-layout">${monthGrid(ym)}<div class="cal-agenda">${agendaListHtml(sel)}</div></div></section>
+ <section class="card" data-sub="today"><h3>Today • ${esc(weekday())}</h3>${agendaListHtml(currentDate())}</section><section class="card" data-sub="today"><h3>Now</h3>${statRow('Time',timeLabel(currentMinute()))}${statRow('School',esc(schoolDayStatus()))}${statRow('Bedtime',S.age<18?timeLabel(bedtimeMinute()):'Your choice')}${statRow('Calendar profile',esc(calendarProfile().region))}<h4>Pending decisions</h4>${pendingHtml()}</section>
+ <section class="card wide" data-sub="upcoming"><h3>Upcoming</h3>${up.map(e=>{const d=daysBetween(currentDate(),e.dateISO);return `<div class="calendar-row"><div><b>${e.icon||typeIcon(e.type)} ${esc(e.title)}</b><small>${formatDate(e.dateISO)}${e.minute!=null&&e.type!=='homework'?` • ${timeLabel(e.minute)}`:''}${e.location?` • ${esc(e.location)}`:''}${e.required?' • required':''}</small></div><div class="inline-actions">${e.status&&e.status!=='Scheduled'?statusTag(e.status):''}<span class="countdown">${d===0?'TODAY':d===1?'TOMORROW':`${d} days`}</span></div></div>`}).join('')||'<p class="muted-text">Nothing scheduled.</p>'}</section>
+ <section class="card" data-sub="history"><h3>Recently resolved</h3>${recent.map(e=>`<div class="calendar-row"><div><b>${typeIcon(e.type)} ${esc(e.title)}</b><small>${formatDate(e.dateISO)}${e.resolutionReason?` • ${esc(e.resolutionReason)}`:''}</small></div>${statusTag(e.status)}</div>`).join('')||'<p class="muted-text">Nothing resolved recently.</p>'}</section><section class="card" data-sub="history"><h3>Holidays this year (${calendarProfile().region})</h3>${hols.map(x=>`<div class="calendar-row"><div><b>${x.h.icon} ${esc(x.h.name)}</b><small>${formatDate(x.d)}</small></div><span class="countdown">${x.d<currentDate()?'passed':daysBetween(currentDate(),x.d)+'d'}</span></div>`).join('')}${rec&&needsFormalSchool()?`<h4>Attendance this year</h4>${statRow('Days attended',rec.daysAttended)}${statRow('Unexcused absences',rec.absences)}${statRow('Excused',rec.excused)}${statRow('Late arrivals',rec.tardies)}${statRow('Classes skipped',rec.classesSkipped||0)}${statRow('Missed assessments',rec.examsMissed)}${statRow('Missing homework',rec.missingHomework)}`:''}</section></div>`
+}
+function renderPlanner(){
+ const host=$('planner');if(!host||!S)return;const ym=currentDate().slice(0,7),today=agendaFor(currentDate()).filter(i=>i.type!=='birthday'||true),next=upcomingEvents(6).filter(e=>e.dateISO>currentDate()).slice(0,5),pend=pendingOpen().slice(0,3),hol=upcomingHolidays(3);
+ host.innerHTML=`<div class="planner-head"><b>${esc(monthLabel(ym))}</b><button class="small ghost planner-close" data-planner-toggle="1" aria-label="Close planner">×</button></div>${monthGrid(ym,{mini:true})}<h4>Today</h4>${today.length?today.slice(0,6).map(i=>`<div class="pl-row ${isTerminal(i.status)?'done':''}"><span>${i.icon}</span><b>${esc(i.title)}</b><small>${i.minute!=null?timeLabel(i.minute):''}</small></div>`).join(''):'<p class="muted-text">Free day.</p>'}<h4>Next up</h4>${next.map(e=>`<div class="pl-row"><span>${e.icon||typeIcon(e.type)}</span><b>${esc(e.title)}</b><small>${daysBetween(currentDate(),e.dateISO)}d</small></div>`).join('')||'<p class="muted-text">Nothing scheduled.</p>'}${pend.length?`<h4>Pending</h4>${pend.map(p=>`<div class="pl-row"><span>⏳</span><b>${esc(p.title)}</b><small>${p.resolveDate?daysBetween(currentDate(),p.resolveDate)+'d':esc(p.status)}</small></div>`).join('')}`:''}<h4>Holidays</h4>${hol.map(x=>`<div class="pl-row"><span>${x.h.icon}</span><b>${esc(x.h.name)}</b><small>${daysBetween(currentDate(),x.dateISO)}d</small></div>`).join('')}`
+}
+document.addEventListener('click',e=>{const b=e.target.closest('#planner button');if(!b||!S)return;if(b.dataset.calDay){calSelected=b.dataset.calDay;calView=b.dataset.calDay.slice(0,7);active='calendar';UI.subTab.calendar='month';saveUI();document.body.classList.remove('planner-open');render()}else if(b.dataset.plannerToggle)document.body.classList.toggle('planner-open')});
 
 // ---------- UI helpers ----------
 function pendingOpen(){return S.pendingDecisions.filter(x=>!x.resolved)}
@@ -1681,7 +2099,6 @@ function personalCards(){
  a.push(actionButton('familyMeal','🥣 Eat with family','Food + family interaction'));
  return `<div class="action-section"><h3>Personal</h3><p class="muted-text">Reading, journaling and devices unlock by development. Household electronics and the stove require caregiver permission while you are a minor.</p><div class="action-grid">${a.join('')}</div></div>`
 }
-function placesPanel(){const places=D.placesOutside.filter(p=>S.age>=p.minAge&&(!p.maxAge||S.age<=p.maxAge));return `<div class="dashboard"><section class="card wide"><div class="section-heading"><div><h3>Daily Life • ${lifeStage()}</h3><p class="muted-text">Core physiological actions stay accessible; the method changes with age and development.</p></div><span class="tag">${timeLabel(currentMinute())}</span></div>${careCards()}</section><section class="card wide">${personalCards()}${yourThingsHtml()}</section><section class="card wide"><h3>Go out</h3><p class="muted-text">Transport: ${esc(localTransport())}. Children and teens use supervision/permission rules automatically.</p><div class="place-grid">${places.map(p=>`<button class="place-card" data-place="${p.id}"><b>${esc(p.name)}</b><small>${p.minutes>=120?Math.round(p.minutes/60)+'h':p.minutes+' min'}${p.cost?` • about ${money(S.age<13?0:p.cost)}`:' • free'}</small></button>`).join('')}</div></section><section class="card"><h3>Weather comfort</h3><p class="muted-text">${esc(weatherAdvice())}</p><div class="inline-actions">${S.homeAmenities.fan?'<button data-act="comfort" data-arg="fan">Use fan</button>':''}${S.homeAmenities.ac?'<button data-act="comfort" data-arg="ac">Use A/C</button>':''}${S.homeAmenities.fireplace?'<button data-act="comfort" data-arg="fireplace">Use fireplace</button>':''}</div></section><section class="card"><h3>Skills & hobbies</h3>${skillsHtml()}</section></div>`}
 
 
 function peoplePanel(){return `<div class="dashboard"><section class="card wide"><h3>${S.age<6?'Your social world':'Relationships remember what happened'}</h3><p class="muted-text">Closeness is only one part: trust, fun, conflict, mood and shared memories all matter. NPCs can contact you without waiting for you.</p></section>${S.people.map(p=>`<section class="person-card"><div class="person-title"><div><h3>${esc(p.name)}</h3><small>${esc(p.role)} • known since age ${p.knownSince}</small></div><span class="tag">${esc(p.mood)}</span></div><div class="relationship-bars"><label>Closeness <span>${Math.round(p.rel)}</span><i><em style="width:${clamp(p.rel)}%"></em></i></label><label>Trust <span>${Math.round(p.trust)}</span><i><em style="width:${clamp(p.trust)}%"></em></i></label><label>Conflict <span>${Math.round(p.conflict)}</span><i class="dangerbar"><em style="width:${clamp(p.conflict)}%"></em></i></label></div><p class="muted-text">${esc(p.memory)}</p><button class="action compact" data-person-open="${p.id}"><strong>Interact with ${esc(p.name.split(' • ')[0])}</strong><small>Talk, spend time, confide, apologize${canUsePhone()?', message/call':''}${S.age>=13?', relationship choices':''}</small></button></section>`).join('')}</div>`}
@@ -1697,14 +2114,11 @@ function careerPanel(){const job=S.career.job,pool=jobPool();return `<div class=
 function healthPanel(){return `<div class="dashboard"><section class="card"><h3>Health</h3>${statRow('Overall',Math.round(S.health)+'%')}${statRow('Fitness',Math.round(S.healthState.fitness)+'%')}${statRow('Sleep quality',Math.round(S.healthState.sleep)+'%')}${statRow('Current issue',esc(S.healthState.illness||'None'))}</section><section class="card"><h3>Care</h3><div class="action-grid">${actionButton('healthCheck','🩺 Checkup',S.age<18?'Caregiver/household handles access':'Costs $25')}${actionButton('mentalCare','🧠 Mental wellbeing','Stress support')}${actionButton('exercise','🏃 Exercise','Fitness and stress')}</div></section></div>`}
 
 
-function worldPanel(){const t=travelMode();const weather=S.weather.forecast?.length?S.weather.forecast.map(x=>`<div class="forecast"><span>${weatherIcon(x.type)}</span><b>${esc(x.type)}</b><small>${x.temp}°C<br>${formatDate(x.dateISO)}</small></div>`).join(''):'';return `<div class="dashboard"><section class="card"><h3>Travel</h3>${statRow('Trips / outings',S.travel.trips)}${statRow('Current rule',esc(t.label))}<p class="muted-text">${esc(t.note)}</p><button data-act="trip">${esc(t.label)}</button></section><section class="card"><h3>Weather</h3><div class="weather-big">${weatherIcon(S.weather.type)} ${esc(S.weather.type)} • ${S.weather.temp}°C</div><p class="muted-text">Humidity ${S.weather.humidity}% • ${esc(weatherAdvice())}</p><div class="forecast-row">${weather}</div></section><section class="card wide"><h3>Life journal / milestones</h3>${S.milestones.slice(0,15).map(m=>`<div class="timeline-entry"><span>${formatDate(m.dateISO||currentDate())} • Age ${m.age}</span><b>${esc(m.title)}</b><p>${esc(m.text)}</p></div>`).join('')||'<p class="muted-text">Important milestones will collect here over time.</p>'}</section><section class="card wide"><h3>Journal note</h3><p class="muted-text">Important milestones stay here. The chronological Life log appears once at the bottom of the main page to avoid duplicate history panels.</p></section></div>`}
 
-function renderPanel(){let html;switch(active){case'places':html=placesPanel();break;case'people':html=peoplePanel();break;case'school':html=schoolPanel();break;case'business':html=businessPanel();break;case'phone':html=phonePanel();break;case'family':html=familyPanel();break;case'development':html=developmentPanel();break;case'career':html=careerPanel();break;case'health':html=healthPanel();break;case'calendar':html=calendarPanel();break;case'world':html=worldPanel();break;default:html=homePanel()}$('panel-host').innerHTML=html}
-function renderLog(){const host=$('log');if(!host)return;host.innerHTML=S.log.slice(0,40).map(e=>`<div class="log-entry"><div class="log-date">${e.dateISO?formatDate(e.dateISO):'DAY '+e.day} • ${timeLabel(e.minute||0)} • AGE ${e.age}</div><b>${esc(e.title)}</b><p>${esc(e.text)}</p></div>`).join('')||'<p class="muted-text">Your life log is empty.</p>'}
-function render(){if(!S)return;renderHeader();renderPanel();renderLog()}
+function renderPanel(){let html;switch(active){case'places':html=placesPanel();break;case'people':html=peoplePanel();break;case'school':html=schoolPanel();break;case'business':html=businessPanel();break;case'phone':html=phonePanel();break;case'family':html=familyPanel();break;case'development':html=developmentPanel();break;case'career':html=careerPanel();break;case'health':html=healthPanel();break;case'calendar':html=calendarPanel();break;case'world':html=worldPanel();break;default:html=homePanel()}$('panel-host').innerHTML=html;applySubTabs()}
+function render(){if(!S)return;renderHeader();renderPanel();renderLog();renderPlanner()}
 
 // ---------- Holidays ----------
-function holidayTick(){const md=currentDate().slice(5),flag=k=>`holiday-${k}-${currentDate()}`;if(md==='01-01'&&S.traditions.newYear&&!S.flags[flag('newyear')]){S.flags[flag('newyear')]=true;log('🎆 New Year','A new calendar year begins. Plans, school/work and family routines keep moving.')}if(md==='02-01'&&S.traditions.lunarNewYear&&!S.flags[flag('lunar')]){S.flags[flag('lunar')]=true;const amt=S.age>=2?10+Math.floor(Math.random()*Math.max(25,Math.min(180,S.age*10+30))):0;if(amt){S.money+=amt;log('🧧 Lunar New Year lucky money',`Relatives give you ${money(amt)}. You can spend it, save it, or put it toward something you want.`,true)}S.familyEvents.unshift({dateISO:currentDate(),text:'Family gathers or connects for Lunar New Year traditions.'})}if(md==='12-25'&&S.traditions.christmas&&!S.flags[flag('christmas')]){S.flags[flag('christmas')]=true;resolveFutureGifts('Christmas');if(chance(70)){const options=['book','artSupplies','toy','sweater','headphones','bicycle'].filter(k=>S.age>=D.catalog[k].minAge&&!ownsItem(k)),key=rand(options);if(key){addItem(key,'Christmas gift');S.giftHistory.unshift({id:uid('gift'),dateISO:currentDate(),age:S.age,item:D.catalog[key].name,occasion:'Christmas',reaction:null,requested:false});log('🎄 Christmas present',`You receive ${D.catalog[key].name}. You decide how honestly to show your reaction.`)}}}}
 
 // ---------- Modal / focused interaction UI ----------
 function openModal(title,html){modalContext={title};$('choice-title').textContent=title;$('choice-content').innerHTML=html;$('choice-overlay').classList.remove('hidden')}
@@ -1728,7 +2142,7 @@ document.querySelectorAll('[data-random]').forEach(b=>b.addEventListener('click'
 $('begin').addEventListener('click',()=>{try{$('creator-error').hidden=true;initializeNewLife()}catch(err){console.error('Start-game error',err);$('creator-error').hidden=false;$('creator-error').textContent='Could not start life: '+(err?.message||err)}});
 $('load-last').addEventListener('click',loadLast);$('import-btn').addEventListener('click',importFile);$('import-file').addEventListener('change',e=>importSaveFile(e.target.files?.[0]));
 $('save').addEventListener('click',()=>{save();toast('Saved')});$('export').addEventListener('click',exportSave);$('pause').addEventListener('click',()=>$('overlay').classList.remove('hidden'));$('close-menu').addEventListener('click',()=>$('overlay').classList.add('hidden'));$('menu-save').addEventListener('click',()=>{save();toast('Saved')});$('menu-export').addEventListener('click',exportSave);$('menu-import').addEventListener('click',importFile);$('menu-new').addEventListener('click',restart);$('close-choice').addEventListener('click',closeChoiceModal);
-$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;active=b.dataset.tab;render()});$('panel-host').addEventListener('click',handlePanelClick);$('event-actions').addEventListener('click',handlePanelClick);$('choice-content').addEventListener('click',handleModalClick);$('age-up').addEventListener('click',ageUp);$('next-day').addEventListener('click',()=>{nextDay();save();render()});$('clear-log').addEventListener('click',()=>{if(!S)return;if(confirm('Clear the visible life log? Important milestones remain in the journal.')){S.log=[];save();render()}});
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;active=b.dataset.tab;render()});$('panel-host').addEventListener('click',handlePanelClick);$('event-actions').addEventListener('click',handlePanelClick);$('choice-content').addEventListener('click',handleModalClick);$('age-up').addEventListener('click',ageUp);$('next-day').addEventListener('click',()=>{nextDay();save();render()});$('log-drawer').addEventListener('toggle',()=>{UI.logOpen=$('log-drawer').open;saveUI()});$('open-journal').addEventListener('click',()=>{if(!S)return;active='world';UI.subTab.world='journal';saveUI();render()});$('planner-btn').addEventListener('click',()=>document.body.classList.toggle('planner-open'));$('clear-log').addEventListener('click',()=>{if(!S)return;if(confirm('Clear the visible life log? Important milestones remain in the journal.')){S.log=[];save();render()}});
 $('needs-hud').addEventListener('click',e=>{const b=e.target.closest('[data-need]');if(!b||!S)return;const k=b.dataset.need;if(k==='social'){active='people';render()}else if(k==='comfort'){active='places';render()}else act(needAction(k))});
 $('choice-overlay').addEventListener('click',e=>{if(e.target===$('choice-overlay'))closeChoiceModal()});document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('choice-overlay').classList.contains('hidden'))closeChoiceModal();else $('overlay').classList.toggle('hidden')});
 $('panel-host').addEventListener('change',()=>{});
@@ -1769,7 +2183,7 @@ window.__LIFE_SIM_TEST__={
  eventChoice:(id,choice)=>resolveEventChoice(id,choice),
  reconcile:()=>{reconcileState('test');render();save()},
  todayWarnings:()=>todayWarnings(),
- call:(name,...args)=>{const f={performItemUse,eatPortion,drinkFromContainer,refillContainer,toggleWear,repairItem,chargeDevice,useInventoryItem,drainActivePhone,giveInventoryItem,itemDailyTick,addItem,addExamRecord,activateClub,registerContest,ensureSchoolDayObligation,nextSchoolDay,isSchoolDay,queueEvent,closeChoiceModal,setKindergartenPreference,exploreSchoolActivity,exploreSchoolEvent,generateHomework,contestAction,decideActivity}[name];if(!f)throw new Error('Unknown test function '+name);const r=f(...args);render();save();return r===undefined?null:JSON.parse(JSON.stringify(r))}
+ call:(name,...args)=>{const f={skipToDismissal,classAction,lunchAction,leaveSchoolEarly,doHolidayActivity,holidaysOn,upcomingHolidays,lunarNewYearDate,easterDate,agendaFor,performItemUse,eatPortion,drinkFromContainer,refillContainer,toggleWear,repairItem,chargeDevice,useInventoryItem,drainActivePhone,giveInventoryItem,itemDailyTick,addItem,addExamRecord,activateClub,registerContest,ensureSchoolDayObligation,nextSchoolDay,isSchoolDay,queueEvent,closeChoiceModal,setKindergartenPreference,exploreSchoolActivity,exploreSchoolEvent,generateHomework,contestAction,decideActivity}[name];if(!f)throw new Error('Unknown test function '+name);const r=f(...args);render();save();return r===undefined?null:JSON.parse(JSON.stringify(r))}
 };
 
 if(new URLSearchParams(location.search).get('smoke')==='1')setTimeout(()=>{try{$('c-name').value='Smoke Test';initializeNewLife();document.body.dataset.smoke=(!$('game').classList.contains('hidden')&&S)?'pass':'fail'}catch(e){console.error(e);document.body.dataset.smoke='fail';document.body.dataset.smokeError=e.message}},30);

@@ -1,5 +1,41 @@
 # Life Simulator Update Log
 
+## v7.2 (phase 3) — Interactive school day, less scrolling, calendar & holidays
+
+### Bugs reported from a real save (fixed)
+- **School event overlapped the school day.** A registered contest at 10:00 on a school day was marked *No-show* while the character was at school, because "Go to school" jumped from 8:00 to 15:00. The school day is now interactive (below), and school-day contests take place **in the school hall at 13:00 during school**. Going means missing class (a real choice), and staying in class gives a softer "missed the event" outcome instead of a no-show penalty. Existing saves with a 10:00 school-day contest are moved to the in-school slot.
+- **Primary-school child at a "Secondary School".** School names now follow the stage (primary 6–11, middle 12–14, high 15–18), and saves with a mismatched name are corrected.
+- **Invitations at 1:30 AM.** NPC initiatives were firing at midnight. They now arrive during waking hours (after school on school days), random events never fire between 9:30 PM and 6:30 AM or during class, and young characters cannot accept invitations late at night.
+- **Four assessments on one day** (summer dates collapsed onto the first school day). Assessments are spread to at most one per school day.
+
+### Interactive school day
+- **Check in** records attendance (on time by 8:15, tardy until 11:00, absent after). Time then runs normally through a weekly timetable: Periods 1–3, Lunch, Periods 4–6, dismissal at 3:00 PM.
+- In class: **Pay attention**, **Participate** (more learning, teacher relationship, costs energy), **Chat with a friend** (social, less learning, strict teachers may catch you), **Skip this class** (risk of being caught, delayed notice home).
+- At lunch: **Eat in the cafeteria**, **Sit with friends**, **Study in the library**, **Visit a teacher**.
+- Assessments and school events appear in their time slot with direct buttons. **Skip ahead to dismissal** auto-attends the remaining periods but stops when an assessment or event is due. **Leave school early** is available from age 10 and counts against attendance.
+- Home-only actions (shower, TV, outings, trips, most items) are blocked while at school; eating, drinking and the bathroom still work. The hero shows the current period with its actions.
+
+### Graduations & education history
+- Moving between stages records a milestone: 🎓 *Finished kindergarten / primary / middle / high school — School name, year*. Older saves receive their missing kindergarten graduation (year of the 6th birthday). Education history appears in Education → Today and World → Journal.
+
+### Less scrolling
+- Every busy screen is split into **numbered sub-tabs** (press **1–4**): My Life (Now / Today / Inbox), Daily Life (Care / Activities / Your things / Go out), Education (Today / Subjects / Assessments / Clubs & events), Money & Items (Your things / Shop / Money & chores / Selling), Calendar (Month / Today / Upcoming / History), World (World / Journal).
+- Tabs show badges (unread notifications, assessments due soon, open homework, urgent needs, broken items). The tab bar is sticky, and the last tab used is remembered (UI preferences are stored separately from the save).
+- **Next day** (key **N**) and **Age up** live in the top bar. The life log is a collapsible drawer showing the latest entry, and the full log is in World → Journal.
+
+### Calendar & Life Planner
+- **Month calendar**: previous/next month, Today, Monday-first 7-column grid, today and selected-day highlights, colored category dots, holiday icons, weekend/break shading, and category filters. Clicking a day shows its agenda (time, title, category, status, location, required/optional, participants, attendance, and holiday activities on the day).
+- **Schedule conflicts**: overlapping live obligations are flagged with ⚠ in the grid and agenda ("you can only be at one").
+- **Life Planner** (screens ≥ 1500 px): a sticky right column with mini month, Today, Next up, Pending and holiday countdowns. Smaller screens get a **Planner** button with a slide-over. The upcoming strip is hidden when the planner is visible, to avoid duplicates.
+
+### Holiday engine
+- `HOLIDAYS` definitions with date resolvers and a **regional calendar profile** (VN, US, UK, CA, AU, KR, JP, FR, SG, TH, CN, INTL), detected from the birthplace plus family traditions.
+- **Lunar New Year**: real-date lookup for 1998–2050 (with Vietnam's 2007 difference), and a lunar-cycle approximation outside it (±1 day); it lasts 3 days. **Easter**: computed with the Gregorian (Meeus) algorithm. **Mother's/Father's Day** follow the region (US 2nd Sunday of May; UK Mothering Sunday; FR/TH/KR variants; AU Father's Day in September). **Teachers' Day**: VN Nov 20, KR May 15, CN Sep 10, TH Jan 16, SG, US Teacher Appreciation Day, otherwise World Teachers' Day. **Thanksgiving**: US/CA only. Also New Year, Valentine's, International Women's Day, Vietnamese Women's Day (Oct 20), Halloween and Christmas.
+- **Real activities** (age-gated, once per holiday): e.g. Halloween (decorate, make a free costume, trick-or-treat with candy and caregiver for young kids, party for teens, scary movie, give out candy, stay home), Lunar New Year (clean/decorate, new clothes, wishes and lucky money, gathering with possible family drama, visiting relatives, photos), Christmas (decorate, wish list, handmade gift, give gifts, meal, relatives, party), Valentine's (class cards for kids; card for a crush with a kind outcome either way; friends instead; dates only for adults with a partner), parent/teacher days, Easter and Thanksgiving. Forgetting Mother's/Father's Day entirely is noticed gently the next day.
+- **Seasonal shop**: costumes, candy, decorations and gift wrap appear only in the 3 weeks before the relevant holiday. They are always optional, with free alternatives. Decorations and gift wrap improve the matching activities.
+- Holidays appear in the hero on the day, in the Home "Now" tab, the agenda, the planner and the upcoming lists. Each holiday triggers once.
+
+
 ## v7.2 (phase 2) — Item lifecycles, inventory & store
 
 ### Item lifecycle system

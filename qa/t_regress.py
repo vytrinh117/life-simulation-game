@@ -16,7 +16,7 @@ async def main():
     await T(pg,"openTab('home')"); html=await pg.inner_text('#panel-host')
     check('KG: UI pending list clean', 'Kindergarten decision' not in html)
     await T(pg,"openTab('calendar')"); html=await pg.inner_text('#panel-host')
-    check('KG: calendar pending clean', 'Kindergarten decision' not in html)
+    check('KG: calendar has no active kindergarten wait', 'Waiting for your preference' not in html)
     await pg.reload(); await pg.click('#load-last'); s=await st(pg)
     check('KG: stays resolved after reload', not any(x['type']=='kindergarten' and not x['resolved'] for x in s['pendingDecisions']))
     check('KG: no JS errors', not pg.errs, pg.errs)

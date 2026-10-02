@@ -114,12 +114,12 @@ async def main():
     await C(pg,'giveInventoryItem',card['id'],fr['id']); s=await st(pg)
     check('gift: one card from the stack given, trust up', items(s,'greetingCard')[0]['quantity']==1 and [x for x in s['people'] if x['id']==fr['id']][0]['trust']>fr['trust'])
     # ---- store UI ----
-    await T(pg,"openTab('business')"); await pg.click("[data-shop-cat='Food & drinks']")
+    await T(pg,"openTab('business')"); await pg.click("[data-subtab='shop']"); await pg.click("[data-shop-cat='Food & drinks']")
     cards=await pg.query_selector_all('.product-card'); check('23: category filter works', 3<=len(cards)<=5, len(cards))
     await pg.select_option("[data-qty-for='juiceBox']","3"); await pg.click("[data-shop-own='juiceBox']"); s=await st(pg)
     check('23: quantity purchase for cheap consumables', sum(i['quantity'] for i in items(s,'juiceBox'))==3)
     # ---- §22 cards show relevant fields only ----
-    await pg.click("[data-inv-filter='All']"); html=await pg.inner_text('.item-grid')
+    await pg.click("[data-subtab='things']"); await pg.click("[data-inv-filter='All']"); html=await pg.inner_text('.item-grid')
     snack=[c for c in html.split('\n\n') if 'Snack pack' in c]
     cards=await pg.evaluate("""()=>[...document.querySelectorAll('.item-card')].map(c=>({n:c.querySelector('.item-title b').innerText,s:c.querySelector('.item-status').innerText}))""")
     sn=[c for c in cards if c['n'].startswith('Snack')][0]; phc=[c for c in cards if 'smartphone' in c['n'].lower()][0]; bt=[c for c in cards if c['n'].startswith('Water')][0]
@@ -128,14 +128,14 @@ async def main():
     check('22: bottle shows water ml', 'ml' in bt['s'], bt)
     r=await pg.evaluate("document.documentElement.scrollWidth>window.innerWidth+1"); check('UI 1440: no overflow on Money & Items', not r)
     await pg.screenshot(path='/home/claude/tests/shot_inventory.png')
-    await pg.evaluate("document.querySelector('.product-grid').scrollIntoView()"); await pg.screenshot(path='/home/claude/tests/shot_store.png')
+    await pg.click("[data-subtab='shop']"); await pg.screenshot(path='/home/claude/tests/shot_store.png')
     check('items: no JS errors', not pg.errs, pg.errs[:3]); await pg.close()
     # ---- mobile ----
     pg=await new_page(b,390,844); await new_life(pg); await T(pg,"setAge(12)")
     for k in ['snackPack','bicycle','book','waterBottle','artSupplies']: await grant(pg,k)
     await T(pg,"openTab('business')"); r=await pg.evaluate("document.documentElement.scrollWidth>window.innerWidth+1")
     check('UI 390: no overflow on Money & Items', not r); await pg.evaluate("document.querySelector('.item-grid').scrollIntoView()"); await pg.screenshot(path='/home/claude/tests/shot_inventory_mobile.png')
-    await T(pg,"openTab('places')"); txt=await pg.inner_text('#panel-host')
+    await T(pg,"openTab('places')"); await pg.click("[data-subtab='things']"); txt=await pg.inner_text('#panel-host')
     check('42: owned items appear in Daily Life', 'use your things' in txt.lower() and 'ride' in txt.lower())
     check('mobile: no JS errors', not pg.errs, pg.errs[:3]); await pg.close()
     # ---- §39 migration of v7.1 items ----

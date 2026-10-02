@@ -44,11 +44,18 @@ async def main():
     s=await st(pg); reg=[x for x in s['school']['contests'] if x['status']=='Registered']
     check('10: registered contests have calendar obligations', len(reg)==2 and all(any(e['type']=='schoolEvent' and e['payload']['contestId']==r['id'] for e in s['calendar']) for r in reg))
     a,bb=sorted(reg,key=lambda x:x['eventDate'])
-    await T(pg,f"setClock('{a['eventDate']}',560)")
+    await T(pg,f"setClock('{a['eventDate']}',470)")
     s=await st(pg); check('10: registration alone does not produce a result', [x for x in s['school']['contests'] if x['id']==a['id']][0]['result'] is None)
+    ev=[e for e in s['calendar'] if e['type']=='schoolEvent' and e['payload']['contestId']==a['id']][0]
+    school=await T(pg,f"call('isSchoolDay','{a['eventDate']}')")
+    check('10/28: school-day contest is held inside school hours', (ev['startMinute']==780) if school else (ev['startMinute']==600), (school,ev['startMinute']))
+    if school:
+        await T(pg,"attendSchool()"); await T(pg,"call('skipToDismissal')"); s=await st(pg)
+        check('10: skipping ahead stops when the event is on', s['clock']['minute']>=780 and s['clock']['minute']<810, s['clock']['minute'])
+    else: await T(pg,f"setClock('{a['eventDate']}',590)")
     await T(pg,f"contestAttend('{a['id']}')"); s=await st(pg); ca=[x for x in s['school']['contests'] if x['id']==a['id']][0]
     check('10: attending runs the competition', ca['status']=='Completed' and ca['result'], ca['result'])
-    await T(pg,f"setClock('{bb['eventDate']}',560)"); await T(pg,"advanceMinutes(240)"); s=await st(pg); cb=[x for x in s['school']['contests'] if x['id']==bb['id']][0]
+    await T(pg,f"setClock('{bb['eventDate']}',560)"); await T(pg,"advanceMinutes(420)"); s=await st(pg); cb=[x for x in s['school']['contests'] if x['id']==bb['id']][0]
     check('10: absent -> No-show, not a result', cb['status']=='No-show' and cb['result']=='Did not attend', (cb['status'],cb['result']))
     check('10: no JS errors', not pg.errs, pg.errs); await pg.close()
 

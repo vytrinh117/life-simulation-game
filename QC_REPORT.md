@@ -1,11 +1,11 @@
-# QC Report — Life Simulator v7.2 (phases 1–2)
+# QC Report — Life Simulator v7.2 (phases 1–3)
 
 ## Method
 The v7.1 report marked features PASS when buttons were wired. Real play still exposed lifecycle bugs, so this QC was redone **from the player's perspective**. Every check drives the real game in headless Chromium (`index.html` + `game.js`) and follows the full lifecycle: **create → display → interact → resolve → leave the active UI → persist after reload → never reappear**.
 
 The two confirmed bugs were reproduced with the **original v7.1 code**, and those exact saves are used as fixtures (`qa/fixture_*_v71.json`).
 
-**Result: 204 deterministic checks passed, 0 failed, plus the fuzz run (6 per-age checks; all invariants held over 840 random steps), with 0 JavaScript errors** on the final build. All phase 1 suites were re-run after phase 2.
+**Result: 271 deterministic checks passed, 0 failed, plus the fuzz run (all invariants held over 840 random steps at six starting ages), with 0 JavaScript errors** on the final build. All earlier suites were re-run after phase 3; assertions that encoded the old "jump to 3 PM" school behavior or single-page layout were updated to the new design (listed below).
 
 | Suite | Checks | Covers |
 |---|---|---|
@@ -16,6 +16,8 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 | `t_balance.py` | 1 | Six consecutive Age Ups: grades/attendance stay plausible |
 | `t_ui.py` | 50 | Education screen at 7 viewports, hero content, modals |
 | `t_items.py` | 50 | §53 item tests, phone sync, slots, multiple ownership, books/rereading, diminishing returns, perishables, gifts, store, card fields, v7.1 item migration |
+| `t_jordan.py` | 13 | Player's real v7.2 save: loads cleanly, primary-school name fixed, kindergarten graduation 2010, assessments de-stacked, interactive school day (check-in at 8:00, period timing, blocked home actions, lunch, dismissal) |
+| `t_holidays.py` | 57 | §54 holiday dates by region (incl. Lunar 2007 VN/CN, fallback 2051, Easter ×4, UK/AU/CA/KR variants), one-time triggers, Halloween activities, seasonal shop, month grid/navigation/agenda/markers, forgotten Mother's Day, planner at 1920/1366, key switching, page height, no overflow at 1366/390 |
 | `t_fuzz.py` | 7 | 840 random player clicks (ages 3–17, run per age pair) with reloads, Next Day, Age Up and heavy Money & Items use; cross-system + inventory invariants every 10 steps |
 
 ## Scenarios (selected)
@@ -49,7 +51,12 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 
 **Fuzz inventory invariants (never violated).** Phone item condition = phone page; at most one item per slot; quantities ≥ 1; no used-up supplies lingering; container contents within capacity; every item has a lifecycle.
 
+**Phase 3 assertion updates (new design, not regressions):** taking an exam now leaves you checked in at school (`Attending`) instead of at 3 PM; arriving at 9:20 leaves the clock at 9:20 (tardy) and dismissal at 3 PM finalizes attendance; school-day contests run 13:00–15:00, so the attend/absent tests reach that slot; the shop, inventory and "Use your things" sections are reached through their sub-tabs; the calendar test checks that nothing is still *waiting* (the resolved kindergarten record legitimately shows in the day agenda as history).
+
+**Phase 3 fuzz invariants:** `Attending` only for today's school day during school hours while at School; no NPC event created between 9:30 PM and 6:30 AM.
+
 ## Bugs found during this QC and fixed
+- Phase 3: reordering the Education screen initially targeted the kindergarten branch (identical markup), which produced a `rec` initialization error for 3-year-olds. The fuzzer caught it; it is fixed and covered.
 - Age Up marked every school day absent (end-of-day processing took the "missed" path instead of simulation).
 - "Attend school" at 11 PM left the day "Scheduled" until time passed.
 - Simulated exams dragged grades down every year; they now assume a typical year of study, and attendance slowly builds skill.
@@ -58,7 +65,9 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 - Nothing in the game currently makes the character ill, so "excused for illness" only occurs in Age Up simulation and on approved family trips.
 - School breaks are fixed (Dec 23–Jan 2, Jun 12–Aug 24, northern-hemisphere style). Regional calendars come with the holiday engine.
 - Inventory: the gift reaction system is basic (price/personal/wear/sentiment). NPC interests and occasion-awareness come with the social phase. Item uses are not yet tied to clubs/tryouts.
-- Not yet implemented (later phases): holiday engine and month calendar (§24–28, 48–49, 89–90), light/dark/auto themes and icon system (§29–31, 35), schedule-conflict choices (§28), and the social/story systems (§60–123).
+- Holidays: school breaks are still a fixed northern-hemisphere schedule; Thanksgiving/Lunar New Year days off are not yet school holidays. A family cannot yet change which holidays it observes from the UI (the profile supports overrides).
+- School: kindergarten days still resolve in one step; the interactive timetable starts in Grade 1.
+- Not yet implemented (later phases): light/dark/auto themes and icon system (§29–31, 35), and the social/story systems (§60–123).
 - Tests use a QC-only clock jump (`setClock`). In normal play time always passes through the processors; a few test-only artifacts (e.g. homework shown "Late" right after a jump) do not occur in real play.
 
 ## Running QC
