@@ -1,25 +1,41 @@
-# Life Sim — Living World v4
+# Life Simulator — Living World v7
 
-A browser-based life simulation built as a static site for GitHub Pages.
+A static browser life simulator with age-aware everyday actions, real simulation time, calendar/deadlines, family permission and delayed decisions, school/exams/clubs, relationships/memories, shopping/inventory, phone ownership, weather, small business, work and aging.
 
-## Start
-Open `index.html` locally, or deploy the repository root with GitHub Pages. Click **BEGIN LIFE AT BIRTH** after creating a character.
+## Run locally
+Open `index.html` in a browser. For best storage behavior, serve the folder with any basic static server.
 
-## Save system
-The game autosaves in browser local storage. Use Export Save for a portable JSON backup and Import Save to restore one.
+## GitHub Pages
+Upload the **contents of this folder to the repository root** so `index.html`, `style.css`, `data.js` and `game.js` sit beside `.nojekyll`.
 
-## Main systems
-School and exams, NPC relationships and memories, weather and gear, health, family/romance, career and money, travel/social media, luck/mentality, small-business stands, yard sales and negotiation, contextual events, and a persistent life log.
+This build includes:
 
-## QC note
-The v4 rebuild fixes the v3 Begin Life runtime crash. `game.js` is syntax-checked before packaging. A `?smoke=1` query hook is included for automated browser startup checks.
+```text
+index.html
+data.js
+game.js
+style.css
+.nojekyll
+.github/
+  workflows/
+    pages.yml
+```
 
-See `CHANGELOG.md` for the detailed update history.
+In GitHub repository settings, set **Pages → Source = GitHub Actions**. Push to `main`; the included workflow publishes the repository root.
 
-## v5 developmental simulation
-Early-life actions are dependency-aware. Babies and toddlers receive caregiver-led actions; autonomy is learned through developmental skills. Kindergarten, playdates, household permission and childhood events are contextual rather than automatic.
-See `CHANGELOG.md` for the full update log.
+All runtime asset paths are relative, so project-site URLs such as `https://username.github.io/repository/` do not require hard-coded root paths.
 
+## Saves
+- Autosave uses browser `localStorage`.
+- Manual Save writes immediately.
+- Export creates a portable JSON save.
+- Import accepts JSON saves.
+- v7 attempts to migrate prior v6.x Life Simulator autosaves.
+- Restart removes known Life Simulator save keys only after confirmation.
 
-## v6.2 age-permission rule
-Actions now change by life stage. Children see caregiver-led or permission-based versions of travel, outings, selling and social interaction instead of adult actions that merely fail after clicking. See `AGE_ACTION_RULES.md` and `QC_REPORT.md`.
+## Documentation
+- `CHANGELOG.md` — feature/fix log
+- `AUDIT.md` — findings from the v6.3 audit
+- `AGE_ACTION_RULES.md` — life-stage eligibility design
+- `MIGRATION_NOTES.md` — legacy save handling
+- `QC_REPORT.md` — tests and known limitations
