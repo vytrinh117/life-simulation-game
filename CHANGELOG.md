@@ -1,5 +1,62 @@
 # Life Simulator Update Log
 
+## v7.2 (phase 5a) — People with real names and lives, plans/RSVP, house rules, tryouts, elections, school reputation
+
+### Names (§97–101)
+- Every persistent NPC has `firstName`, `surname`, `fullName`, an optional `nickname` and a unique ID. Name pools are regional (English-speaking, Vietnamese, Korean, Japanese, Chinese/Singaporean, French, Thai). Vietnamese, Korean, Japanese and Chinese names use family-name-first order; Vietnamese names keep their diacritics.
+- Before assigning a name the game checks every existing NPC and person and retries, so unrelated people never share a full name. Names never change after creation.
+- **Households** follow cultural conventions: siblings share a surname; VN/KR/CN parents keep their own surnames; other regions mix shared, hyphenated and separate parent surnames.
+- **Nicknames** (Alexandra → Alex, Benjamin → Ben…): close friends are shown by nickname, others by full name, family as Mom/Dad.
+- **Migration**: legacy "Mia • neighbor" people keep their given name (Mia), get a surname, and keep their role. Parents and grandparents get gender-appropriate full names in the family's convention. Existing people count as filled social slots (no duplicate classmates).
+- A persistent **school roster** of peers (with households, traits, goals and interests) provides classmates, rivals, election opponents and tryout competition.
+
+### NPCs with their own lives (§62, §102–103)
+- **Availability**: friends sleep, go to school, have practice on their club day, eat dinner with family, study for tests and occasionally travel. Asking a busy friend gives the real reason ("Leo can't hang out right now because basketball practice starts in 30 minutes") with *Ask later / Schedule something / Message instead*.
+- **Goals** (make a team, good grades, class president, music/art, more friends, university, save money) shape their decisions: studious friends decline outings before a test; savers decline paid plans; shy friends avoid parties. Goals are visible once trust is high enough.
+- NPCs invite you to future plans, sometimes cancel themselves (with a reason), and run in elections against you.
+
+### Invitations, RSVP & plans (§94–95)
+- **Make plans** with anyone (hang out, study together, movie, picnic, game night, mall, sleepover, party; age-gated) for later today, tomorrow after school or the weekend. The NPC answers **Accepted / Maybe / Declined** with a contextual reason; a Maybe resolves later.
+- NPC invitations show the date, time, place and an **answer-by** deadline: *Accept / Maybe / Decline politely*. An unanswered Maybe expires ("they take your silence as a no").
+- Accepted plans go on the calendar as obligations: **Go** (late arrival is noticed), **Cancel early** (small hit), **cancel last minute** (bigger), or **no-show** (closeness/trust loss, conflict, and a confrontation the next afternoon: explain / apologize / brush it off). Plans tell a story, with outcomes from great to awkward depending on closeness, lateness and weather.
+
+### House rules (§96)
+- Minors have a **curfew** by age (adjusted by strictness), bedtime, and rules for going out, sleepovers and parties. Asking first can be met with *Negotiate (home by curfew)*, *Accept the answer*, or *Go anyway (disobey)*. Disobeying risks being caught (grounding, a large trust loss).
+- New **household trust** (shown in People → House rules): asking first and obeying build it; lying and disobeying cost it; trust shifts future approvals.
+
+### Clubs: sign-up, tryouts, progression (§72–75)
+- Three kinds of clubs. **Open** (Art, Reading, Chess, Science, Coding, Photography, Volunteer, School Newspaper, Recreational League…): sign up. **Selective** (Drama, Debate, Music): **audition**. **Sports** (Football, Basketball, Swimming, Volleyball, Track): **tryout**. Plus **Student Council** (by election). *Learn more* shows the entry method, judged components, spots, relevant skills and the position ladder.
+- **Preparation** before a tryout: practice alone, with a friend, lessons ($25) or a weekend camp ($60), with diminishing returns per day.
+- **Tryouts** score each component (e.g. Dribbling / Shooting / Fitness / Teamwork) from skills, fitness, confidence, preparation and luck against competition from roster peers who share the interest. Outcomes: starting lineup, reserve, **waitlisted** (a spot may open a week later) or **not selected**, always with a reason ("Coach Lee liked your fitness, but your shooting (31) is not strong enough yet").
+- **Recovery paths**: practice and try again (next tryout ~4 weeks later, keeping part of your preparation), or join the Recreational League.
+- **Club-specific ladders**: Sports (Reserve → Starter → Vice Captain → Captain), Drama, Council, Newspaper, Debate, Music, and a generic ladder. The leader promotes you through the lower ranks based on sessions, attendance, skill and relationship.
+
+### Elections (§76–77)
+- The top club positions and Student Council roles are **elected**, against named NPC opponents. A one-week campaign offers: write a message, talk to classmates, ask friends, posters, speech (quality matters), online campaign (13+, can backfire) and **promise an initiative** (popular, but you must deliver later). Results come from reputation, friends, effort, speech, opponents and luck, with vote shares. You can lose; NPCs win and lead. Losing offers *congratulate the winner* (kindness and a new relationship), *lead elsewhere*, *run again next year*, or *keep your distance*.
+
+### School reputation & identity (§71, §78)
+- Eight dimensions (academic, athletic, creative, leadership, social, kindness, troublemaker, clubs) driven by real behavior: exam results, participation, skipping, tryouts, club sessions, contests, elections, lunch with friends, volunteering, cheating and absences. They drift slowly back to a baseline.
+- Emergent **identities** (Star Athlete, Theatre Kid, Student Leader, Academic Competitor, Art Student, Debate Kid, Musician, Popular, Kind Classmate, Known Troublemaker) are never permanent. Occasional **recognition moments** ("A younger student recognizes you from the last game").
+
+### Continuity, threads & outcome history (§109–112)
+- **Story threads** track multi-step stories (tryout attempts, campaigns, plans) from start to resolution. **Outcome history** records each result with its reason. Both appear in World → Journal.
+- Friends remember: a friend who knew about your tryout asks the next day how it went.
+
+
+## v7.2 (phase 4) — Light / Dark / Auto / Life themes & a consistent icon set
+
+### Themes
+- The forced dark-only design is gone: `<meta name="color-scheme" content="dark">` became `light dark`, and the global `color-scheme: dark` was removed.
+- Four appearances: **Light** (new default; warm canvas, white elevated cards, soft shadows), **Dark** (the previous look, now token-based), **Auto** (follows the OS and switches live when the OS changes), and **Life** (warm, colorful light variant).
+- Switch from the top-bar button (cycles Light → Dark → Auto → Life) or Menu → Appearance. The choice is stored in the UI preferences (`lifeSim_ui`), separately from the life save, and survives Restart / New Life. A tiny inline script in `<head>` applies the theme before first paint (no dark flash on light), and transitions are suppressed for one frame while switching (no color "fade" flash).
+- **Semantic tokens**: every hardcoded color was converted by an auditable script (`tools/theme.py` mapping table; not shipped). This covers ~60 literals, including the `#11151c / #10141a / #12171e / #1a2029`-style surfaces and all `rgba(255,255,255,…)` / accent `rgba(…)` overlays, which became `color-mix()` on tokens: `--bg, --panel, --card, --card2, --surface, --surface-raised, --surface-sunken, --surface-modal, --input, --control, --control-hover, --secondary, --track, --line, --line-strong, --text, --text-2, --muted, --soft, --accent, --accent-hover, --accent-tint, --accent2, --on-accent, --good, --warn, --bad, --info, --backdrop, --shadow, --shadow-card, --glow` plus `--tone-*` for item categories and calendar dots. No literal hex colors remain outside the theme token blocks.
+- Light/Life use darker, text-safe variants of every semantic and category color (e.g. teal #0d8576, warning #9a5c00) instead of pastel-on-white.
+- Elevation: cards, item/product cards and subject cards get a subtle shadow in light themes (none in dark). Reduced-motion users get no transitions or animations.
+
+### Icons
+- A local inline **SVG sprite** (no external dependency; works offline on GitHub Pages) replaces platform-dependent emoji in the side navigation, the needs HUD and the top-bar controls (Next day, Age up, Planner, Appearance). Icons are stroke-based, use `currentColor`, and follow the theme. Holiday and item emoji remain as flavor, as the spec allows.
+
+
 ## v7.2 (phase 3) — Interactive school day, less scrolling, calendar & holidays
 
 ### Bugs reported from a real save (fixed)

@@ -60,3 +60,13 @@ The original legacy browser key is not silently deleted during migration. Restar
 - Registered school-day contests still at the old 10:00 slot move to the 13:00 in-school slot before they start.
 - `S.calendarProfile` (region + per-holiday overrides) and `S.holidayLog` are added. Old `holiday-*` flags still prevent re-triggering.
 - UI preferences (sub-tab per screen, log drawer open) live under a separate localStorage key `lifeSim_ui`, not in the save.
+
+
+## v7.2 phase 4
+- No save changes. The appearance preference lives in `lifeSim_ui.theme` (`light` | `dark` | `auto` | `life`; default `light`). Existing players without a stored preference start in Light and can switch back to Dark in one click.
+
+
+## v7.2 phase 5a
+- People: `firstName`, `surname`, `fullName`, `nickname`, `roleLabel`, `npcId`, `goals` are added. Legacy names like "Mia • neighbor" keep the given name (Mia) and gain a surname; `name` becomes the full name. Mom/Dad/Grandmother keep their `name` (used for address) and gain a gender-appropriate full name.
+- New containers: `S.npcs` (school roster), `S.households`, `S.plans`, `S.elections`, `S.threads`, `S.outcomes`, `S.schoolRep`, `S.family.trust` (default 60), `S.school.tryouts`, `S.familyName`.
+- Existing friends count as filled social slots (no duplicate "classmate" is added on load). Existing club positions not on the new ladders are mapped on the next promotion check.

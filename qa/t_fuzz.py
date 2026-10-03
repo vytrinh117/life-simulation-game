@@ -15,6 +15,10 @@ INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,no
  const c=S.current;if(c.sourceType==='exam'){const e=S.exams.find(x=>x.id===c.sourceId);if(!e||!exOpen(e))bad.push('hero points at resolved exam')}
  if(c.sourceType==='event'){const e=S.events.find(x=>x.id===c.sourceId);if(!e||e.status!=='Open')bad.push('hero points at closed event')}
  if(S.school&&S.school.clubs)for(const cl of S.school.clubs){const live=S.calendar.filter(e=>e.type==='clubSession'&&e.payload.clubId===cl.id&&!term.includes(e.status));if(cl.status==='Active'&&live.length>1)bad.push('duplicate live club sessions');if(cl.status!=='Active'&&live.length)bad.push('session for inactive club')}
+ for(const pl of S.plans||[]){if(pl.status==='Accepted'){const ev=S.calendar.find(e=>e.type==='plan'&&e.payload.planId===pl.id);if(!ev)bad.push('accepted plan without calendar');if(pl.dateISO<today)bad.push('accepted plan in the past')}}
+ for(const el of S.elections||[])if(el.status==='Campaign'&&el.date<today)bad.push('election stuck in campaign');
+ for(const t of (S.school&&S.school.tryouts)||[])if(t.status==='Scheduled'&&t.dateISO<today)bad.push('tryout stuck scheduled');
+ const fn=S.npcs?S.npcs.map(n=>n.fullName.toLowerCase()):[];if(new Set(fn).size!==fn.length)bad.push('duplicate NPC full names');
  const ph=S.inventoryItems.find(i=>i.id===S.phone.activeItemId);if(ph&&Math.round(ph.condition)!==S.phone.condition)bad.push('phone desync '+ph.condition+' vs '+S.phone.condition);
  const slots={};for(const i of S.inventoryItems){if(i.equipped){if(slots[i.slot])bad.push('two items in slot '+i.slot);slots[i.slot]=1}if(!(i.quantity>=1))bad.push('bad quantity');if(i.lifecycleType==='finite'&&i.remaining<=0.5)bad.push('used-up item lingers');if(i.lifecycleType==='container'&&(i.contents<0||i.contents>i.capacity))bad.push('container out of bounds');if(!i.lifecycleType)bad.push('item without lifecycle')}
  return bad}"""
