@@ -93,3 +93,8 @@ The original legacy browser key is not silently deleted during migration. Restar
 - The school record gains `yearKey` (the academic year), `reports`, and `semExams`. A save without `yearKey` is tagged with the current academic year and keeps its grade; `S.education.gradeOffset` is stored so the next school year is exactly one grade higher.
 - `S.education.highSchoolDone` marks graduation; no school is created afterwards.
 - Prom pairings are stored on the NPC records as well as on people, and existing one-way pairings are kept as they are.
+
+
+## v7.3 batch B–F
+- New fields: `S.farm` (today's per-target action counts, reset daily), mood bookkeeping (`S.moodClock` and related), and per-subject study/advanced-exercise day markers. Existing skill and reputation values (0–100) are kept and simply displayed as levels (10 points per level).
+- Grades become one-decimal numbers as soon as you study; older integer grades are unchanged.

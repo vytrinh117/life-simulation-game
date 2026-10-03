@@ -259,3 +259,8 @@ body.planner-open .planner-close{display:inline-flex}
 .zodiac-view span{font-weight:800}.zodiac-view small{color:var(--muted);font-size:11px}
 .creator-note{margin:0 0 10px}
 .choices h3 .small{margin-left:6px;vertical-align:middle}
+.star{font-style:normal;color:var(--warn)}
+.skill-line.lvl b{min-width:44px;text-align:right}
+.trait-row{display:grid;gap:1px;padding:6px 0;border-bottom:1px solid var(--line)}.trait-row:last-of-type{border-bottom:0}.trait-row small{color:var(--muted);font-size:11px}
+.mood-big{display:flex;align-items:baseline;gap:8px;margin:0 0 6px}.mood-big b{font-size:28px}.mood-big small{color:var(--muted)}
+.study-menu summary small{font-weight:600;color:var(--muted);margin-left:4px}

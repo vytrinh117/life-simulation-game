@@ -1,5 +1,36 @@
 # Life Simulator Update Log
 
+## v7.3 (batch B–F) — Talents that matter, levels 1–10, study rules, mood with reasons, one anti-farming rule
+
+### B. Talents & personality have real, visible effects
+- Each **talent** gives **+25%** to its skills, subjects and reputation (e.g. Sports → sports, fitness, Physical Education, athletic reputation; Math → Mathematics and knowledge; Leadership → leadership reputation).
+- **Personality traits** give smaller targeted bonuses (e.g. Curious +15% knowledge/reading; Responsible → homework).
+- It is always explained:
+  - a ★ next to boosted skills and subjects;
+  - the bonus named in the result line ("+25% from your Sports talent");
+  - a **Traits & talents** card in Daily Life → Your things listing every effect.
+
+### C. Levels 1–10
+- Skills and school reputation dimensions are shown as **Lv 1–10**, each level with its own progress bar.
+- Higher levels fill more slowly (Level 10 gains about half as fast as Level 1, never zero).
+- Each level-up shows a notification and records a milestone.
+
+### D. Study & exams
+- **Max 3 study sessions per subject per day**; 30 min, 1 h and 3 h each count as one. Other subjects are unaffected.
+- **Longer sessions give more.** Grade gain is capped at **2.0 per session** and stored to **one decimal** (e.g. 80.6). The skill/status bar gains 1–5 per session.
+- **Desk lamp, workbook and notebook** add a stated bonus.
+- **Advanced exercises**: optional, once per day per subject, for faster progress.
+- **The real exam score is not the displayed grade.** It also depends on preparation, sleep, hunger, mood, stress and lateness, so the same grade can score very differently on different days.
+
+### E. Mood
+- Mood moves toward what your life feels like right now. It is pulled down by hunger, exhaustion, loneliness, stress and recent failures, and lifted by being well rested, relaxed, recent successes, time with people and good weather.
+- A **Mood card** (My Life → Today) shows the current mood, the reasons with their weights, and your **focus %**. Focus affects studying, class, exams and social moments.
+
+### F. One anti-farming rule
+- Any non-need action that raises a stat can be done at most **3 times per day per target**, with diminishing returns (100% → 65% → 40%; the 4th is blocked with an explanation). This covers relationship actions per person, hobbies, club extras, skill practice and study.
+- Needs and wants (eating, sleeping, bathroom, washing…) are exempt.
+
+
 ## v7.3 (batch G) — Real school year with 2 semesters, regional calendars, prom & elections Grades 8–12, more people to meet
 
 ### School year (§G)
