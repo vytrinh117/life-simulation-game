@@ -11,7 +11,9 @@ async def new_page(b,w=1440,h=900):
     pg.on('console',lambda m:pg.errs.append('console:'+m.text) if m.type=='error' else None)
     await pg.goto(URL); return pg
 async def new_life(pg,name='QC',dob='2005-03-10'):
-    await pg.fill('#c-name',name); await pg.fill('#c-dob',dob); await pg.click('#begin')
+    await pg.fill('#c-name',name); await pg.fill('#c-dob',dob)
+    await pg.evaluate("()=>{const p=document.getElementById('c-place');if(!p.value)p.value='New York City, USA'}")
+    await pg.click('#begin')
 async def st(pg): return await pg.evaluate("__LIFE_SIM_TEST__.getState()")
 async def T(pg,expr): return await pg.evaluate("__LIFE_SIM_TEST__."+expr)
 def days(a,b): return (datetime.date.fromisoformat(b)-datetime.date.fromisoformat(a)).days

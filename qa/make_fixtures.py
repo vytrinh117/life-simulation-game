@@ -1,6 +1,6 @@
 import json, asyncio
 from playwright.async_api import async_playwright
-ORIG='file:///path/to/v7.1/index.html'  # original v7.1 build
+ORIG='file:///path/to/v7.1/index.html'
 async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(executable_path='/opt/pw-browsers/chromium-1194/chrome-linux/chrome')

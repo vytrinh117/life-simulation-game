@@ -1,5 +1,37 @@
 # Life Simulator Update Log
 
+## v7.3 (batch G) — Real school year with 2 semesters, regional calendars, prom & elections Grades 8–12, more people to meet
+
+### School year (§G)
+- **School years start on a fixed date per country** instead of on the character's birthday: US late Aug; UK, US-style INTL, VN, FR, CN early Sept; CA after Labour Day; KR March; JP April; AU late Jan; SG early Jan; TH mid-May.
+- **Two semesters** per year, each with its own assessments (and Semester finals from Grade 6), a semester break, and a **report card** at the end of each semester. Education → Today shows the current semester, its end date and the next break.
+- **Real breaks per country**:
+  - US: Thanksgiving, winter, spring break.
+  - UK: half-terms, Christmas, Easter.
+  - FR: Toussaint, Christmas, winter, spring.
+  - VN: New Year, **Tết week (lucky money stays)**, 30/4–1/5.
+  - CN: National Day, Spring Festival.
+  - KR / JP / AU / SG / TH: their own vacations.
+  - New Year's Day, Christmas, US/CA Thanksgiving and Lunar New Year (VN/KR/CN/SG) are days off.
+- **Grades follow the country's age cutoff**, not birthdays (e.g. a child born after Sept 1 in the US starts Grade 1 a year later). Classes move up on the **first day of the new school year**. Summer is a real gap between grades.
+- **High school ends after Grade 12** with a graduation at the end of that school year.
+- **The calendar plans 2 school years ahead**: first days of school, Semester 2 starts, breaks, last days, graduation day, and future proms marked "(planned)".
+- **Old saves keep their current grade** until the next first day of school, then move up exactly one grade (no repeat, no skip).
+
+### Prom & elections
+- Prom every year from **Grade 8 to Grade 12** (Junior Prom in Grades 8–9), on the Saturday nearest the **middle of semester 2**, on the calendar from the first day of the school year.
+- **School elections are open in Grades 8–12** (all five grades). Batch A2 had wrongly excluded Grade 9 by reading "8th grade and 10–12th grade" literally.
+
+### Prom fixes from playtesting
+- **No more prom "chains".** Previously one NPC could say they were going with Sam, while Sam said he was going with Maya. Pairings are now always two-way and stored on both people (and on the underlying NPC record), so every refusal names a consistent partner. NPC couples who are dating go together.
+- **You can ask neighbors near your age**, even ones you have not formally met; they appear in the ask list.
+- **Fewer rejections**: a lower acceptance threshold, a bonus close to prom night (people still looking say yes more easily) and a bonus for members of your friend group. Friends at closeness 45+ often accept "as friends". NPCs pair up gradually instead of almost everyone being taken early.
+
+### More people in your life
+- **Meeting new people when you go out** (mall, café, library, park…): sometimes nobody, often one person, occasionally two, all age-appropriate. Chat with one, say hi to both, or keep to yourself; chatting adds them to People with a short story about how you met. It happens a little less once you already know many people.
+- **New classmates each school year** (1–2 introduced on the first day).
+
+
 ## v7.3 (batch A2) — Prom for Grades 8–12, election grades, attendance tab, Grade 12 fix
 
 - **Prom is planned from the first day of the school year** and appears on the calendar immediately. Before, it was only created at the first midnight after turning 16, so it was missing on the birthday and in Grades 8–10.

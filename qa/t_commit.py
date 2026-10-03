@@ -86,7 +86,8 @@ async def main():
     done=[e for e in arch if e['status'] in ('Completed','Missed','Excused','Make-up scheduled','Replaced by make-up','Cancelled')]
     check('11: last year assessments all resolved', all(e['status']!='Scheduled' for e in arch if e['dateISO']<s['clock']['dateISO']), len(done))
     hist=s['schoolHistory'][0] if s['schoolHistory'] else None
-    check('11: attendance simulated (not magically perfect every time)', hist and hist['record']['daysAttended']>100, hist and hist['record'])
+    total=(hist['record']['daysAttended'] if hist else 0)+(s['school']['record']['daysAttended'] if s.get('school') else 0)
+    check('11: a full year of school days simulated across the September rollover', total>140, (total, hist and hist['record'], s.get('school') and s['school']['record']))
     print('   summary:', body.replace('\n',' | ')[:600])
     check('11: no JS errors', not pg.errs, pg.errs)
     # run several age-ups for robustness / performance

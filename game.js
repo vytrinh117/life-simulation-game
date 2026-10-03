@@ -302,7 +302,7 @@ function negotiateYardSale(strategy='counter'){const st=S.stall;if(!st?.active||
 // ---------- Travel / outside ----------
 function travelMode(){if(S.age<3)return {kind:'caregiver',label:'Caregiver outing',note:'A caregiver chooses and handles everything.'};if(S.age<8)return {kind:'family',label:'Family outing',note:'A caregiver decides destination, transport and timing.'};if(S.age<13)return {kind:'ask',label:'Ask about a trip',note:'You suggest it; caregivers control permission and logistics.'};if(S.age<16)return {kind:'permission',label:'Ask permission for a trip',note:'Trips require an adult-approved plan.'};if(S.age<18)return {kind:'supervised',label:'Plan a trip with permission',note:'You can help plan and contribute money, but caregiver approval is required.'};return {kind:'independent',label:'Plan a trip',note:'You control destination, budget and transport.'}}
 function localTransport(){if(S.age<8)return 'caregiver drives / walks with you';if(S.age<13)return ownsItem('bicycle')?'bike or caregiver':'school bus / caregiver';if(S.age<16)return 'bus, bike, caregiver or walking';if(S.age<18)return 'bus, train, ride with permission';return 'walk, bike, transit, taxi/ride-share or car where available'}
-function visitPlace(placeId){const p=D.placesOutside.find(x=>x.id===placeId);if(!p)return;if(atSchool()){toast(`You are at school until ${timeLabel(SCHOOL_DAY.end)}.`);return}if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(S.age<p.minAge||p.maxAge&&S.age>p.maxAge){toast('That place is not relevant at this age.');return}if(S.age<13&&!caregiverApproval(p.id==='friend'?5:12)){log('Outing denied',`A caregiver says no to ${p.name} right now.`);return}if(S.age<18&&S.age>=13&&!caregiverApproval(10)){log('Permission denied',`Household rules or timing prevent the ${p.name} plan.`);return}let cost=p.cost;if(S.age<13)cost=0;else if(S.age<18&&chance(55))cost=Math.round(cost*.5);if(S.money<cost&&cost>0){toast(`You need ${money(cost)} for this outing.`);return}S.money-=cost;S.location=p.name;let mins=p.minutes;mins=applyWeatherGear(p,mins);S.needs.fun=clamp(S.needs.fun+8);S.needs.social=clamp(S.needs.social+(p.id==='friend'?15:3));advanceTime(mins);feedback(`Went to ${p.name}`,`${localTransport()}${cost?` • spent ${money(cost)}`:''}`,mins);S.location='Home';if(chance(22))maybeRandomEvent(true)}
+function visitPlace(placeId){const p=D.placesOutside.find(x=>x.id===placeId);if(!p)return;if(atSchool()){toast(`You are at school until ${timeLabel(SCHOOL_DAY.end)}.`);return}if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(S.age<p.minAge||p.maxAge&&S.age>p.maxAge){toast('That place is not relevant at this age.');return}if(S.age<13&&!caregiverApproval(p.id==='friend'?5:12)){log('Outing denied',`A caregiver says no to ${p.name} right now.`);return}if(S.age<18&&S.age>=13&&!caregiverApproval(10)){log('Permission denied',`Household rules or timing prevent the ${p.name} plan.`);return}let cost=p.cost;if(S.age<13)cost=0;else if(S.age<18&&chance(55))cost=Math.round(cost*.5);if(S.money<cost&&cost>0){toast(`You need ${money(cost)} for this outing.`);return}S.money-=cost;S.location=p.name;let mins=p.minutes;mins=applyWeatherGear(p,mins);S.needs.fun=clamp(S.needs.fun+8);S.needs.social=clamp(S.needs.social+(p.id==='friend'?15:3));advanceTime(mins);if(!['friend','school','home'].includes(p.id))meetNewPeople(`the ${p.name.toLowerCase()}`);feedback(`Went to ${p.name}`,`${localTransport()}${cost?` • spent ${money(cost)}`:''}`,mins);S.location='Home';if(chance(22))maybeRandomEvent(true)}
 function takeTrip(){const m=travelMode();if(atSchool()){toast('You are at school right now.');return}if(isGrounded()){toast(`You are grounded until ${formatDate(S.family.restrictions.groundedUntil)}.`);return}if(['caregiver','family','ask','permission','supervised'].includes(m.kind)&&!caregiverApproval(m.kind==='caregiver'?15:0)){log('Trip does not happen','Your caregivers decide against the trip because of time, cost, safety or other obligations.');return}const adult=S.age>=18,cost=adult?80+Math.floor(Math.random()*180):S.age>=16?30+Math.floor(Math.random()*80):0;if(adult&&S.money<cost){toast(`The trip costs about ${money(cost)}.`);return}if(S.age>=16&&S.age<18&&S.money<Math.round(cost*.4)&&!['Wealthy','Extremely wealthy'].includes(S.wealth)){toast('The trip is approved, but your contribution is not ready yet.');return}if(adult)S.money-=cost;else if(S.age>=16){const share=Math.min(S.money,Math.round(cost*.4));S.money-=share}S.travel.trips++;S.travel.lastTrip=currentDate();const days=adult?1+Math.floor(Math.random()*3):1;SIM.excuse=S.age<18?'Away on a family-approved trip':null;try{advanceTime(days*1440,{skipNeeds:true,silent:true})}finally{SIM.excuse=null}S.needs.fun=clamp(S.needs.fun+25);S.happiness=clamp(S.happiness+8);log(m.kind==='independent'?'Independent trip':'Family / approved trip',`${m.note} ${cost?`Approximate cost ${money(cost)}.`:''}`,true);if(chance(28))maybeRandomEvent(true)}
 
 // ---------- Daily-life actions / validation ----------
@@ -372,13 +372,7 @@ function ensureLifecycleContainers(){
 // ---------- School calendar ----------
 const SCHOOL_DAY={start:480,tardyAfter:495,cutoff:660,end:900};
 function isWeekend(dateISO){const d=parseISO(dateISO).getUTCDay();return d===0||d===6}
-function inSchoolBreak(dateISO){const md=dateISO.slice(5);return md>='12-23'||md<='01-02'||(md>='06-12'&&md<='08-24')}
-function isSchoolDay(dateISO=currentDate()){return !isWeekend(dateISO)&&!inSchoolBreak(dateISO)}
-function nextSchoolDay(dateISO){let d=dateISO;for(let i=0;i<140&&!isSchoolDay(d);i++)d=addDays(d,1);return d}
-function needsFormalSchool(){return !!S.school&&S.school.grade!=='Kindergarten'&&S.age>=6&&S.age<=17}
 function gradeNumber(){const m=/Grade (\d+)/.exec(S.school?.grade||'');return m?Number(m[1]):0}
-function electionGradeOK(){const g=gradeNumber();return g===8||g>=10}
-function schoolYearEnd(){return S.school?.yearStarted?addDays(nextBirthday(),-1):null}
 function freshSchoolRecord(){return {daysAttended:0,absences:0,excused:0,tardies:0,examsCompleted:0,examsMissed:0,examsExcused:0,submittedHomework:0,lateHomework:0,missingHomework:0,meetingHeld:false}}
 function ensureSchoolRecord(){if(!S.school)return null;S.school.record=Object.assign(freshSchoolRecord(),S.school.record||{});return S.school.record}
 function isGrounded(){const g=S.family?.restrictions?.groundedUntil;return S.age<18&&!!g&&g>=currentDate()}
@@ -498,18 +492,13 @@ function normalizeExam(x){
 function calStatusForExam(exam){if(!exam)return null;if(exam.status==='Completed'||exam.status==='Replaced by make-up')return 'Completed';if(exam.status==='Excused')return 'Excused';if(exam.status==='Make-up scheduled')return exam.excused?'Excused':'Missed';if(exam.status==='Missed')return 'Missed';if(exam.status==='Cancelled')return 'Cancelled';return null}
 function examCalendarEvents(exam){return S.calendar.filter(e=>e.type==='exam'&&e.payload?.examId===exam.id)}
 function addExamRecord(exam){normalizeExam(exam);S.exams.push(exam);createCalendarEvent({id:'cal-'+exam.id,type:'exam',title:`${exam.subject} • ${exam.type}`,dateISO:exam.dateISO,startMinute:exam.minute,endMinute:exam.endMinute,graceMinute:exam.graceMinute,payload:{examId:exam.id},source:'school'});return exam}
-function scheduleExams(){
- if(!needsFormalSchool())return;const offsets=[8,15,24,34,48,62];
- S.school.subjects.slice(0,6).forEach((sub,i)=>{const dateISO=nextSchoolDay(addDays(currentDate(),offsets[i]||20+i*7));addExamRecord({id:uid('exam'),subject:sub.name,dateISO,minute:540,type:S.age<=11?'Class assessment':i%3===0?'Midterm':i%3===1?'Quiz':'Project / final',score:null,status:'Scheduled',prep:0})});
- spreadExamDates();syncExamCalendar()
-}
 function ensureRollingAssessments(){
  if(!needsFormalSchool())return;if(S.exams.filter(examIsOpen).length>=2)return;
  const subs=S.school.subjects.slice(0,6);if(!subs.length)return;
  const last=n=>S.exams.filter(e=>e.subject===n).map(e=>e.dateISO).sort().pop()||'0000';
  const sub=[...subs].sort((a,b)=>last(a.name).localeCompare(last(b.name))||Math.random()-.5)[0];
  const types=S.age<=11?['Class assessment','Quiz']:['Quiz','Unit test','Project / final'];
- const rollDate=nextSchoolDay(addDays(currentDate(),7+Math.floor(Math.random()*12)));if(schoolYearEnd()&&rollDate>schoolYearEnd())return;
+ const rollDate=nextSchoolDay(addDays(currentDate(),7+Math.floor(Math.random()*12)));if(!semesterEnd()||rollDate>semesterEnd())return;
  addExamRecord({id:uid('exam'),subject:sub.name,dateISO:rollDate,minute:540,type:rand(types),score:null,status:'Scheduled',prep:0})
 }
 function syncExamCalendar(){
@@ -613,7 +602,7 @@ function ensureSchoolDayObligation(dateISO=currentDate()){
 }
 function schoolDayStatus(){
  if(!S.school)return 'Not enrolled';if(S.school.grade==='Kindergarten')return isSchoolDay()?'Kindergarten day':'Kindergarten closed';
- if(!isSchoolDay())return isWeekend(currentDate())?'Weekend':'School break';
+ if(!isSchoolDay())return noSchoolReason();
  const ev=schoolDayEvent(),m=currentMinute();
  if(ev&&ev.status==='Attended')return ev.attendanceStatus==='Tardy'?'Attended (late)':'Attended';
  if(ev&&ev.status==='Excused')return 'Excused absence';if(ev&&ev.status==='Missed')return 'Absent';
@@ -726,7 +715,7 @@ function clubSessionAttended(ev,{simulated=false,late=0}={}){
 
  setCalendarStatus(ev,'Attended',late?'Arrived late':'Attended');
  if(SIM.summary){const s=SIM.summary.clubs[c.id]=SIM.summary.clubs[c.id]||{name:c.name,attended:0,missed:0,excused:0};s.attended++}
- addRep(clubInfo(c.name).rep,.25);addRep('club',.3);checkClubPromotion(c);if(chance(8))maybeOfferElection(c);
+ addRep(clubInfo(c.name).rep,.25);addRep('club',.3);if(!simulated&&chance(10))meetNewPeople(c.name);checkClubPromotion(c);if(chance(8))maybeOfferElection(c);
  if(!simulated){S.needs.social=clamp(S.needs.social+10);S.needs.fun=clamp(S.needs.fun+8);S.energy=clamp(S.energy-6);log(`${c.name} session`,clubSessionStory(c,late));toast(`${c.name} • skill ${Math.round(c.skill)}%`)}
  if(c.status==='Active')scheduleClubSession(c,nextClubDate(ev.dateISO))
 }
@@ -791,7 +780,7 @@ function resolveContestAttendance(ev,status,{simulated=false}={}){
 
 // ---------- Pending decisions lifecycle ----------
 const PENDING_RULES={
- kindergarten:{minAge:3,maxAge:5,expireStatus:'Superseded',expireReason:'Primary school age reached',autoDays:14},
+ kindergarten:{minAge:3,maxAge:null,expireStatus:'Superseded',expireReason:'Primary school age reached',autoDays:14},
  clubApproval:{maxDays:10,needsSchool:true},contestApproval:{maxDays:10,needsSchool:true},
  purchaseConsideration:{maxDays:21},jobApplication:{maxDays:21},
  conditionalPurchase:{maxDays:180,expireStatus:'Expired',expireReason:'The offer quietly lapsed'}
@@ -801,7 +790,8 @@ function normalizePending(x){
  const rule=PENDING_RULES[x.type]||{};
  Object.assign(x,Object.assign({id:uid('pending'),createdDate:currentDate(),status:'Pending',detail:'',resolved:false,resolveDate:null,expiresDate:null,minAge:rule.minAge??null,maxAge:rule.maxAge??null,resolvedDate:null,resolutionReason:null,supersededBy:null},x));
  if(x.type==='purchaseConsideration'&&x.status==='Conditional'&&!x.resolveDate){x.type='conditionalPurchase';x.expiresDate=addDays(currentDate(),180)}
- if(!x.expiresDate&&!x.resolved){if(x.type==='kindergarten')x.expiresDate=sixthBirthday();else if(rule.maxDays)x.expiresDate=addDays(x.createdDate||currentDate(),rule.maxDays)}
+ if(x.type==='kindergarten'){x.maxAge=null;x.expiresDate=null}
+ if(!x.expiresDate&&!x.resolved){if(x.type==='kindergarten'){}else if(rule.maxDays)x.expiresDate=addDays(x.createdDate||currentDate(),rule.maxDays)}
  if(x.type==='kindergarten'&&!x.resolved&&!x.resolveDate&&!x.autoDecideDate)x.autoDecideDate=addDays(currentDate(),x.createdDate&&daysBetween(x.createdDate,currentDate())>14?3:rule.autoDays||14);
  return x
 }
@@ -812,6 +802,7 @@ function resolvePendingDecision(p,status,reason,{title=null,text=null,important=
 }
 function pendingLifecycleCheck(p){
  if(p.resolved)return;const rule=PENDING_RULES[p.type]||{};
+ if(p.type==='kindergarten'){if(needsFormalSchool()||S.age>=7){const k=S.development.kindergarten;if(!k.decision)k.decision='Not needed — primary school began';resolvePendingDecision(p,'Superseded','Primary school age reached',{title:'Kindergarten question closed',text:`The kindergarten decision was never settled before primary school began, so it is closed. You started ${S.school?.grade||'primary school'} instead.`,supersededBy:S.school?.grade||'Primary school'})}return}
  if(p.maxAge!=null&&S.age>p.maxAge){
   if(p.type==='kindergarten'){const k=S.development.kindergarten;if(!k.decision)k.decision='Not needed — primary school began';resolvePendingDecision(p,'Superseded','Primary school age reached',{title:'Kindergarten question closed',text:`The kindergarten decision was never settled before primary school began, so it is closed. You started ${S.school?.grade||'primary school'} instead.`,supersededBy:S.school?.grade||'Primary school'});return}
   resolvePendingDecision(p,rule.expireStatus||'Expired',rule.expireReason||'No longer relevant at this age',{text:`${p.title} is no longer relevant at your age.`});return
@@ -1012,21 +1003,6 @@ function closeSchoolYear(old,{leaving=false}={}){
  if(rec||old.grade==='Kindergarten')S.schoolHistory.unshift({grade:old.grade,school:old.name,endedDate:currentDate(),average:Math.round(old.subjects?.reduce((a,s)=>a+safeNum(s.score,0),0)/Math.max(1,old.subjects?.length||1)),attendance:Math.round(old.attendance||0),record:rec});
  if(S.schoolHistory.length>20)S.schoolHistory.length=20
 }
-function progressSchoolForAge(){
- ensureLifecycleContainers();const carry=S.school;
- if(S.age===3&&!S.development.kindergarten.asked){S.development.kindergarten.asked=true;createPending({type:'kindergarten',title:'Kindergarten decision',resolveDate:null,status:'Waiting for your preference',payload:{preference:null},autoDecideDate:addDays(currentDate(),14),detail:'Your caregivers want to hear whether you want to attend before they decide. If you do not answer, they will decide within two weeks.'});log('Kindergarten becomes a question','Your family starts discussing preschool/kindergarten, childcare, money, schedules and your preferences.')}
- if(S.age>=3&&S.age<=5){if(S.development.kindergarten.decision&&S.development.kindergarten.enrolled)S.school=buildSchool(S.age,carry);else S.school=null;return}
- if(S.age>=6&&S.age<=17){closeSchoolYear(carry);const fromStage=stageOfSchool(carry),toStage=stageForAge(S.age);if(carry&&fromStage&&fromStage!==toStage)recordGraduation(fromStage,carry.name);S.school=buildSchool(S.age,carry);S.school.record=freshSchoolRecord();S.school.clubs.forEach(c=>{ensureClub(c);if(!clubSessionEvent(c))scheduleClubSession(c,nextSchoolDay(addDays(currentDate(),3)))});scheduleExams();generateHomework(true);ensureProm()}
- else{if(carry){closeSchoolYear(carry,{leaving:true});if(S.age>=18&&stageOfSchool(carry)==='high')recordGraduation('high',carry.name)}S.school=null}
-}
-function reconcileSchoolStage(){
- const k=S.development?.kindergarten;
- if(S.age>=6&&S.age<=17&&(!S.school||S.school.grade==='Kindergarten'))progressSchoolForAge();
- else if(S.age>=18&&S.school){const old=S.school;closeSchoolYear(old,{leaving:true});if(stageOfSchool(old)==='high')recordGraduation('high',old.name);S.school=null}
- else if(S.age<3&&S.school)S.school=null;
- else if(S.age>=3&&S.age<=5&&S.school&&S.school.grade!=='Kindergarten')S.school=k?.enrolled?buildSchool(S.age,null):null;
- if(S.school&&S.school.grade==='Kindergarten'&&!(k?.enrolled))S.school=null
-}
 function reconcileExams(){
  S.exams=Array.isArray(S.exams)?S.exams:[];S.exams.forEach(normalizeExam);
  if(!needsFormalSchool()){for(const exam of S.exams)if(examIsOpen(exam)){exam.status='Cancelled';exam.reason='Not enrolled in formal school'}}
@@ -1179,7 +1155,7 @@ function advanceTime(minutes,{skipNeeds=false,silent=false,skipRoutine=false}={}
  if(!SIM.skipping)clearCurrentContextIfSourceResolved()
 }
 function dailyTick({skipRoutine=false}={}){
- setWeather();ageSync();itemDailyTick();schoolDailyTick(skipRoutine);schoolActivityTick();holidayTick();
+ setWeather();ageSync();itemDailyTick();academicTick();schoolDailyTick(skipRoutine);schoolActivityTick();holidayTick();
  if(!skipRoutine){worldTick();const sd=needsFormalSchool()&&isSchoolDay();scheduleFollowUp('npcInitiative',{},{minute:(sd?940:600)+Math.floor(Math.random()*(sd?200:540))});applyNeedConsequences(true);if(S.stall?.active&&chance(35))runStall(false)}
  if(!skipRoutine)repDailyTick();
  promTick();npcAgencyTick();if(!skipRoutine){neighborhoodTick();groupTick()}
@@ -1215,6 +1191,7 @@ function upcomingEvents(limit=7,{includeRoutine=false}={}){
  const today=currentDate(),now=nowStamp(),arr=[];
  arr.push({id:'birthday',title:`${S.name}'s birthday`,dateISO:nextBirthday(),type:'birthday',icon:'🎂'});
  for(const x of upcomingHolidays(4))arr.push({id:'hol-'+x.h.id,title:x.h.name,dateISO:x.dateISO,type:'holiday',icon:x.h.icon});
+ for(const mk of academicMarkers().filter(x=>x.dateISO>=today).slice(0,40).sort((a,b)=>a.dateISO.localeCompare(b.dateISO)).slice(0,4))arr.push(mk);
  for(const e of S.calendar){if(isTerminal(e.status))continue;if(!includeRoutine&&e.type==='schoolDay')continue;if(e.dateISO<today)continue;if(e.dateISO===today&&stamp(e.dateISO,e.graceMinute??e.minute??0)<now)continue;arr.push(e)}
  if(needsFormalSchool())for(const s of S.school.subjects){const hw=s.homework;if(hw&&HW_OPEN.includes(hw.status)&&hw.dueDate>=today)arr.push({id:hw.id,title:`${s.name} homework`,dateISO:hw.dueDate,minute:480,type:'homework',status:homeworkLabel(hw)})}
  for(const p of S.pendingDecisions.filter(x=>!x.resolved&&x.resolveDate&&x.resolveDate>=today))arr.push({id:p.id,title:p.title,dateISO:p.resolveDate,type:'decision'});
@@ -1266,7 +1243,7 @@ function schoolPanel(){
  const clubHtml=clubs.length?clubs.map(c=>{ensureClub(c);const def=D.clubDefs[c.name]||{actions:[['practice','Practice',60],['special','Special activity',90],['social','Talk with members',45]]},ev=clubSessionEvent(c),today=ev&&ev.dateISO===currentDate(),open=today&&currentMinute()<=ev.graceMinute,before=ev&&(ev.dateISO>currentDate()||(today&&currentMinute()<ev.startMinute));
   return `<div class="commitment-card club-card"><div><b>${esc(c.name)} <span class="tag">${esc(c.position)}</span>${(()=>{const L=ladderFor(c),i=L.indexOf(c.position);return i>=0&&i<L.length-1?` <small class="muted-text">next: ${esc(L[i+1])}</small>`:''})()}${c.leaderNpc?` <small class="muted-text">• led by ${esc(c.leaderNpc)}</small>`:''}${c.warnings?' <span class="tag bad">Warning</span>':''}</b><small>Led by ${esc(c.leader)} · relationship ${Math.round(c.leaderRel)}% • attendance ${clubAttendanceRate(c)}% (${c.attended} attended, ${c.missedSessions} missed${c.excusedSessions?`, ${c.excusedSessions} excused`:''}) • skill ${Math.round(c.skill||0)}%</small><small>${ev?`Next session ${today?'<b>today</b>':formatDate(ev.dateISO)} ${timeLabel(ev.startMinute)}–${timeLabel(ev.endMinute)}${ev.status==='Due'?' • happening now':''}`:'No session scheduled'}</small><div class="progress"><i style="width:${clamp(c.skill||0)}%"></i></div></div><div class="inline-actions">${open?`<button class="small primary" data-club-attend="${c.id}">Attend session</button><button class="small ghost" data-club-skip="${c.id}">Skip</button>`:''}${before?`<button class="small ghost" data-club-excuse="${c.id}">Tell leader you can't come</button>`:''}${def.actions.map(a=>`<button class="small ghost" data-club-action="${c.id}" data-kind="${a[0]}">${esc(a[1])}</button>`).join('')}<button class="small ghost" data-club-action="${c.id}" data-kind="leave">Leave</button></div></div>`}).join(''):'<p class="muted-text">You have not joined a club yet.</p>';
  const eventHtml=events.length?events.map(c=>{const d=daysBetween(currentDate(),c.eventDate);if(c.status==='Open')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Register by ${formatDate(c.decisionDate)} • event ${formatDate(c.eventDate)}</small></div><div class="inline-actions"><button class="small" data-contest-enter="${c.id}">${S.age<13?'Ask to enter':'Register'}</button><button class="small ghost" data-contest-decline="${c.id}">Decline</button></div></div>`;if(c.status==='Waiting')return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>Waiting for caregiver approval</small></div>${statusTag('Waiting')}</div>`;if(c.status==='Registered'){const ev=contestEvent(c),live=ev&&ev.dateISO===currentDate()&&currentMinute()<=ev.graceMinute;return `<div class="commitment-card"><div><b>${esc(c.name)}</b><small>${d<=0?`Today • check-in ${timeLabel(ev?.startMinute??600)}–${timeLabel(ev?.graceMinute??690)}`:`Event in ${d} day${d===1?'':'s'} • ${formatDate(c.eventDate)}`} • preparation ${Math.round(c.prep||0)}%</small><div class="progress"><i style="width:${clamp(c.prep||0)}%"></i></div></div><div class="inline-actions">${live?`<button class="small primary" data-contest-attend="${c.id}">Go to the event</button>`:''}<button class="small ghost" data-contest-practice="${c.id}">Prepare 75m</button></div></div>`}return `<div class="opportunity-row"><div><b>${esc(c.name)}</b><small>${esc(c.result||c.status)}</small></div>${statusTag(c.status)}</div>`}).join(''):'<p class="muted-text">No current event opportunities.</p>';
- return `<div class="dashboard"><section class="card wide"><h3>Today at school</h3>${schoolSessionHtml()}<p class="muted-text">On time by ${timeLabel(SCHOOL_DAY.tardyAfter)}, absent after ${timeLabel(SCHOOL_DAY.cutoff)}. This year: ${rec.daysAttended} days • ${rec.absences} absent • ${rec.tardies} late${rec.classesSkipped?` • ${rec.classesSkipped} classes skipped`:''}.</p></section><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Grade',esc(S.school.grade))}${statRow('Class',esc(S.school.className))}${statRow('Academic average',Math.round(schoolAverage())+'%')}${statRow('Attendance',Math.round(S.school.attendance)+'%')}${statRow('Behavior',Math.round(S.school.behavior)+'%')}${!primary&&S.school.gpa!=null?statRow('GPA',Number(S.school.gpa).toFixed(2)):''}</section><section class="card"><h3>School reputation</h3>${repHtml()}</section><section class="card"><h3>Education history</h3>${educationHistoryHtml()}</section><section class="card wide"><h3>Subjects, teachers & homework</h3><div class="subject-grid">${subjectHtml}</div></section><section class="card wide"><h3>Assessments</h3>${examHtml}</section>${attendanceHtml()}<section class="card wide"><div class="section-heading"><div><h3>Clubs & activities</h3><p class="muted-text">Sessions are weekly commitments. Missing them has consequences; telling the leader beforehand is understood.</p></div><button class="small" data-act="exploreClub">Explore activities</button></div>${electionHtml()}${tryoutsHtml()?`<h4>Tryouts & auditions</h4>${tryoutsHtml()}`:''}<h4>Offers</h4>${offerHtml}${electionGradeOK()&&!(S.school.clubs||[]).some(c=>c.name==='Student Council'&&c.status==='Active')&&!(S.elections||[]).some(e=>e.status==='Campaign'&&e.scope==='council')?'<div class="inline-actions"><button class="small ghost" data-run-council="1">Run for class representative</button></div>':''}<h4>Your commitments</h4>${clubHtml}${removed.length?`<p class="muted-text">Removed: ${removed.map(c=>esc(c.name)).join(', ')}</p>`:''}</section><section class="card wide"><div class="section-heading"><div><h3>Competitions & school events</h3><p class="muted-text">Registering is not enough — you have to show up on the day.</p></div><button class="small" data-act="exploreContest">Find event</button></div>${eventHtml}</section></div>`
+ return `<div class="dashboard"><section class="card wide"><h3>Today at school</h3>${schoolSessionHtml()}<p class="muted-text">On time by ${timeLabel(SCHOOL_DAY.tardyAfter)}, absent after ${timeLabel(SCHOOL_DAY.cutoff)}. This year: ${rec.daysAttended} days • ${rec.absences} absent • ${rec.tardies} late${rec.classesSkipped?` • ${rec.classesSkipped} classes skipped`:''}.</p></section><section class="card"><h3>${esc(S.school.name)}</h3>${statRow('Grade',esc(S.school.grade))}${statRow('Semester',esc(semesterLabel()))}${statRow('Class',esc(S.school.className))}${statRow('Academic average',Math.round(schoolAverage())+'%')}${statRow('Attendance',Math.round(S.school.attendance)+'%')}${statRow('Behavior',Math.round(S.school.behavior)+'%')}${!primary&&S.school.gpa!=null?statRow('GPA',Number(S.school.gpa).toFixed(2)):''}</section><section class="card"><h3>School reputation</h3>${repHtml()}</section><section class="card"><h3>Education history</h3>${educationHistoryHtml()}</section><section class="card wide"><h3>Subjects, teachers & homework</h3><div class="subject-grid">${subjectHtml}</div></section><section class="card wide"><h3>Assessments</h3>${examHtml}</section>${attendanceHtml()}<section class="card wide"><div class="section-heading"><div><h3>Clubs & activities</h3><p class="muted-text">Sessions are weekly commitments. Missing them has consequences; telling the leader beforehand is understood.</p></div><button class="small" data-act="exploreClub">Explore activities</button></div>${electionHtml()}${tryoutsHtml()?`<h4>Tryouts & auditions</h4>${tryoutsHtml()}`:''}<h4>Offers</h4>${offerHtml}${electionGradeOK()&&!(S.school.clubs||[]).some(c=>c.name==='Student Council'&&c.status==='Active')&&!(S.elections||[]).some(e=>e.status==='Campaign'&&e.scope==='council')?'<div class="inline-actions"><button class="small ghost" data-run-council="1">Run for class representative</button></div>':''}<h4>Your commitments</h4>${clubHtml}${removed.length?`<p class="muted-text">Removed: ${removed.map(c=>esc(c.name)).join(', ')}</p>`:''}</section><section class="card wide"><div class="section-heading"><div><h3>Competitions & school events</h3><p class="muted-text">Registering is not enough — you have to show up on the day.</p></div><button class="small" data-act="exploreContest">Find event</button></div>${eventHtml}</section></div>`
 }
 function handleLifecycleClick(b){
  if(handleInventoryClick(b))return true;if(promClick(b))return true;if(worldClick(b))return true;if(handleSchoolClick(b))return true;if(handlePlanClick(b))return true;if(handleClubClick(b))return true;if(handleUIClick(b))return true;
@@ -1666,7 +1643,7 @@ function reconcileEducationHistory(){
  S.education=Object.assign({graduations:[]},S.education||{});
  const k=S.development?.kindergarten;
  if(S.age>=6&&k?.enrolled&&!S.education.graduations.some(g=>g.stage==='kindergarten')){const y=parseISO(sixthBirthday()).getUTCFullYear();recordGraduation('kindergarten',k.schoolName||'kindergarten',{year:y,silent:true})}
- if(S.school&&S.school.grade!=='Kindergarten'){const st=stageForAge(S.age);S.school.stage=st;if(!nameMatchesStage(S.school.name,st)){const old=S.school.name;S.school.name=schoolNameFor(st,old);for(const e of S.calendar)if(e.type==='schoolDay'&&!isTerminal(e.status))e.title=`School • ${S.school.name}`}}
+ if(S.school&&S.school.grade!=='Kindergarten'){const st=stageForAge(gradeNumber()+5);S.school.stage=st;if(!nameMatchesStage(S.school.name,st)){const old=S.school.name;S.school.name=schoolNameFor(st,old);for(const e of S.calendar)if(e.type==='schoolDay'&&!isTerminal(e.status))e.title=`School • ${S.school.name}`}}
 }
 
 // ---------- Timetable ----------
@@ -1699,7 +1676,7 @@ function classAction(kind){
  let story;ev.periods[p.id]=kind;
  if(kind==='attend'){sessionGain(sub,mins,{focus:S.needs.sleep<35?.6:1});story=rand([`${sub.name} with ${t.name}. You take decent notes.`,`You follow along in ${sub.name}. One idea finally makes sense.`,`${t.name} runs ${sub.name} at full speed; you keep up, mostly.`])+(S.needs.sleep<35?' You are tired, so less of it sticks.':'')}
  else if(kind==='participate'){if(S.energy<15){toast('You are too tired to participate actively.');return}sessionGain(sub,mins,{focus:1.4,teacher:1.5});addRep('academic',.3);S.energy=clamp(S.energy-4);const right=chance(40+sub.skill*.5);story=right?`You raise your hand in ${sub.name} and get it right. ${t.name} looks pleased.`:`You answer a question in ${sub.name} and get it wrong, but ${t.name} walks you through it. You remember it now.`}
- else if(kind==='chat'){sessionGain(sub,mins,{focus:.35,social:10});if(friend){friend.rel=clamp(friend.rel+2);rememberPerson(friend,`You chatted during ${sub.name}.`)}addRep('social',.3);if(chance(t.style==='Strict'?45:22)){t.rel=clamp(t.rel-3);addRep('troublemaker',1);story=`You and ${fn||'a classmate'} whisper through ${sub.name} until ${t.name} stops mid-sentence and stares at you both.`}else story=`You and ${fn||'a classmate'} pass notes through ${sub.name}. Fun — but you missed most of the lesson.`}
+ else if(kind==='chat'){sessionGain(sub,mins,{focus:.35,social:10});if(chance(20))setTimeout(()=>{},0),meetNewPeople('school');if(friend){friend.rel=clamp(friend.rel+2);rememberPerson(friend,`You chatted during ${sub.name}.`)}addRep('social',.3);if(chance(t.style==='Strict'?45:22)){t.rel=clamp(t.rel-3);addRep('troublemaker',1);story=`You and ${fn||'a classmate'} whisper through ${sub.name} until ${t.name} stops mid-sentence and stares at you both.`}else story=`You and ${fn||'a classmate'} pass notes through ${sub.name}. Fun — but you missed most of the lesson.`}
  else if(kind==='skip'){ev.skipped=(ev.skipped||0)+1;S.needs.fun=clamp(S.needs.fun+6);S.stress=clamp(S.stress+2);const rec=ensureSchoolRecord();rec.classesSkipped=(rec.classesSkipped||0)+1;addRep('troublemaker',2);
   if(chance(30+ev.skipped*15)){t.rel=clamp(t.rel-5);S.school.behavior=clamp(S.school.behavior-3);story=`You hide out in the stairwell during ${sub.name}. A hall monitor finds you. ${t.name} will hear about it.`;if(S.age<18)scheduleFollowUp('absenceNotice',{dateISO:currentDate(),count:Math.max(2,rec.absences+1)},{minute:1050})}else story=`You skip ${sub.name} and wander the empty corridors. Nobody notices — this time.`;}
  advanceTime(mins,{silent:true});log(`${p.label} • ${sub.name}`,story)
@@ -2032,7 +2009,7 @@ function holidayHtml(){
 
 // ---------- v7.2 Month calendar, date agenda & Life Planner ----------
 let calView=null,calSelected=null,calFilter=null;
-const CAL_CATS={prom:'Social',tryout:'Club',plan:'Social',election:'Club',schoolDay:'School',exam:'Exam',homework:'Homework',clubSession:'Club',schoolEvent:'Competition',party:'Social',holiday:'Holiday',birthday:'Birthday',decision:'Decision',generic:'Other'};
+const CAL_CATS={term:'School',prom:'Social',tryout:'Club',plan:'Social',election:'Club',schoolDay:'School',exam:'Exam',homework:'Homework',clubSession:'Club',schoolEvent:'Competition',party:'Social',holiday:'Holiday',birthday:'Birthday',decision:'Decision',generic:'Other'};
 const CAL_TONE={School:'school',Exam:'exam',Homework:'homework',Club:'club',Competition:'competition',Social:'social',Holiday:'holiday',Birthday:'birthday',Decision:'decision',Other:'other'};
 function calShift(n){const v=calView||currentDate().slice(0,7),[y,m]=v.split('-').map(Number);calView=isoDate(new Date(Date.UTC(y,m-1+n,1))).slice(0,7)}
 function monthLabel(ym){const [y,m]=ym.split('-').map(Number);return new Date(Date.UTC(y,m-1,1)).toLocaleDateString(undefined,{month:'long',year:'numeric',timeZone:'UTC'})}
@@ -2040,6 +2017,7 @@ function agendaFor(dateISO){
  const items=[],seen=new Set(),today=currentDate();
  for(const ev of [...S.calendar,...(S.archive?.calendar||[])].filter(e=>e.dateISO===dateISO)){if(seen.has(ev.id))continue;seen.add(ev.id);const d=obDef(ev.type);items.push({id:ev.id,cat:CAL_CATS[ev.type]||'Other',icon:d.icon,title:ev.type==='schoolDay'?'School day':ev.title,minute:ev.startMinute??ev.minute??null,end:ev.endMinute??null,status:ev.status||'Scheduled',location:ev.location||d.location||'',required:ev.required??d.required,participants:ev.participants||[],type:ev.type,attendance:ev.attendanceStatus||null})}
  for(const x of holidaysOn(dateISO))items.push({id:'hol-'+x.h.id,cat:'Holiday',icon:x.h.icon,title:x.h.durationDays>1?`${x.h.name} (day ${x.day})`:x.h.name,minute:null,status:dateISO<today?'Passed':'Holiday',type:'holiday',holiday:x});
+ for(const mk of academicMarkers().filter(x=>x.dateISO===dateISO))items.push({id:mk.id,cat:'School',icon:mk.icon,title:mk.title,minute:null,status:'',type:'term'});
  if(sameMonthDay(S.dob,dateISO))items.push({id:'bday',cat:'Birthday',icon:'🎂',title:dateISO.slice(0,4)===S.dob.slice(0,4)?'You were born':`Your ${ordinal(Number(dateISO.slice(0,4))-Number(S.dob.slice(0,4)))} birthday`,minute:null,status:'',type:'birthday'});
  if(S.school?.subjects)for(const s of S.school.subjects){const hw=s.homework;if(hw?.dueDate===dateISO&&hw.status!=='None')items.push({id:hw.id||s.name,cat:'Homework',icon:'📒',title:`${s.name} homework due`,minute:480,status:HW_OPEN.includes(hw.status)?homeworkLabel(hw):hw.status,type:'homework'})}
  for(const p of [...S.pendingDecisions,...(S.archive?.pending||[])].filter(x=>x.resolveDate===dateISO||x.resolvedDate===dateISO&&x.resolved))items.push({id:p.id,cat:'Decision',icon:'⏳',title:p.title,minute:null,status:p.resolved?p.status:'Decision due',type:'decision'});
@@ -2573,13 +2551,6 @@ const DATE_SCENE={steps:[
 
 // ---------- v7.2 PHASE 5b: PROM (§63–70) ----------
 function promEligible(){const g=gradeNumber();return needsFormalSchool()&&g>=8&&g<=12}
-function promDateFor(fromISO){const y=parseISO(fromISO).getUTCFullYear();for(const yy of [y,y+1]){const d=lastWeekday(yy,4,6);if(d>fromISO)return d}return lastWeekday(y+1,4,6)}
-function ensureProm(){
- if(!promEligible())return null;const sc=S.school;if(sc.prom&&sc.prom.year===sc.yearStarted)return sc.prom;
- const d=promDateFor(sc.yearStarted||currentDate());if(d<=currentDate()||(schoolYearEnd()&&d>schoolYearEnd()))return null;const junior=gradeNumber()<=9;
- sc.prom={year:sc.yearStarted,junior,dateISO:d,venue:junior?'the school gym, transformed':rand(['the Grand Hotel ballroom','the school gym, transformed','the riverside event hall','the old city museum']),dress:'Formal',ticket:40,status:'Upcoming',plan:null,partnerId:null,asFriends:false,asked:[],received:[],prep:{},committee:0,ticket:40,ticketBought:false};
- createCalendarEvent({id:`prom-${sc.yearStarted}`,type:'prom',title:junior?'Junior Prom':'Prom',dateISO:d,startMinute:1140,endMinute:1380,graceMinute:1230,location:sc.prom.venue,payload:{year:sc.yearStarted},required:false,source:'school'});return sc.prom
-}
 function promDaysLeft(){const pr=S.school?.prom;return pr?daysBetween(currentDate(),pr.dateISO):null}
 function promTick(){
  const pr=ensureProm();if(!pr||['Done','Skipped'].includes(pr.status))return;const d=promDaysLeft();
@@ -2587,47 +2558,49 @@ function promTick(){
  if(pr.status!=='Season')return;
  // NPC agency: peers pair up, some decide not to go
  const pool=S.people.filter(p=>!isFamilyPerson(p)&&personAge(p)>=13&&personAge(p)<=18&&Math.abs(personAge(p)-S.age)<=2&&!p.promWith&&p.id!==pr.partnerId);
- for(const p of pool){if(chance(4)){const other=(S.npcs||[]).find(n=>n.id!==p.npcId&&Math.abs(npcAge(n)-personAge(p))<=1&&!n.promWith);if(other){p.promWith=other.fullName;other.promWith=p.fullName;if(p.rel>=60&&!SIM.skipping)log('Prom news',`${firstName(p)} is going to prom with ${other.fullName}.`)}}else if(chance(1))p.notGoingProm=true}
+ for(const p of pool){if(personPromWith(p))continue;const cpl=p.datingNpc&&(S.npcs||[]).find(n=>n.fullName===p.datingNpc);if(cpl&&!cpl.promWith){pairPersonWithNpc(p,cpl);continue}if(chance(3)){const other=freePromNpc([p.npcId],personAge(p));if(other){pairPersonWithNpc(p,other);if(p.rel>=60&&!SIM.skipping)log('Prom news',`${firstName(p)} is going to prom with ${other.fullName}.`)}}else if(chance(.6))p.notGoingProm=true}
  // NPC asks the player
- if(!SIM.skipping&&!pr.partnerId&&!pr.received.some(r=>r.status==='Pending')&&chance(7)){const c=S.people.filter(p=>eligibleRomance(p)&&!p.promWith&&!p.datingNpc).map(ensureRomanceProfile).filter(p=>p.attraction>=55&&p.rel>=45).sort((a,b)=>b.attraction-a.attraction)[0];if(c)npcAsksToProm(c)}
+ const dleft=promDaysLeft();if(!SIM.skipping&&!pr.partnerId&&!pr.received.some(r=>r.status==='Pending')&&chance(7+(dleft<=14?8:0))){const c=S.people.filter(p=>eligibleRomance(p)&&!personPromWith(p)&&!p.datingNpc).map(ensureRomanceProfile).filter(p=>(p.attraction>=45&&p.rel>=40)||(dleft<=10&&p.rel>=55)).sort((a,b)=>b.attraction-a.attraction)[0];if(c)npcAsksToProm(c)}
 }
 function npcAsksToProm(p){const pr=S.school.prom;pr.received.push({personId:p.id,dateISO:currentDate(),status:'Pending'});queueEvent({type:'promInvite',title:`${displayName(p)} asks about prom`,text:`"So… do you have plans for prom? Would you want to go with me?" ${firstName(p)} looks nervous.`,participants:[p.id],priority:4,expiresDays:3,choices:[{id:'accept',label:'Accept'},{id:'friends',label:'Suggest going as friends'},{id:'time',label:'Say you need time'},{id:'decline',label:'Politely decline'},...(pr.partnerId?[{id:'have',label:'Tell them you already have a date'}]:[])]})}
 function handlePromInvite(e,id){
  const pr=S.school?.prom,p=personById(e.participants?.[0]);if(!pr||!p)return true;const rec=pr.received.find(r=>r.personId===p.id&&r.status==='Pending');const th=thread('prom',`prom-${pr.year}`,'Prom season');
- if(id==='accept'){if(pr.partnerId){toast('You already have a prom date.');return true}pr.partnerId=p.id;pr.plan='date';pr.asFriends=false;if(rec)rec.status='Accepted';p.rel=clamp(p.rel+6);p.promWith=S.name;threadStep(th,'Got a prom date',`${displayName(p)} asked you`);recordOutcome('Prom',`${displayName(p,'formal')} asked you`,'Accepted','You said yes.');log('Prom date!',`You say yes. ${firstName(p)} grins and tries to act casual about it. It is not working.`,true);if(eligibleRomance(p)&&p.romanceStage==='none')p.romanceStage='crush'}
- else if(id==='friends'){pr.partnerId=p.id;pr.plan='date';pr.asFriends=true;if(rec)rec.status='Accepted as friends';p.rel=clamp(p.rel+3);p.promWith=S.name;threadStep(th,'Going with a friend',displayName(p));log('Prom — as friends',`"As friends? Sure — honestly that's less pressure," ${firstName(p)} says.`)}
+ if(id==='accept'){if(pr.partnerId){toast('You already have a prom date.');return true}pr.partnerId=p.id;pr.plan='date';pr.asFriends=false;if(rec)rec.status='Accepted';p.rel=clamp(p.rel+6);setPromWithPerson(p,S.name);threadStep(th,'Got a prom date',`${displayName(p)} asked you`);recordOutcome('Prom',`${displayName(p,'formal')} asked you`,'Accepted','You said yes.');log('Prom date!',`You say yes. ${firstName(p)} grins and tries to act casual about it. It is not working.`,true);if(eligibleRomance(p)&&p.romanceStage==='none')p.romanceStage='crush'}
+ else if(id==='friends'){pr.partnerId=p.id;pr.plan='date';pr.asFriends=true;if(rec)rec.status='Accepted as friends';p.rel=clamp(p.rel+3);setPromWithPerson(p,S.name);threadStep(th,'Going with a friend',displayName(p));log('Prom — as friends',`"As friends? Sure — honestly that's less pressure," ${firstName(p)} says.`)}
  else if(id==='time'){if(rec){rec.status='Waiting';rec.deadline=addDays(currentDate(),2)}scheduleFollowUp('promTimeout',{personId:p.id},{days:2,minute:1080});log('You need time',`"Can I get back to you?" ${firstName(p)} nods. "Sure… just don't take too long."`)}
  else if(id==='have'){if(rec)rec.status='Declined';log('Already going',`You tell ${firstName(p)} you already have a date. "Oh — right. Of course." It is a little awkward.`)}
- else{if(rec)rec.status='Declined';p.rel=clamp(p.rel-1);log('Declined',`You thank ${firstName(p)} but say no. They take it well, mostly.`);if(chance(70))p.promWith=rand(S.npcs.filter(n=>n.id!==p.npcId))?.fullName||null}
+ else{if(rec)rec.status='Declined';p.rel=clamp(p.rel-1);log('Declined',`You thank ${firstName(p)} but say no. They take it well, mostly.`);if(chance(70)){const o=freePromNpc([p.npcId],personAge(p));if(o)pairPersonWithNpc(p,o)}}
  return true
 }
 const PROM_APPROACH={casual:'Ask casually',private:'Ask privately',promposal:'Make a cute promposal',text:'Ask by text',public:'Ask in front of friends',gift:'Ask with a small gift',joke:'Ask jokingly'};
 function promCandidates(){return S.people.filter(p=>!isFamilyPerson(p)&&personAge(p)>=13&&personAge(p)<=18&&Math.abs(personAge(p)-S.age)<=2&&!p.movedAway).map(p=>{ensureRomanceProfile(p);return p})}
-function promAskModal(personId){const p=personById(personId);if(!p)return;openModal(`Ask ${displayName(p)} to prom`,`<p class="muted-text">How you ask matters — and depends on who they are.${p.trust>=55&&p.boundaries?.includes('noPublicAffection')?` You know ${firstName(p)} dislikes public attention.`:''}</p><div class="modal-action-grid">${Object.entries(PROM_APPROACH).filter(([k])=>k!=='text'||canUsePhone()).map(([k,l])=>`<button data-prom-approach="${k}" data-person-id="${p.id}">${esc(l)}${k==='gift'?` • ${money(8)}`:k==='promposal'?` • ${money(10)}`:''}</button>`).join('')}<button class="ghost" data-close-modal="1">Not yet</button></div>`)}
+function promAskTarget(id){if(String(id).startsWith('npc:')){const n=npcById(id.slice(4));if(!n)return null;const p=addNeighborPerson(n,'neighbor');p.rel=Math.max(p.rel,45);ensureRomanceProfile(p);return p}return personById(id)}
+function promAskModal(personId){const p=promAskTarget(personId);if(!p)return;openModal(`Ask ${displayName(p)} to prom`,`<p class="muted-text">How you ask matters — and depends on who they are.${p.trust>=55&&p.boundaries?.includes('noPublicAffection')?` You know ${firstName(p)} dislikes public attention.`:''}</p><div class="modal-action-grid">${Object.entries(PROM_APPROACH).filter(([k])=>k!=='text'||canUsePhone()).map(([k,l])=>`<button data-prom-approach="${k}" data-person-id="${p.id}">${esc(l)}${k==='gift'?` • ${money(8)}`:k==='promposal'?` • ${money(10)}`:''}</button>`).join('')}<button class="ghost" data-close-modal="1">Not yet</button></div>`)}
 function askToProm(personId,approach){
- const pr=S.school?.prom,p=personById(personId);if(!pr||!p||pr.status!=='Season'){toast('It is not prom season.');return}closeChoiceModal();if(pr.partnerId){toast('You already have a prom date.');return}
+ const pr=S.school?.prom,p=promAskTarget(personId);if(!pr||!p||pr.status!=='Season'){toast('It is not prom season.');return}closeChoiceModal();if(pr.partnerId){toast('You already have a prom date.');return}
  if(pr.asked.some(a=>a.personId===p.id&&a.result!=='Pending')){toast(`You already asked ${firstName(p)}.`);return}
  if((approach==='gift'||approach==='promposal')&&S.age>=13&&!spendOwn(approach==='gift'?8:10)){toast('You cannot afford that approach.');return}
  const recent=pr.asked.filter(a=>daysBetween(a.dateISO,currentDate())<=7).length,tr=p.traits||[],romantic=eligibleRomance(p),a=p.attraction??40;
  const bonus={casual:0,private:tr.includes('Shy')?8:4,promposal:tr.includes('Outgoing')||tr.includes('Funny')?12:tr.includes('Shy')?-6:8,text:tr.includes('Shy')?4:-2,public:tr.includes('Outgoing')?10:(tr.includes('Shy')||tr.includes('Quiet'))?-20:0,gift:p.boundaries?.includes('noExpensiveGifts')?2:5,joke:tr.includes('Funny')?8:-6}[approach]||0;
  let result,reason,story;const prev=pr.asked[pr.asked.length-1];
- if(p.promWith&&p.promWith!==S.name){result='Rejected';reason='Already has a date';story=`"I really like hanging out with you, but I already told ${p.promWith} I'd go with them. I'm sorry."`}
+ const pw=personPromWith(p);if(pw&&pw!==S.name){result='Rejected';reason='Already has a date';story=`"I really like hanging out with you, but I already told ${pw} I'd go with them. I'm sorry."`}
  else if(p.datingNpc){result='Rejected';reason='Dating someone else';story=`"I'm going with ${p.datingNpc} — we're together. But thank you for asking."`}
  else if(p.notGoingProm){result='Rejected';reason='Not going to prom';story=`"I'm actually not going to prom at all. It's just not my thing."`}
  else if(approach==='public'&&(p.boundaries?.includes('noPublicAffection')||tr.includes('Shy'))){result='Rejected';reason='Embarrassed by the public promposal';story=`Everyone turns to look. ${firstName(p)} goes bright red. "I— can we talk about this later?" Later, quietly: "I'm sorry. I just can't do this when everyone is watching."`;addRep('social',-2)}
  else if((p.conflict||0)>25){result='Rejected';reason='Recent argument';story=`"After everything lately? I don't think that's a good idea."`}
  else if(S.romance.partnerId===p.id){result='Accepted';reason='You are together';story=`"Was that even a question? Of course."`}
  else if(p.rel<35){result='Rejected';reason='Low relationship';story=`"That's… nice of you, but we don't really know each other that well."`}
- else{const score=(romantic?a*.45:15)+p.rel*.35+bonus+Math.random()*20-10-(recent>=2?10:0);
-  if(score>=60&&romantic&&p.romanceOpen){result='Accepted';reason=a>=70?'Already had a crush on you':approach==='promposal'?'Impressed by the promposal':'Hoping you would ask';story=a>=70?`${firstName(p)} laughs, then covers their face. "Yes. I was literally hoping you'd ask."`:approach==='promposal'?`Your promposal gets a crowd laughing — ${firstName(p)} is laughing hardest. "Okay, okay — YES."`:`"Yes! I'd love to."`}
-  else if(p.rel>=55){result='Accepted as friends';reason=romantic&&a<45?'No romantic interest, but happy to go as friends':'Strong friendship';story=`"I'd love to go — just as friends, if that's okay?"`}
+ else{const dl=promDaysLeft(),late=dl<=7?14:dl<=14?8:0,grp=(S.groups||[]).some(g=>g.members.includes(p.id))?6:0;const score=(romantic?a*.45:15)+p.rel*.35+bonus+late+grp+Math.random()*20-10-(recent>=2?10:0);
+  if(score>=55&&romantic&&p.romanceOpen){result='Accepted';reason=a>=70?'Already had a crush on you':approach==='promposal'?'Impressed by the promposal':'Hoping you would ask';story=a>=70?`${firstName(p)} laughs, then covers their face. "Yes. I was literally hoping you'd ask."`:approach==='promposal'?`Your promposal gets a crowd laughing — ${firstName(p)} is laughing hardest. "Okay, okay — YES."`:`"Yes! I'd love to."`}
+  else if(chance(12)&&!romantic){result='Rejected';reason='Going with their friend group';story=`"Aww — I already promised my friends we'd all go as a group. Come find us there?"`}
+  else if((p.rel>=45||(p.rel>=35&&late>0))&&chance(clamp(35+(p.rel-45)*1.5+late,15,90))){result='Accepted as friends';reason=romantic&&a<45?'No romantic interest, but happy to go as friends':'Strong friendship';story=`"I'd love to go — just as friends, if that's okay?"`}
   else if(tr.includes('Shy')&&chance(50)){result='Pending';reason='Nervous — needs time';story=`"Can I… think about it? I'll tell you by ${formatDate(addDays(currentDate(),2))}."`;scheduleFollowUp('promAnswer',{personId:p.id},{days:2,minute:1020})}
   else{result='Rejected';reason=romantic&&a<35?'Does not share romantic attraction':'Simply not interested';story=`"Thank you for asking — really. But I don't think so."`}}
  if(recent>=1&&prev&&prev.result==='Rejected'&&result!=='Pending'&&chance(40)){const pp=personById(prev.personId);if(pp)story+=` (${firstName(p)} also mentions they heard you asked ${firstName(pp)} first.)`}
  pr.asked.push({personId:p.id,dateISO:currentDate(),approach,result,reason});
  if(recent>=2&&!pr.gossiped){pr.gossiped=true;addRep('social',-3);log('People are talking',`Word gets around that you have asked several people to prom this week. Someone makes a joke about it in the hallway.`)}
  const th=thread('prom',`prom-${pr.year}`,'Prom season');
- if(result.startsWith('Accepted')){pr.partnerId=p.id;pr.plan='date';pr.asFriends=result!=='Accepted';p.promWith=S.name;p.rel=clamp(p.rel+(pr.asFriends?3:6));setEmotion('Excited','You have a prom date.',70);threadStep(th,pr.asFriends?'Going with a friend':'Got a prom date',`${displayName(p)} — ${reason}`)}
+ if(result.startsWith('Accepted')){pr.partnerId=p.id;pr.plan='date';pr.asFriends=result!=='Accepted';setPromWithPerson(p,S.name);p.rel=clamp(p.rel+(pr.asFriends?3:6));setEmotion('Excited','You have a prom date.',70);threadStep(th,pr.asFriends?'Going with a friend':'Got a prom date',`${displayName(p)} — ${reason}`)}
  else if(result==='Rejected'){p.rel=clamp(p.rel-(reason==='Embarrassed by the public promposal'?5:1));S.happiness=clamp(S.happiness-4);setEmotion('Disappointed','A prom rejection.',55);threadStep(th,'Rejected',`${displayName(p)} — ${reason}`)}
  recordOutcome('Prom',`Asked ${displayName(p,'formal')} (${PROM_APPROACH[approach].toLowerCase()})`,result,reason);rememberPerson(p,`You asked them to prom: ${result.toLowerCase()}.`,2);advanceTime(20);log(`Prom: ${result}`,story,result.startsWith('Accepted'))
 }
@@ -2647,10 +2620,10 @@ function setPromPlan(plan){const pr=S.school?.prom;if(!pr||pr.status!=='Season')
  pr.plan=plan;const th=thread('prom',`prom-${pr.year}`,'Prom season');threadStep(th,{friends:'Going with friends',alone:'Going alone',skip:'Skipping prom',wait:'Waiting to be asked'}[plan]||plan,'');log('Prom plans',{friends:'You and your friends decide to go as a group. No pressure, all fun.',alone:'You decide to go on your own. Plenty of people do.',skip:'You decide prom is not for you this year.',wait:'You decide to wait and see if someone asks.'}[plan])}
 function promHtml(){
  const pr=S.school?.prom;if(!pr||!['Season'].includes(pr.status))return '';const d=promDaysLeft(),partner=pr.partnerId?personById(pr.partnerId):null;
- const cands=promCandidates().filter(p=>p.id!==pr.partnerId&&!pr.asked.some(a=>a.personId===p.id));
+ const cands=promCandidates().filter(p=>p.id!==pr.partnerId&&!pr.asked.some(a=>a.personId===p.id)),nbs=neighborPromCandidates();
  const prepRow=(slot,keys)=>`<div class="prom-prep"><b>${slot}</b>${pr.prep[slot.toLowerCase()]?`<span class="tag ok">${esc(pr.prep[slot.toLowerCase()])}</span>`:keys.map(k=>`<button class="small ${PROM_PREP[k][1]?'':'ghost'}" data-prom-prep="${k}">${esc(PROM_PREP[k][0])}${PROM_PREP[k][1]?` • ${money(PROM_PREP[k][1])}`:''}</button>`).join('')}</div>`;
  return `<div class="holiday-card prom-card"><div class="holiday-head"><span class="holiday-icon">💃</span><div><b>Prom • ${d===0?'tonight':`in ${d} day${d===1?'':'s'}`}</b><small>${formatDate(pr.dateISO)} • ${esc(pr.venue)} • formal${partner?` • going with ${esc(displayName(partner))}${pr.asFriends?' (as friends)':''}`:pr.plan?` • plan: ${esc(pr.plan)}`:''}</small></div></div>
- ${!partner&&pr.plan!=='skip'?`<h4>Ask someone</h4>${cands.length?`<div class="holiday-acts">${cands.slice(0,8).map(p=>`<button class="small" data-prom-ask="${p.id}">${esc(displayName(p))}${eligibleRomance(p)?'':' (as friends)'}</button>`).join('')}</div>`:'<p class="muted-text">Nobody left to ask right now.</p>'}`:''}
+ ${!partner&&pr.plan!=='skip'?`<h4>Ask someone</h4>${cands.length||nbs.length?`<div class="holiday-acts">${cands.slice(0,10).map(p=>`<button class="small" data-prom-ask="${p.id}">${esc(displayName(p))}${personPromWith(p)?' • has a date':''}${eligibleRomance(p)?'':' (as friends)'}</button>`).join('')}${nbs.slice(0,4).map(n=>`<button class="small ghost" data-prom-ask="npc:${n.id}">${esc(n.fullName)} (neighbor)</button>`).join('')}</div>`:'<p class="muted-text">Nobody left to ask right now — meet more people at school, clubs or around town.</p>'}`:''}
  <div class="holiday-acts">${['friends','alone','wait','skip'].filter(x=>x!==pr.plan).map(x=>`<button class="small ghost" data-prom-plan="${x}">${{friends:'Go with friends',alone:'Go alone',wait:'Wait to be asked',skip:'Skip prom'}[x]}</button>`).join('')}${pr.committee<3?`<button class="small ghost" data-prom-plan="committee">Help the prom committee (${pr.committee}/3)</button>`:''}</div>
  ${pr.plan!=='skip'?`<h4>Preparation</h4>${prepRow('Ticket',['ticket','waiver'])}${prepRow('Outfit',['outfitOwn','outfitBorrow','outfitBuy'])}${prepRow('Hair',['hairDiy','hairSalon'])}${findUsable('makeup')?prepRow('Makeup',['makeup']):''}${partner&&['US','UK','CA','AU'].includes(calendarProfile().region)?prepRow('Corsage',['corsage']):''}${prepRow('Transport',['rideParents','rideCarpool','rideLimo'])}${prepRow('Dinner',['dinnerHome','dinnerOut'])}${prepRow('Photos',['photos'])}<small class="muted-text">Nothing expensive is required — free options work.</small>`:''}</div>`
 }
@@ -2685,6 +2658,22 @@ function promMissed(ev){const pr=S.school?.prom;if(!pr){setCalendarStatus(ev,'Ex
  pr.status='Done';setCalendarStatus(ev,'Missed','Did not go');const p=pr.partnerId?personById(pr.partnerId):null;if(p){p.rel=clamp(p.rel-10);p.trust=clamp(p.trust-8);p.conflict=clamp((p.conflict||0)+12);rememberPerson(p,'You were supposed to go to prom together and never showed.',3);if(!SIM.skipping)log('Missed prom',`${firstName(p)} waited, then went in alone. That is going to be hard to fix.`)}recordOutcome('Prom','Prom night','Missed',p?'Your date went without you.':'You did not go.')}
 function handlePromSkip(id){const t={gaming:'You skipped prom and spent the evening gaming with friends who also skipped. Zero regrets.',family:'You skipped prom and watched movies with your family. Honestly lovely.',alone:'A quiet night: snacks, a book, no dress code.'}[id];S.milestones.unshift({dateISO:currentDate(),age:S.age,title:'Prom night',text:t});recordOutcome('Prom','Skipped prom','Chose something else',t);log('Prom night',t);return true}
 function promClick(b){const d=b.dataset;if(d.promAsk){promAskModal(d.promAsk);return true}if(d.promApproach){askToProm(d.personId,d.promApproach);save();render();return true}if(d.promPrep){promPrep(d.promPrep);save();render();return true}if(d.promPlan){setPromPlan(d.promPlan);save();render();return true}if(d.promGo){attendProm();save();return true}if(d.sceneChoice){sceneChoice(d.sceneChoice);return true}if(d.sceneResume){renderScene();return true}if(d.romance){romanceAction(personById(d.personId),d.romance);save();render();return true}if(d.romanceOpen){romanceMenu(d.romanceOpen);return true}return false}
+
+// v7.3: prom date = middle of semester 2 (moved to the following Saturday); consistent two-way pairs
+function promDateFor(yearKey){const a=academicYear(yearKey);let d=addDays(a.sem2Start,Math.floor(daysBetween(a.sem2Start,a.end)/2));while(parseISO(d).getUTCDay()!==6)d=addDays(d,1);return d}
+function ensureProm(){
+ if(!promEligible())return null;const sc=S.school;if(sc.yearKey==null)return null;if(sc.prom&&sc.prom.year===sc.yearKey)return sc.prom;
+ const d=promDateFor(sc.yearKey);if(d<=currentDate())return null;const junior=gradeNumber()<=9;
+ sc.prom={year:sc.yearKey,junior,dateISO:d,venue:junior?'the school gym, transformed':rand(['the Grand Hotel ballroom','the school gym, transformed','the riverside event hall','the old city museum']),dress:'Formal',status:'Upcoming',plan:null,partnerId:null,asFriends:false,asked:[],received:[],prep:{},committee:0,ticket:junior?20:40,ticketBought:false};
+ createCalendarEvent({id:`prom-${sc.yearKey}`,type:'prom',title:junior?'Junior Prom':'Prom',dateISO:d,startMinute:1140,endMinute:1380,graceMinute:1230,location:sc.prom.venue,payload:{year:sc.yearKey},required:false,source:'school'});return sc.prom
+}
+function npcPromWith(n){return n?.promWith||null}
+function personPromWith(p){return p?.promWith||npcById(p?.npcId)?.promWith||null}
+function setPromWithNpc(npcId,name){const n=npcById(npcId);if(n)n.promWith=name;for(const p of S.people)if(p.npcId===npcId)p.promWith=name}
+function setPromWithPerson(p,name){p.promWith=name;if(p.npcId)setPromWithNpc(p.npcId,name)}
+function freePromNpc(excludeIds,age){return (S.npcs||[]).filter(n=>!excludeIds.includes(n.id)&&!n.promWith&&Math.abs(npcAge(n)-age)<=1&&npcAge(n)>=13&&npcAge(n)<=18&&!n.movedAway).sort(()=>Math.random()-.5)[0]||null}
+function pairPersonWithNpc(p,n){if(!p||!n)return;setPromWithPerson(p,n.fullName);setPromWithNpc(n.id,displayName(p,'formal'))}
+function neighborPromCandidates(){const ids=new Set(S.people.map(p=>p.npcId).filter(Boolean));return (S.neighborhood?.households||[]).map(id=>S.households.find(h=>h.id===id)).filter(Boolean).flatMap(h=>hhKids(h)).filter(n=>!ids.has(n.id)&&npcAge(n)>=13&&npcAge(n)<=18&&Math.abs(npcAge(n)-S.age)<=2&&!n.movedAway)}
 
 // ---------- v7.2 PHASE 5b: neighborhood, groups, rivals, awards, gifts, sneaking, NPC agency ----------
 // ===== Neighborhood (§91–93) =====
@@ -2835,8 +2824,8 @@ function handleSneakSibling(e,id){const sib=personById(e.participants?.[0]);if(!
 function npcAgencyTick(){
  if(S.age<10)return;
  for(const p of S.people){if(isFamilyPerson(p)||p.movedAway)continue;const a=personAge(p);
-  if(a>=14&&!p.datingNpc&&p.id!==S.romance?.partnerId&&chance(1.2)){const o=(S.npcs||[]).find(n=>n.id!==p.npcId&&Math.abs(npcAge(n)-a)<=1&&!n.datingId);if(o){p.datingNpc=o.fullName;o.datingId=p.npcId;if(!SIM.skipping&&p.rel>=55)log('News',`${firstName(p)} is dating ${o.fullName} now.`);if(S.romance?.partnerId!==p.id&&(p.attraction||0)>=60)p.attraction=clamp(p.attraction-15)}}
-  else if(p.datingNpc&&chance(1)){if(!SIM.skipping&&p.rel>=55)queueEvent({type:'helpRequest',title:`${firstName(p)} had a breakup`,text:`${firstName(p)} and ${p.datingNpc} broke up. They seem upset.`,participants:[p.id],priority:2,expiresDays:1,choices:[{id:'help',label:'Be there for them'},{id:'later',label:'Text them later'}]});p.datingNpc=null}
+  if(a>=14&&!p.datingNpc&&p.id!==S.romance?.partnerId&&chance(1.2)){const o=(S.npcs||[]).find(n=>n.id!==p.npcId&&Math.abs(npcAge(n)-a)<=1&&!n.datingId&&!S.people.some(x=>x.npcId===n.id&&(x.datingNpc||x.id===S.romance?.partnerId))&&npcAge(n)>=14&&(a<18)===(npcAge(n)<18));if(o){p.datingNpc=o.fullName;o.datingId=p.npcId;const q=S.people.find(x=>x.npcId===o.id);if(q)q.datingNpc=displayName(p,'formal');if(!SIM.skipping&&p.rel>=55)log('News',`${firstName(p)} is dating ${o.fullName} now.`);if(S.romance?.partnerId!==p.id&&(p.attraction||0)>=60)p.attraction=clamp(p.attraction-15)}}
+  else if(p.datingNpc&&chance(1)){const ex=(S.npcs||[]).find(n=>n.fullName===p.datingNpc);if(ex){ex.datingId=null;const q=S.people.find(x=>x.npcId===ex.id);if(q)q.datingNpc=null}if(!SIM.skipping&&p.rel>=55)queueEvent({type:'helpRequest',title:`${firstName(p)} had a breakup`,text:`${firstName(p)} and ${p.datingNpc} broke up. They seem upset.`,participants:[p.id],priority:2,expiresDays:1,choices:[{id:'help',label:'Be there for them'},{id:'later',label:'Text them later'}]});p.datingNpc=null}
  }
  const partner=partnerPerson();if(partner&&partner.rel<35&&chance(15)){const why=partner.conflict>25?'too many fights':'they felt you had drifted apart';endRelationship(partner,why,{byNpc:true});if(!SIM.skipping)log('Breakup',`${firstName(partner)} ends things. "${why==='too many fights'?'We just keep fighting. I can\'t do this anymore.':'It feels like we\'re not really together anymore.'}"`,true)}
  if(!SIM.skipping&&chance(2)){const p=rand(S.people.filter(x=>!isFamilyPerson(x)&&x.rel>=50&&!x.movedAway));if(p)queueEvent({type:'helpRequest',title:`${firstName(p)} needs a favor`,text:rand([`${firstName(p)} is stuck on an assignment and asks for help.`,`${firstName(p)} is moving furniture and asks for an extra pair of hands.`,`${firstName(p)} needs someone to talk to.`]),participants:[p.id],priority:2,expiresDays:1,choices:[{id:'help',label:'Help'},{id:'later',label:'Not right now'}]})}
@@ -2858,12 +2847,12 @@ function relationshipStory(p,action){const tr=p.traits||[],fn=firstName(p),j=(S.
  return rand(pools[action]||[`You spend some time with ${fn}.`])}
 // ===== Click & event routing =====
 function worldEventChoice(e,id){
- if(e.type==='nbh')return handleNeighborhood(e,id);if(e.type==='promInvite')return handlePromInvite(e,id);if(e.type==='promSkipNight')return handlePromSkip(id);
+ if(e.type==='nbh')return handleNeighborhood(e,id);if(e.type==='meetPeople')return handleMeetPeople(e,id);if(e.type==='promInvite')return handlePromInvite(e,id);if(e.type==='promSkipNight')return handlePromSkip(id);
  if(e.type==='groupExcluded'||e.type==='groupArgument')return handleGroupEvent(e,id);if(e.type==='rivalMoment')return handleRival(e,id);if(e.type==='sneakSibling')return handleSneakSibling(e,id);if(e.type==='helpRequest')return handleHelpRequest(e,id);
  if(e.type==='sneakTalk'){const s={apologize:'You admit it and apologize. Grounded for three days, but some trust is saved.',lie:'You deny it. They do not believe you. That makes it worse.',argue:'You argue that you are old enough. It goes badly.'}[id];if(id==='apologize'){ground(3,'Sneaking out');S.family.trust=clamp(S.family.trust-4)}else{ground(6,'Sneaking out');S.family.trust=clamp(S.family.trust-12);S.family.tension=clamp(S.family.tension+6)}log(e.title,s);return true}
  return false}
 function worldFollowUp(f){
- if(f.type==='promTimeout'){const pr=S.school?.prom,p=personById(f.payload.personId),rec=pr?.received?.find(r=>r.personId===p?.id&&r.status==='Waiting');if(!rec)return true;rec.status='Expired';p.promWith=rand((S.npcs||[]).filter(n=>n.id!==p.npcId))?.fullName||'someone else';p.rel=clamp(p.rel-2);if(!SIM.skipping)log('Too slow',`${firstName(p)} got tired of waiting and asked ${p.promWith} instead.`);return true}
+ if(f.type==='promTimeout'){const pr=S.school?.prom,p=personById(f.payload.personId),rec=pr?.received?.find(r=>r.personId===p?.id&&r.status==='Waiting');if(!rec)return true;rec.status='Expired';const o2=freePromNpc([p.npcId],personAge(p));if(o2)pairPersonWithNpc(p,o2);else setPromWithPerson(p,'someone else');p.rel=clamp(p.rel-2);if(!SIM.skipping)log('Too slow',`${firstName(p)} got tired of waiting and asked ${personPromWith(p)} instead.`);return true}
  if(f.type==='promAnswer'){const pr=S.school?.prom,p=personById(f.payload.personId),a=pr?.asked?.find(x=>x.personId===p?.id&&x.result==='Pending');if(!a)return true;if(!pr.partnerId&&chance(55)){a.result='Accepted';pr.partnerId=p.id;pr.plan='date';p.promWith=S.name;if(!SIM.skipping)log(`${firstName(p)} said yes!`,`"Okay. Yes. I'd like to go with you." Worth the wait.`,true)}else{a.result='Rejected';a.reason='Decided not to';if(!SIM.skipping)log(`${firstName(p)} decided`,`"I thought about it… I don't think so. Sorry."`)}return true}
  if(f.type==='sneakFound'){if(SIM.skipping){S.family.trust=clamp(S.family.trust-6);return true}const how={neighbor:'A neighbor mentioned seeing you out late',sibling:'Your sibling told',parent:'Something gave you away'}[f.payload.how]||'Someone noticed';queueEvent({type:'sneakTalk',title:'They know you snuck out',text:`${how}. ${primaryCaregiver()} wants to talk — now.`,priority:4,expiresDays:1,choices:[{id:'apologize',label:'Admit it and apologize'},{id:'lie',label:'Deny it'},{id:'argue',label:'Argue'}]});if(f.payload.how==='neighbor')nbRep('troublemaker',2);return true}
  return false}
@@ -2927,6 +2916,130 @@ setTimeout(setupCreator,0);
 
 // Fix: the original zodiac table returned Capricorn for every date after a sign's cutoff day (e.g. Jul 23 → Capricorn).
 function zodiacFromDate(dateISO){const d=parseISO(dateISO),m=d.getUTCMonth()+1,day=d.getUTCDate();const signs=['Capricorn','Aquarius','Pisces','Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius'],cut=[19,18,20,19,20,20,22,22,22,22,21,21];return day<=cut[m-1]?signs[m-1]:signs[m%12]}
+
+// =====================================================================
+// v7.3 G — REAL ACADEMIC CALENDAR
+// School years start on a fixed date per country, have 2 semesters and real
+// breaks. Grades follow an age cutoff (not birthdays). Classes move up on the
+// first day of the new school year. Old saves keep their grade until then.
+// =====================================================================
+const D_=(Y,md)=>`${Y}-${md}`;
+const SCHOOL_CAL={
+ US:{start:Y=>D_(Y,'08-27'),sem1End:Y=>D_(Y+1,'01-16'),sem2Start:Y=>D_(Y+1,'01-21'),end:Y=>D_(Y+1,'06-12'),cutoff:Y=>D_(Y,'09-01'),breaks:Y=>{const tg=nthWeekday(Y,11,4,4),sb=nthWeekday(Y+1,3,1,2);return [['Thanksgiving break',addDays(tg,-1),addDays(tg,1)],['Winter break',D_(Y,'12-21'),D_(Y+1,'01-02')],['Spring break',sb,addDays(sb,4)]]}},
+ CA:{start:Y=>addDays(nthWeekday(Y,9,1,1),1),sem1End:Y=>D_(Y+1,'01-31'),sem2Start:Y=>D_(Y+1,'02-03'),end:Y=>D_(Y+1,'06-27'),cutoff:Y=>D_(Y,'12-31'),breaks:Y=>{const tg=nthWeekday(Y,10,1,2),mb=nthWeekday(Y+1,3,1,3);return [['Thanksgiving',tg,tg],['Winter break',D_(Y,'12-21'),D_(Y+1,'01-04')],['March break',mb,addDays(mb,4)]]}},
+ UK:{start:Y=>D_(Y,'09-04'),sem1End:Y=>D_(Y+1,'01-31'),sem2Start:Y=>D_(Y+1,'02-02'),end:Y=>D_(Y+1,'07-19'),cutoff:Y=>D_(Y,'09-01'),breaks:Y=>{const oh=lastWeekday(Y,10,1),fh=nthWeekday(Y+1,2,1,3),e=easterDate(Y+1),mh=lastWeekday(Y+1,5,1);return [['October half-term',oh,addDays(oh,4)],['Christmas holidays',D_(Y,'12-20'),D_(Y+1,'01-03')],['February half-term',fh,addDays(fh,4)],['Easter holidays',addDays(e,-7),addDays(e,7)],['May half-term',mh,addDays(mh,4)]]}},
+ FR:{start:Y=>D_(Y,'09-02'),sem1End:Y=>D_(Y+1,'01-24'),sem2Start:Y=>D_(Y+1,'01-27'),end:Y=>D_(Y+1,'07-04'),cutoff:Y=>D_(Y,'12-31'),breaks:Y=>[['Toussaint holidays',D_(Y,'10-19'),D_(Y,'11-03')],['Christmas holidays',D_(Y,'12-21'),D_(Y+1,'01-05')],['Winter holidays',D_(Y+1,'02-15'),D_(Y+1,'03-02')],['Spring holidays',D_(Y+1,'04-12'),D_(Y+1,'04-27')]]},
+ VN:{start:Y=>D_(Y,'09-05'),sem1End:Y=>D_(Y+1,'01-10'),sem2Start:Y=>D_(Y+1,'01-13'),end:Y=>D_(Y+1,'05-25'),cutoff:Y=>D_(Y,'12-31'),breaks:Y=>{const t=lunarNewYearDate(Y+1,'VN');return [['New Year holiday',D_(Y+1,'01-01'),D_(Y+1,'01-01')],['Tết holiday',addDays(t,-3),addDays(t,5)],['Reunification & Labour Day',D_(Y+1,'04-30'),D_(Y+1,'05-01')]]}},
+ CN:{start:Y=>D_(Y,'09-01'),sem1End:Y=>D_(Y+1,'01-15'),sem2Start:Y=>addDays(lunarNewYearDate(Y+1,'CN'),16),end:Y=>D_(Y+1,'07-05'),cutoff:Y=>D_(Y,'08-31'),breaks:Y=>[['National Day holiday',D_(Y,'10-01'),D_(Y,'10-07')]]},
+ KR:{start:Y=>D_(Y,'03-02'),sem1End:Y=>D_(Y,'07-19'),sem2Start:Y=>D_(Y,'08-19'),end:Y=>D_(Y+1,'02-10'),cutoff:Y=>D_(Y-1,'12-31'),breaks:Y=>[['Winter vacation',D_(Y,'12-24'),D_(Y+1,'02-02')]]},
+ JP:{start:Y=>D_(Y,'04-07'),sem1End:Y=>D_(Y,'09-30'),sem2Start:Y=>D_(Y,'10-07'),end:Y=>D_(Y+1,'03-20'),cutoff:Y=>D_(Y,'04-01'),breaks:Y=>[['Golden Week',D_(Y,'04-29'),D_(Y,'05-05')],['Summer vacation',D_(Y,'07-20'),D_(Y,'08-31')],['Winter vacation',D_(Y,'12-25'),D_(Y+1,'01-07')]]},
+ AU:{start:Y=>D_(Y,'01-30'),sem1End:Y=>D_(Y,'06-27'),sem2Start:Y=>D_(Y,'07-14'),end:Y=>D_(Y,'12-18'),cutoff:Y=>D_(Y,'07-31'),breaks:Y=>[['Term 1 holidays',D_(Y,'04-11'),D_(Y,'04-27')],['Term 3 holidays',D_(Y,'09-20'),D_(Y,'10-06')]]},
+ SG:{start:Y=>D_(Y,'01-02'),sem1End:Y=>D_(Y,'05-29'),sem2Start:Y=>D_(Y,'06-29'),end:Y=>D_(Y,'11-14'),cutoff:Y=>D_(Y-1,'12-31'),breaks:Y=>{const t=lunarNewYearDate(Y,'SG');return [['March holidays',D_(Y,'03-14'),D_(Y,'03-22')],['Chinese New Year',t,addDays(t,1)],['September holidays',D_(Y,'09-06'),D_(Y,'09-14')]]}},
+ TH:{start:Y=>D_(Y,'05-16'),sem1End:Y=>D_(Y,'09-30'),sem2Start:Y=>D_(Y,'11-01'),end:Y=>D_(Y+1,'03-15'),cutoff:Y=>D_(Y,'05-16'),breaks:Y=>[['New Year holiday',D_(Y,'12-31'),D_(Y+1,'01-02')]]},
+ INTL:{start:Y=>D_(Y,'09-01'),sem1End:Y=>D_(Y+1,'01-20'),sem2Start:Y=>D_(Y+1,'01-25'),end:Y=>D_(Y+1,'06-20'),cutoff:Y=>D_(Y,'09-01'),breaks:Y=>[['Winter break',D_(Y,'12-21'),D_(Y+1,'01-03')],['Spring break',D_(Y+1,'04-06'),D_(Y+1,'04-10')]]}
+};
+const DAY_OFF_HOLIDAYS={newYear:'all',christmas:'all',thanksgiving:['US','CA'],lunarNewYear:['VN','KR','CN','SG']};
+function weekdayOnOrBefore(d){let x=d;for(let i=0;i<7&&isWeekend(x);i++)x=addDays(x,-1);return x}
+function weekdayOnOrAfter(d){let x=d;for(let i=0;i<7&&isWeekend(x);i++)x=addDays(x,1);return x}
+function schoolRegion(){const r=calendarProfile().region;return SCHOOL_CAL[r]?r:'INTL'}
+const _acCache={},_sdCache={};
+function academicYear(Y){const r=schoolRegion(),k=r+Y;if(_acCache[k])return _acCache[k];const c=SCHOOL_CAL[r];return _acCache[k]={key:Y,region:r,start:weekdayOnOrAfter(c.start(Y)),sem1End:weekdayOnOrBefore(c.sem1End(Y)),sem2Start:weekdayOnOrAfter(c.sem2Start(Y)),end:weekdayOnOrBefore(c.end(Y)),cutoff:c.cutoff(Y),breaks:c.breaks(Y).map(([name,from,to])=>({name,from,to}))}}
+function academicInfo(date=currentDate()){let Y=parseISO(date).getUTCFullYear(),a=academicYear(Y);if(date<a.start){Y--;a=academicYear(Y)}const phase=date<=a.sem1End?'sem1':date<a.sem2Start?'semBreak':date<=a.end?'sem2':'summer';return Object.assign({},a,{phase,semester:phase==='sem1'?1:phase==='sem2'?2:null})}
+function breakOn(date,a=academicInfo(date)){return a.breaks.find(b=>date>=b.from&&date<=b.to)||null}
+function dayOffHoliday(date,region){for(const x of holidaysOn(date)){const r=DAY_OFF_HOLIDAYS[x.h.id];if(r==='all'||(Array.isArray(r)&&r.includes(region)))return x.h.name}return null}
+function isSchoolDay(date=currentDate()){const k=schoolRegion()+date;if(k in _sdCache)return _sdCache[k];let v=!isWeekend(date);if(v){const a=academicInfo(date);v=!!a.semester&&!breakOn(date,a)&&!dayOffHoliday(date,a.region)}if(Object.keys(_sdCache).length>4000)for(const x in _sdCache)delete _sdCache[x];return _sdCache[k]=v}
+function noSchoolReason(date=currentDate()){if(isWeekend(date))return 'Weekend';const a=academicInfo(date);if(a.phase==='summer')return a.region==='KR'||a.region==='JP'||a.region==='AU'||a.region==='SG'||a.region==='TH'?'Between school years':'Summer break';if(a.phase==='semBreak')return 'Semester break';const b=breakOn(date,a);if(b)return b.name;return dayOffHoliday(date,a.region)||'No school'}
+function nextSchoolDay(dateISO){let d=dateISO;for(let i=0;i<200&&!isSchoolDay(d);i++)d=addDays(d,1);return d}
+function ageOn(dateISO){const b=parseISO(S.dob),d=parseISO(dateISO);let a=d.getUTCFullYear()-b.getUTCFullYear();if(d.getUTCMonth()<b.getUTCMonth()||(d.getUTCMonth()===b.getUTCMonth()&&d.getUTCDate()<b.getUTCDate()))a--;return a}
+function baseGradeFor(Y){return ageOn(academicYear(Y).cutoff)-5}
+function gradeForYear(Y){return baseGradeFor(Y)+(S.education?.gradeOffset||0)}
+function gradeLabelFor(g){return g<=6?`Grade ${g}`:g<=9?`Middle school • Grade ${g}`:`High school • Grade ${g}`}
+function needsFormalSchool(){return !!S.school&&S.school.grade!=='Kindergarten'&&gradeNumber()>=1&&!S.education?.highSchoolDone}
+function electionGradeOK(){const g=gradeNumber();return g>=8&&g<=12}
+function schoolYearEnd(){return S.school?academicYear(S.school.yearKey??academicInfo().key).end:null}
+function semesterEnd(){const a=academicInfo();return a.phase==='sem1'?a.sem1End:a.phase==='sem2'?a.end:null}
+function semesterLabel(){const a=academicInfo(),d=currentDate();if(a.phase==='sem1'||a.phase==='sem2'){const end=a.phase==='sem1'?a.sem1End:a.end,nb=a.breaks.filter(b=>b.from>=d&&b.from<=end).sort((x,y)=>x.from.localeCompare(y.from))[0];return `Semester ${a.semester} • ends ${formatDate(end)}${nb?` • next: ${nb.name} (${formatDate(nb.from)})`:''}`}if(a.phase==='semBreak')return `Semester break • Semester 2 starts ${formatDate(a.sem2Start)}`;const nx=academicYear(a.key+1);return `School year over • next year starts ${formatDate(nx.start)}`}
+// ---------- Exams per semester ----------
+function scheduleSemesterExams(sem){
+ if(!needsFormalSchool())return;const a=academicInfo(),start=sem===1?a.start:a.sem2Start,end=sem===1?a.sem1End:a.end,from=addDays(currentDate()>start?currentDate():start,7),to=addDays(end,-10);if(from>=to)return;
+ const span=daysBetween(from,to),subs=S.school.subjects.slice(0,6);
+ subs.forEach((sub,i)=>{const d=nextSchoolDay(addDays(from,Math.round(span*(i+1)/(subs.length+2))));if(d<=end)addExamRecord({id:uid('exam'),subject:sub.name,dateISO:d,minute:540,type:S.age<=11?'Class assessment':i%2?'Quiz':'Midterm',score:null,status:'Scheduled',prep:0})});
+ if(gradeNumber()>=6)subs.slice(0,3).forEach((sub,i)=>{const d=nextSchoolDay(addDays(end,-8+i));if(d<=end&&d>currentDate())addExamRecord({id:uid('exam'),subject:sub.name,dateISO:d,minute:540,type:`Semester ${sem} final`,score:null,status:'Scheduled',prep:0})});
+ spreadExamDates();syncExamCalendar()
+}
+function scheduleExams(){const a=academicInfo();if(a.semester){scheduleSemesterExams(a.semester);if(S.school){S.school.semExams=S.school.semExams||{};S.school.semExams[a.semester]=true}}}
+// ---------- Year rollover, report cards, graduation ----------
+function graduateHighSchool(){
+ const old=S.school;if(!old)return;closeSchoolYear(old,{leaving:true});recordGraduation('high',old.name);S.education.highSchoolDone=true;S.school=null;
+ if(!SIM.skipping){const p=S.people.find(x=>x.role==='parent');log('🎓 High school graduation',`Caps in the air. ${p?`${firstName(p)} cries a little and denies it.`:''} Twelve years of school, done.`,true)}
+}
+function reportCard(sem){
+ const subs=S.school?.subjects||[];if(!subs.length)return null;const avg=Math.round(10*subs.reduce((a,s)=>a+s.score,0)/subs.length)/10,lines=subs.map(s=>`${s.name} ${Math.round(s.score*10)/10}`).join(' • ');
+ const parent=S.people.find(x=>x.role==='parent');
+ if(avg>=85){if(parent)parent.rel=clamp(parent.rel+2);S.happiness=clamp(S.happiness+3)}else if(avg<60){S.family.tension=clamp(S.family.tension+3);S.stress=clamp(S.stress+3)}
+ if(!SIM.skipping)log(`📄 Semester ${sem} report card`,`Average ${avg}. ${lines}. ${avg>=85?`${parent?firstName(parent):'Your family'} puts it on the fridge.`:avg<60?'Your caregivers want to talk about it.':'Solid, with room to grow.'} Behavior ${Math.round(S.school.behavior)}% • attendance ${Math.round(S.school.attendance)}%.`,avg>=90);
+ return {avg,dateISO:currentDate()}
+}
+function ensureSchoolForDate(){
+ ensureLifecycleContainers();S.education=Object.assign({graduations:[]},S.education||{});
+ if(S.age===3&&!S.development.kindergarten.asked){S.development.kindergarten.asked=true;createPending({type:'kindergarten',title:'Kindergarten decision',resolveDate:null,status:'Waiting for your preference',payload:{preference:null},autoDecideDate:addDays(currentDate(),14),detail:'Your caregivers want to hear whether you want to attend before they decide. If you do not answer, they will decide within two weeks.'});log('Kindergarten becomes a question','Your family starts discussing preschool/kindergarten, childcare, money, schedules and your preferences.')}
+ if(S.age<3){S.school=null;return}
+ if(S.education.highSchoolDone){if(S.school){closeSchoolYear(S.school,{leaving:true});S.school=null}return}
+ const a=academicInfo(),carry=S.school;
+ if(carry&&carry.yearKey==null){carry.yearKey=a.key;carry.yearStarted=a.start;if(carry.grade!=='Kindergarten'&&S.education.gradeOffset==null)S.education.gradeOffset=gradeNumber()-baseGradeFor(a.key);return}
+ if(carry&&carry.yearKey>=a.key)return;
+ const g=gradeForYear(a.key);
+ if(g>=13){if(carry&&carry.grade!=='Kindergarten')graduateHighSchool();else{S.school=null;if(S.age>=18)S.education.highSchoolDone=true}return}
+ if(g>=1){
+  closeSchoolYear(carry);const fromStage=stageOfSchool(carry),toStage=stageForAge(g+5);if(carry&&fromStage&&fromStage!==toStage)recordGraduation(fromStage,carry.name);
+  S.school=buildSchool(g+5,carry);S.school.yearKey=a.key;S.school.yearStarted=a.start;S.school.record=freshSchoolRecord();S.school.reports={};S.school.semExams={};
+  S.school.clubs.forEach(c=>{ensureClub(c);if(!clubSessionEvent(c))scheduleClubSession(c,nextSchoolDay(addDays(currentDate(),3)))});
+  if(a.semester){scheduleExams();if(a.semester===2)S.school.semExams[1]=true}generateHomework(true);ensureProm();
+  if(carry&&!SIM.skipping)log(`🎒 New school year • ${S.school.grade}`,`${S.school.name}. ${a.phase==='summer'||a.phase==='semBreak'?'':`Semester ${a.semester||1} starts now.`} New class, new timetable${carry.name!==S.school.name?', new building':''}.`,true);
+  meetNewClassmates(chance(60)?2:1,{silent:SIM.skipping});return
+ }
+ if(carry&&carry.grade==='Kindergarten'){carry.yearKey=a.key;return}
+ if(S.development.kindergarten.decision&&S.development.kindergarten.enrolled){S.school=buildSchool(Math.min(5,Math.max(3,S.age)),carry);if(S.school)S.school.yearKey=a.key}else S.school=null
+}
+function progressSchoolForAge(){ensureSchoolForDate()}
+function reconcileSchoolStage(){ensureSchoolForDate();const k=S.development?.kindergarten;if(S.school&&S.school.grade==='Kindergarten'&&!(k?.enrolled))S.school=null}
+function academicTick(){
+ if(S.age<3)return;const a=academicInfo(),sc=S.school;
+ if(needsFormalSchool()&&sc.yearKey===a.key){sc.reports=sc.reports||{};sc.semExams=sc.semExams||{};
+  if(!sc.reports[1]&&currentDate()>a.sem1End)sc.reports[1]=reportCard(1);
+  if(!sc.reports[2]&&currentDate()>a.end)sc.reports[2]=reportCard(2);
+  if(a.semester===2&&!sc.semExams[2]){sc.semExams[2]=true;scheduleSemesterExams(2);if(!SIM.skipping)log('📘 Semester 2 begins',`New semester, new assessments. ${semesterLabel()}.`)}
+  if(gradeNumber()===12&&currentDate()>a.end){graduateHighSchool();return}}
+ ensureSchoolForDate()
+}
+// ---------- Calendar markers (planned 2 school years ahead) ----------
+function academicMarkers(){
+ if(S.age<2||S.education?.highSchoolDone)return [];const cur=academicInfo().key,out=[];
+ for(let Y=cur;Y<=cur+2;Y++){const a=academicYear(Y),g=gradeForYear(Y);const kg=g<=0&&S.school?.grade==='Kindergarten';if(!(g>=1&&g<=12)&&!kg)continue;
+  const lab=g>=1?gradeLabelFor(g):'Kindergarten';out.push({id:`term-${Y}-start`,dateISO:a.start,title:`First day of school • ${lab}`,icon:'🎒',type:'term'});
+  if(g>=1)out.push({id:`term-${Y}-s2`,dateISO:a.sem2Start,title:'Semester 2 begins',icon:'📘',type:'term'});
+  for(const b of a.breaks)if(b.from>=a.start&&b.from<=a.end)out.push({id:`brk-${Y}-${b.name}`,dateISO:b.from,title:`${b.name}${b.to!==b.from?` (until ${formatDate(b.to)})`:''}`,icon:'🏖️',type:'term'});
+  out.push({id:`term-${Y}-end`,dateISO:a.end,title:g===12?'High school graduation day':'Last day of school',icon:g===12?'🎓':'🏁',type:'term'});
+  if(g>=8&&g<=12&&!(S.school?.prom&&S.school.prom.year===Y))out.push({id:`prom-plan-${Y}`,dateISO:promDateFor(Y),title:`${g<=9?'Junior Prom':'Prom'} (planned)`,icon:'💃',type:'term'})}
+ return out
+}
+// ---------- Meeting new people (0–2 at a time) ----------
+function peerAgeOK(n){const a=npcAge(n);return S.age<18?(a>=Math.max(4,S.age-2)&&a<=S.age+2&&a<18):a>=18&&Math.abs(a-S.age)<=10}
+function freshPeers(k){const known=new Set(S.people.map(p=>p.npcId).filter(Boolean)),pool=(S.npcs||[]).filter(n=>!known.has(n.id)&&peerAgeOK(n)&&!n.movedAway).sort(()=>Math.random()-.5);while(pool.length<k){const made=generateHousehold({kids:1,childAge:S.age<18?S.age+rand([-1,0,1]):S.age+rand([-4,-2,0,2,4])});pool.push(...made.filter(peerAgeOK))}return pool.slice(0,k)}
+function meetNewClassmates(k,{silent=false}={}){if(S.age<6)return;for(const n of freshPeers(k)){const p=personFromNpc(n,'friend','classmate');p.rel=40;p.knownSince=S.age;S.people.push(p);if(!silent)rememberPerson(p,'You met on the first day of the school year.')}}
+function meetNewPeople(where){
+ if(S.age<6||SIM.skipping)return;const r=Math.random(),crowd=S.people.filter(p=>!isFamilyPerson(p)).length,k=r<(crowd>=30?.06:.15)?2:r<(crowd>=30?.3:.55)?1:0;if(!k)return;
+ const ns=freshPeers(k),line=ns.map(n=>`${n.fullName} (${npcAge(n)})`).join(' and ');
+ queueEvent({type:'meetPeople',title:k===2?'You meet two new people':'You meet someone new',text:`At ${where} you get talking with ${line}.`,payload:{npcIds:ns.map(n=>n.id),where},priority:2,expiresDays:1,choices:[...ns.map(n=>({id:'chat:'+n.id,label:`Chat with ${n.firstName}`})),{id:'hi',label:k===2?'Say hi to both':'Say hi'},{id:'skip',label:'Keep to yourself'}]})
+}
+function handleMeetPeople(e,id){
+ const ids=e.payload?.npcIds||[],where=e.payload?.where||'there';if(id==='skip'){log('Kept to yourself',`You smile politely and keep to yourself at ${where}.`);return true}
+ const add=(nid,rel)=>{const n=npcById(nid);if(!n)return null;let p=S.people.find(x=>x.npcId===nid);if(!p){p=personFromNpc(n,'friend',`met at ${where}`);p.rel=rel;p.knownSince=S.age;S.people.push(p)}else p.rel=clamp(p.rel+3);rememberPerson(p,`You met at ${where}.`,2);return p};
+ if(id==='hi'){const ps=ids.map(x=>add(x,36)).filter(Boolean);log('New acquaintances',`You say hi to ${ps.map(firstName).join(' and ')}. Maybe you will see them again.`);return true}
+ const nid=id.slice(5),p=add(nid,47);if(!p)return true;p.trust=clamp(p.trust+3);advanceTime(30,{silent:true});S.needs.social=clamp(S.needs.social+8);
+ const tr=p.traits||[],shared=tr.includes('Funny')?'they make you laugh twice in five minutes':tr.includes('Curious')?'they ask surprisingly good questions':tr.includes('Sporty')?'you end up talking about sports for ages':tr.includes('Artsy')?'they show you a drawing on their phone':'the conversation is easy';
+ log(`Met ${firstName(p)}`,`You chat with ${p.name} at ${where} — ${shared}. You leave knowing each other's names, and maybe a bit more.`);return true
+}
 
 // ---------- UI helpers ----------
 function pendingOpen(){return S.pendingDecisions.filter(x=>!x.resolved)}
@@ -3061,7 +3174,7 @@ window.__LIFE_SIM_TEST__={
  eventChoice:(id,choice)=>resolveEventChoice(id,choice),
  reconcile:()=>{reconcileState('test');render();save()},
  todayWarnings:()=>todayWarnings(),
- call:(name,...args)=>{const f={romanceAction:(id,k)=>romanceAction(personById(id),k),startDate,sceneChoice,askToProm,promPrep,setPromPlan,attendProm,ensureProm,promTick,npcAsksToProm:(id)=>npcAsksToProm(personById(id)),neighborhoodTick,sneakOut,giveInventoryItem,maybeRival,groupTick,npcAgencyTick,eligibleRomance:(id)=>eligibleRomance(personById(id)),ensureRomanceProfile:(id)=>ensureRomanceProfile(personById(id)),makePlan,attendPlan,cancelPlan,npcInvitesPlayer:(id)=>npcInvitesPlayer(personById(id)),practiceForTryout,attendTryout,signUpForActivity,campaignAction,startElection,decideElection:(id)=>decideElection(S.elections.find(e=>e.id===id)),generateHousehold,npcStatusAt:(id,d,m)=>npcStatusAt(personById(id),d,m),ensureRoster,retryTryout,joinRecreational,personAction,exploreSchoolActivity,answerMaybe,schoolIdentities,skipToDismissal,classAction,lunchAction,leaveSchoolEarly,doHolidayActivity,holidaysOn,upcomingHolidays,lunarNewYearDate,easterDate,agendaFor,performItemUse,eatPortion,drinkFromContainer,refillContainer,toggleWear,repairItem,chargeDevice,useInventoryItem,drainActivePhone,giveInventoryItem,itemDailyTick,addItem,addExamRecord,activateClub,registerContest,ensureSchoolDayObligation,nextSchoolDay,isSchoolDay,queueEvent,closeChoiceModal,setKindergartenPreference,exploreSchoolActivity,exploreSchoolEvent,generateHomework,contestAction,decideActivity}[name];if(!f)throw new Error('Unknown test function '+name);const r=f(...args);render();save();return r===undefined?null:JSON.parse(JSON.stringify(r))}
+ call:(name,...args)=>{const f={meetNewPeople,semesterLabel,academicMarkers,neighborPromCandidates,academicInfo:(d)=>academicInfo(d),romanceAction:(id,k)=>romanceAction(personById(id),k),startDate,sceneChoice,askToProm,promPrep,setPromPlan,attendProm,ensureProm,promTick,npcAsksToProm:(id)=>npcAsksToProm(personById(id)),neighborhoodTick,sneakOut,giveInventoryItem,maybeRival,groupTick,npcAgencyTick,eligibleRomance:(id)=>eligibleRomance(personById(id)),ensureRomanceProfile:(id)=>ensureRomanceProfile(personById(id)),makePlan,attendPlan,cancelPlan,npcInvitesPlayer:(id)=>npcInvitesPlayer(personById(id)),practiceForTryout,attendTryout,signUpForActivity,campaignAction,startElection,decideElection:(id)=>decideElection(S.elections.find(e=>e.id===id)),generateHousehold,npcStatusAt:(id,d,m)=>npcStatusAt(personById(id),d,m),ensureRoster,retryTryout,joinRecreational,personAction,exploreSchoolActivity,answerMaybe,schoolIdentities,skipToDismissal,classAction,lunchAction,leaveSchoolEarly,doHolidayActivity,holidaysOn,upcomingHolidays,lunarNewYearDate,easterDate,agendaFor,performItemUse,eatPortion,drinkFromContainer,refillContainer,toggleWear,repairItem,chargeDevice,useInventoryItem,drainActivePhone,giveInventoryItem,itemDailyTick,addItem,addExamRecord,activateClub,registerContest,ensureSchoolDayObligation,nextSchoolDay,isSchoolDay,queueEvent,closeChoiceModal,setKindergartenPreference,exploreSchoolActivity,exploreSchoolEvent,generateHomework,contestAction,decideActivity}[name];if(!f)throw new Error('Unknown test function '+name);const r=f(...args);render();save();return r===undefined?null:JSON.parse(JSON.stringify(r))}
 };
 
 if(new URLSearchParams(location.search).get('smoke')==='1')setTimeout(()=>{try{$('c-name').value='Smoke Test';initializeNewLife();document.body.dataset.smoke=(!$('game').classList.contains('hidden')&&S)?'pass':'fail'}catch(e){console.error(e);document.body.dataset.smoke='fail';document.body.dataset.smokeError=e.message}},30);

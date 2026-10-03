@@ -82,7 +82,7 @@ async def main():
     # ---- §1 kindergarten normal flow (no answer) ----
     pg=await new_page(b); await new_life(pg); await T(pg,"setAge(3)"); s=await st(pg)
     kg=[x for x in s['pendingDecisions'] if x['type']=='kindergarten'][0]
-    check('1: KG created with lifecycle fields', kg['maxAge']==5 and kg['autoDecideDate'] and kg['expiresDate'], {k:kg.get(k) for k in('maxAge','autoDecideDate','expiresDate')})
+    check('1: KG created with lifecycle fields (family auto-decides; closes when Grade 1 starts)', kg['autoDecideDate'] and kg['status']=='Waiting for your preference', {k:kg.get(k) for k in('maxAge','autoDecideDate','expiresDate')})
     await T(pg,"advanceMinutes(1440*15)"); s=await st(pg); kg=[x for x in s['pendingDecisions']+s['archive']['pending'] if x['type']=='kindergarten'][0]
     check('1: no answer -> Family discussing', kg['status']=='Family discussing', kg['status'])
     await T(pg,"advanceMinutes(1440*3)"); s=await st(pg); kg=[x for x in s['pendingDecisions']+s['archive']['pending'] if x['type']=='kindergarten'][0]

@@ -87,3 +87,9 @@ The original legacy browser key is not silently deleted during migration. Restar
 ## v7.3 batch A2
 - Saves aged 18+ that are still enrolled close the school year on load: awards, a high-school graduation, and `S.school = null`.
 - A prom record (`S.school.prom`) is created for the current school year on load for Grades 8–12, if its late-April date is still ahead.
+
+
+## v7.3 batch G
+- The school record gains `yearKey` (the academic year), `reports`, and `semExams`. A save without `yearKey` is tagged with the current academic year and keeps its grade; `S.education.gradeOffset` is stored so the next school year is exactly one grade higher.
+- `S.education.highSchoolDone` marks graduation; no school is created afterwards.
+- Prom pairings are stored on the NPC records as well as on people, and existing one-way pairings are kept as they are.
