@@ -50,7 +50,13 @@ async def main():
     school=await T(pg,f"call('isSchoolDay','{a['eventDate']}')")
     check('10/28: school-day contest is held inside school hours', (ev['startMinute']==780) if school else (ev['startMinute']==600), (school,ev['startMinute']))
     if school:
-        await T(pg,"attendSchool()"); await T(pg,"call('skipToDismissal')"); s=await st(pg)
+        await T(pg,"attendSchool()")
+        for _ in range(4):
+            await T(pg,"call('skipToDismissal')"); s=await st(pg)
+            if s['clock']['minute']>=780: break
+            due=[e for e in s['exams'] if e['dateISO']==s['clock']['dateISO'] and e['status'] in ('Scheduled','Due')]
+            if due: await T(pg,f"takeExam('{due[0]['id']}')")
+        s=await st(pg)
         check('10: skipping ahead stops when the event is on', s['clock']['minute']>=780 and s['clock']['minute']<810, s['clock']['minute'])
     else: await T(pg,f"setClock('{a['eventDate']}',590)")
     await T(pg,f"contestAttend('{a['id']}')"); s=await st(pg); ca=[x for x in s['school']['contests'] if x['id']==a['id']][0]
@@ -62,13 +68,13 @@ async def main():
     # ---- §46 absence consequence chain ----
     pg=await new_page(b); await new_life(pg); await T(pg,"setAge(12)"); s=await st(pg)
     d=dt.date.fromisoformat(s['clock']['dateISO']); missed=0
-    while missed<2:
+    while missed<4:
         if await T(pg,f"call('isSchoolDay','{d.isoformat()}')"):
             await T(pg,f"setClock('{d.isoformat()}',700)"); await T(pg,"advanceMinutes(500)"); missed+=1
         d+=dt.timedelta(days=1)
     s=await st(pg)
     talk=[e for e in s['events'] if e['type']=='absenceTalk']
-    check('46: 2nd absence -> caregiver conversation (later, not instantly)', talk and talk[0]['minute']>=1050, talk and talk[0]['minute'])
+    check('46/H: 4th absence -> caregiver conversation (later, not instantly)', talk and talk[0]['minute']>=1050, talk and talk[0]['minute'])
     if talk:
         await T(pg,f"eventChoice('{talk[0]['id']}','lie')"); s=await st(pg)
         check('46: choice resolved with narrative', [e for e in s['events'] if e['id']==talk[0]['id']][0]['status']=='Resolved' and any('heard from school' in l['title'] for l in s['log'][:3]))

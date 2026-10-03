@@ -1,5 +1,28 @@
 # Life Simulator Update Log
 
+## v7.3 (batch H + I + J) — School–home communication, real weather, Fast Forward
+
+### H. Attendance, behavior & school–home communication
+- **Late arrivals happen occasionally, always with a reason**: overslept, the school bus was late (under 16) or traffic (16+), helping a sibling, running back for forgotten homework, a stomach ache, or bad weather. It is more likely on rainy/stormy days and after poor sleep. The reason is shown on check-in and tracked in the attendance record.
+- **Unexcused absence thresholds**: a light notice at 1, caregiver talks at 4 and 7, the **teacher phones home at 10**, a **1:1 parent–teacher meeting at 20** (you find out only from your parents' reaction), a **formal warning letter at 35**, and an **expulsion hearing at 45** (final warning and probation, or expulsion and a transfer to another school).
+- **Behavior below 30%** → the teacher calls home once per semester. If behavior is still under 40% next semester, your parents meet the teacher without telling you, and you learn about it from them.
+- **Parent–teacher conference every semester** (on the calendar). You choose what to do with the notice: give it to Mom, give it to Dad, leave it in your bag, or hide it. If nobody comes, the teacher may call home (more likely if you hid it), and hiding it costs a lot of trust.
+- **Asking to stay home** (the evening before or in the morning before school): "I feel sick" (parents check your health; faking may be noticed), "I need a day" (approved more often when you are really stressed or low), or "I don't want to go" (usually refused by strict parents). Approved days are logged as excused absences, and asking too often lowers the chance.
+
+### I. Weather
+- **Climate-aware and seasonal**: 12 climate profiles chosen by city (e.g. New York continental, Chicago/Toronto cold, London/Paris oceanic, Los Angeles Mediterranean, Houston/Miami subtropical, Ho Chi Minh/Singapore/Bangkok tropical, Hanoi monsoon, Da Nang/Huế central-VN storm season, Seoul/Beijing, Tokyo, Shanghai, Sydney). Temperatures follow monthly averages; snow only where and when it can happen; typhoons and hurricanes only in their seasons.
+- New conditions: Cold, Snowy, **Blizzard**, **Heatwave**, **Typhoon**, **Hurricane**, each with a severity level.
+- **The forecast is real**: tomorrow usually matches it (forecasts are right most, not all, of the time).
+- **The weather and forecast moved to the Life Planner** (right side, below the mini calendar). The separate World weather card was removed.
+- **Severe weather** on a school morning: your caregiver asks whether you want to go (staying home is an excused absence). Outdoor outings are blocked while it is dangerous.
+- **Extreme weather closes every school in the area** for that day: no attendance obligation, assessments moved to a later date, club sessions cancelled, contests postponed a week, tryouts moved, and an announcement for everyone.
+
+### J. Fast Forward
+- Controls are **Next day | Fast forward ▾ | Age up**. Fast forward offers **Next week, Next month, End of break / next term (or "until the next break" during term), Next major event, Next birthday (Age up)**, each showing its target date.
+- Routine days run on autopilot: school days attended, club sessions, homework due soon. It **stops early** for anything that needs you: a new invitation or decision, an assessment, a contest, plans, a tryout, prom, a conference or an election. It will not start while something is still waiting for your answer.
+- A summary lists the days passed, why it stopped, and what happened along the way.
+
+
 ## v7.3 (batch B–F) — Talents that matter, levels 1–10, study rules, mood with reasons, one anti-farming rule
 
 ### B. Talents & personality have real, visible effects

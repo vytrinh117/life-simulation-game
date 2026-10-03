@@ -98,3 +98,9 @@ The original legacy browser key is not silently deleted during migration. Restar
 ## v7.3 batch B–F
 - New fields: `S.farm` (today's per-target action counts, reset daily), mood bookkeeping (`S.moodClock` and related), and per-subject study/advanced-exercise day markers. Existing skill and reputation values (0–100) are kept and simply displayed as levels (10 points per level).
 - Grades become one-decimal numbers as soon as you study; older integer grades are unchanged.
+
+
+## v7.3 batch H + I + J
+- `S.weather` gains `severity` and a real 5-day `forecast`; old saves get a new forecast at the next day change. New: `S.closures` (closure dates with reasons).
+- The school record gains `lateReasons`, `stayHomeAsks`, `expulsionHearing` and `probation`; the school gains `behaviorCalls`, `conf` (conference per semester) and `stayHome`.
+- Per-absence caregiver talks now follow the threshold schedule (1 notice, 4 and 7 talks, 10 call, 20 meeting, 35 warning, 45 hearing) instead of a talk after every absence.
