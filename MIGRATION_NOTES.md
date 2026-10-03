@@ -76,3 +76,9 @@ The original legacy browser key is not silently deleted during migration. Restar
 - People gain romance fields lazily (`attraction`, `romanceStage`, `romanceOpen`, `boundaries`), plus `promWith`, `datingNpc`, `giftsReceived` and `movedAway` as they come up. `S.romance.partnerId` is added; the legacy `S.romance.partner` name string is kept for display.
 - New containers: `S.neighborhood` (households and reputation, created on load for ages 3+), `S.groups`, `S.rivals`, `S.awards`, `S.scene` (a date or prom night in progress; resumable from the hero), `S.school.prom`, and `S.family.ruleBreaks`.
 - The old romance action (which had no partner-age check) is replaced; any existing `S.romance.status` text is preserved.
+
+
+## v7.3 batch A
+- `S.version` → 7.3. `S.zodiac` is recalculated from `S.dob` on load, because the old calculation was wrong for many dates and the sign is now always automatic.
+- Messages gain `fromId`. Older messages are linked to the sender by name and role, preferring non-family people; their `from` becomes the person's full name.
+- Existing characters keep their birth year. Only new lives start in the current year.

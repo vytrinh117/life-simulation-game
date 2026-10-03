@@ -1,11 +1,11 @@
-# QC Report — Life Simulator v7.2 (phases 1–5b, complete)
+# QC Report — Life Simulator v7.3 (batch A on top of v7.2 phases 1–5b)
 
 ## Method
 The v7.1 report marked features PASS when buttons were wired. Real play still exposed lifecycle bugs, so this QC was redone **from the player's perspective**. Every check drives the real game in headless Chromium (`index.html` + `game.js`) and follows the full lifecycle: **create → display → interact → resolve → leave the active UI → persist after reload → never reappear**.
 
 The two confirmed bugs were reproduced with the **original v7.1 code**, and those exact saves are used as fixtures (`qa/fixture_*_v71.json`).
 
-**Result: 400 deterministic checks passed, 0 failed, plus the fuzz run (all invariants held over 840 random steps at six starting ages, including age-appropriate-partner safety invariants), with 0 JavaScript errors** on the final build. All earlier suites were re-run after phase 5b.
+**Result: 434 deterministic checks passed, 0 failed, plus the fuzz run (all invariants held over 840 random steps at six starting ages), with 0 JavaScript errors.** The QA harness runs the game with `?qa=1` so historical test dates remain valid; `t_creator.py` runs in normal player mode.
 
 | Suite | Checks | Covers |
 |---|---|---|
@@ -21,6 +21,7 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 | `t_theme.py` | 30 | §55 default Light; Light/Dark/Life × 4 screens: no neutral-dark hardcoded surfaces in light themes and WCAG contrast ≥ 4.5:1 for body, headings, muted text, buttons, primary, active tab, tags, nav, needs, hero; persistence across reload (creator and in game); not stored in the save; quick toggle; Auto follows OS dark/light; nav and needs use the SVG icon set |
 | `t_social.py` | 50 | §122 111-NPC name stress test (unique IDs, no duplicate full names, ≥35 distinct first names, sibling surnames, varied conventions, persistence after reload); VN family-first order and parents' own surnames; player-save name migration; §102 availability (school, night, busy modal with alternatives); §94–95 RSVP (accept with reason, calendar, attend with story, early cancel vs no-show, next-day confrontation, NPC invitation with deadline, Maybe expiry); §96 strict household denial with negotiate/defy; §120 club QC (open sign-up, decline, tryout scheduled, weak fail with component reason, recovery date, retry, diminishing practice, strong success with ladder rank, reputation, outcome history, resolved thread, election opponents, campaign, win sets Captain, loss with NPC winner and recovery, reload persistence, Journal, identity) |
 | `t_romance.py` | 48 | **Safety**: 16-year-old cannot romance a 26-year-old (logic and UI), intimacy refused for minors at the logic level, minor romance menu without intimate options, minor date endings without kiss/invite, minors cannot sneak a partner over, unknown actions ignored safely; adult consent: a "no" is respected with trust up and no penalty, a mutual yes fades to black. **§119 Prom**: season, reject with reason, reason in outcome history, already-has-a-date refusal, ask another → crush accepts, free prep, hero on prom night, 6-stage night resolves, memory, no Due afterwards, NPC asks, "need time" expires and they ask someone else, alone / friends / skip (with alternative evening) all resolve. Dates/Valentine scenes; gifts (loved / already had one / awkward); neighborhood events with households and reputation; friend group; rival creation and evolution; NPC–NPC dating; narrated relationship actions; end-of-year awards; sneaking discovery |
+| `t_creator.py` | 35 | Player mode: Surprise me fills all; each per-field Random changes only its field (name, birth date, place, gender, attraction, wealth, home, personality, talents); horoscope has no manual input, follows the birth date, and is correct at 6 cutoff dates; birth date limited to the current year, random dates in the current year, a typed 2005 date starts in the current year; city disabled until a country is chosen; country fills its cities; place stored as "City, Country"; no free-text birthplace; Fill the rest keeps typed values; Hanoi → VN profile; phone usable at 13; legacy message linked by ID and reply affects that friend (via the real Messages app path); person-window tiles on one row and memory dates on their own line. Run 4× consecutively to check stability |
 | `t_fuzz.py` | 7 | 840 random player clicks (ages 3–17, run per age pair) with reloads, Next Day, Age Up and heavy Money & Items use; cross-system + inventory invariants every 10 steps |
 
 ## Scenarios (selected)
@@ -65,6 +66,8 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 **Phase 3 fuzz invariants:** `Attending` only for today's school day during school hours while at School; no NPC event created between 9:30 PM and 6:30 AM.
 
 ## Bugs found during this QC and fixed
+- v7.3 A: the zodiac calculation (from the original code) returned Capricorn for every date after a sign's cutoff day; found while testing the new automatic horoscope.
+- v7.3 A: the first version of legacy-message linking matched by first name only and attached a friend's message to Dad when they shared a first name; it now prefers non-family people with the matching role.
 - Phase 5b (safety): the legacy romance action had no partner-age check. It was replaced by an age-gated system and covered by tests and a fuzz invariant.
 - Phase 5b: the new NPC gift-reaction function initially had the same name as the existing player gift-reaction function (`giftReaction`) and would have silently overwritten it. It was renamed `npcGiftReaction`.
 - Phase 5b: the neighborhood state was only created on the first neighborhood event; it is now created during reconciliation, including for old saves.

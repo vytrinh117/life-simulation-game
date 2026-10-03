@@ -1,6 +1,6 @@
 from harness import *
 async def life(b,place,dob='2003-04-10',w=1440,h=900):
-    pg=await new_page(b,w,h); await pg.fill('#c-place',place); await new_life(pg,dob=dob); return pg
+    pg=await new_page(b,w,h); await pg.evaluate('v=>{document.getElementById("c-place").value=v}',place); await new_life(pg,dob=dob); return pg
 async def C(pg,fn,*a): return await T(pg,"call("+",".join([repr(fn)]+[repr(x) for x in a])+")")
 async def main():
   async with async_playwright() as p:

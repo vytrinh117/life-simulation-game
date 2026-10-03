@@ -250,3 +250,12 @@ body.planner-open .planner-close{display:inline-flex}
 .plan-type small{color:var(--muted);font-size:11px}
 .identity-row{margin-bottom:8px}
 .progress.dangerbar i{background:var(--bad)}
+.modal-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:600px){.modal-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.memory-list p{margin:0}.memory-list small{display:block;color:var(--muted);font-size:11px;margin-bottom:2px}
+.place-pick{display:grid;grid-template-columns:1fr 1fr auto;gap:6px}
+.place-pick select:disabled{opacity:.55}
+.zodiac-view{display:flex;align-items:baseline;gap:10px;min-height:42px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-sunken)}
+.zodiac-view span{font-weight:800}.zodiac-view small{color:var(--muted);font-size:11px}
+.creator-note{margin:0 0 10px}
+.choices h3 .small{margin-left:6px;vertical-align:middle}

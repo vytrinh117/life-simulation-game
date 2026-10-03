@@ -10,7 +10,7 @@ async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(executable_path=CHROME)
     # ---------- §122 names ----------
-    pg=await new_page(b); await pg.fill('#c-place','New York City, USA'); await new_life(pg); await T(pg,"setAge(10)")
+    pg=await new_page(b); await pg.evaluate('v=>{document.getElementById("c-place").value=v}','New York City, USA'); await new_life(pg); await T(pg,"setAge(10)")
     for _ in range(45): await C(pg,'generateHousehold',{'kids':2})
     s=await st(pg); n=s['npcs']
     check('122: ≥100 NPCs generated', len(n)>=100, len(n))
@@ -27,7 +27,7 @@ async def main():
     fr=[x for x in s2['people'] if x['role']=='friend']
     check('97: persistent friends have first+surname+fullName', fr and all(x.get('firstName') and x.get('surname') and x.get('fullName') for x in fr), [x['name'] for x in fr])
     check('names: no JS errors', not pg.errs, pg.errs[:2]); await pg.close()
-    pg=await new_page(b); await pg.fill('#c-place','Hanoi, Vietnam'); await new_life(pg); await T(pg,"setAge(9)")
+    pg=await new_page(b); await pg.evaluate('v=>{document.getElementById("c-place").value=v}','Hanoi, Vietnam'); await new_life(pg); await T(pg,"setAge(9)")
     for _ in range(10): await C(pg,'generateHousehold',{'kids':1})
     s=await st(pg); vn=s['npcs'][0]
     check('99: Vietnamese profile uses family-name-first order', vn['fullName'].startswith(vn['surname']+' '), vn['fullName'])
@@ -41,7 +41,7 @@ async def main():
     mom=[x for x in s['people'] if x['name']=='Mom']; check('100: Mom keeps "Mom" as how you address her, has a full name', mom and mom[0].get('fullName'), mom and mom[0].get('fullName'))
     check('migration: no JS errors', not pg.errs, pg.errs[:2]); await pg.close()
     # ---------- §102 availability ----------
-    pg=await new_page(b); await pg.fill('#c-place','New York City, USA'); await new_life(pg); await T(pg,"setAge(12)"); s=await st(pg)
+    pg=await new_page(b); await pg.evaluate('v=>{document.getElementById("c-place").value=v}','New York City, USA'); await new_life(pg); await T(pg,"setAge(12)"); s=await st(pg)
     f=[x for x in s['people'] if x['role']=='friend'][0]; d=await school_day(pg,s)
     st10=await C(pg,'npcStatusAt',f['id'],d,600); check('102: friend is at school on a school morning', not st10['free'] and 'school' in st10['why'], st10)
     st23=await C(pg,'npcStatusAt',f['id'],d,1400); check('102: friend unavailable late at night', not st23['free'], st23)

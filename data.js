@@ -1,6 +1,6 @@
 'use strict';
 window.LS_DATA = Object.freeze({
-  version: 7.2,
+  version: 7.3,
   personalities: ['Kind','Ambitious','Curious','Calm','Bold','Funny','Romantic','Practical','Creative','Competitive','Shy','Social','Stubborn','Empathetic','Independent','Adventurous','Responsible','Athletic'],
   talents: ['Music','Writing','Art','Sports','Math','Science','Programming','Business','Languages','Acting','Fashion','Cooking','Photography','Gaming','Leadership','Dance'],
   names: ['Mina','Lena','Sofia','Emma','Ari','Nora','Maya','Iris','Lina','Elena','Avery','Jade','Theo','Noah','Leo','Eli','Kai','Lucas','Julian','Alex','Mia','Jordan','Sam','Rowan'],
@@ -8,7 +8,7 @@ window.LS_DATA = Object.freeze({
   weatherTypes: ['Sunny','Cloudy','Rainy','Stormy','Cool','Hot','Windy'],
   moods: ['good','busy','quiet','excited','stressed','curious','tired','happy','annoyed','confident','lonely'],
   ageRules: {
-    phone: 15,
+    phone: 13,
     partTimeWork: 16,
     adult: 18,
     investing: 18,

@@ -11,7 +11,7 @@ async def main():
     check('KG: Grade 1 intact', s['school'] and s['school']['grade']=='Grade 1', s['school'] and s['school']['grade'])
     check('KG: not active', not any(not x['resolved'] for x in kg))
     check('KG: resolved as Superseded w/ reason', kg and kg[0]['status']=='Superseded' and kg[0]['resolutionReason']=='Primary school age reached', kg and (kg[0]['status'],kg[0]['resolutionReason']))
-    check('KG: version 7.2', s['version']==7.2)
+    check('KG: version 7.3', s['version']==7.3)
     check('KG: journal entry kept', any('Kindergarten question closed' in l['title'] for l in s['log']))
     await T(pg,"openTab('home')"); html=await pg.inner_text('#panel-host')
     check('KG: UI pending list clean', 'Kindergarten decision' not in html)

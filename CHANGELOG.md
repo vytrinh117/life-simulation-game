@@ -1,5 +1,23 @@
 # Life Simulator Update Log
 
+## v7.3 (batch A) — Character creator fixes, zodiac fix, phone at 13, message reply fix, layout
+
+### Character creator
+- **Random buttons now change only their own field.** Previously all 8 per-field buttons called the same `randomize()` function, which re-rolled every field. Personality and Talents also get their own Random buttons.
+- **Horoscope is automatic.** The manual dropdown and its Random button are gone; the sign is shown read-only and updates as you change the birth date.
+- **Modes simplified.** MIXED, TRUE RANDOM and SURPRISE ME all did the same thing. Now there are two: **Surprise me** (everything) and **Fill the rest** (only empty fields; what you typed is kept). Fields start empty ("Choose…"), and anything still empty when you begin is filled randomly.
+- **Birthplace is chosen from dropdowns**: Country → City/State (11 countries, 46 cities). No free text. The calendar region, name pools and holidays follow the choice.
+- **New lives begin in the real current year** (from the device clock: 2026 now). The date picker is limited to that year, and a typed date from another year is moved into the current year. The QA harness can still use historical dates with `?qa=1`.
+
+### Bugs fixed
+- **Zodiac was wrong for about a third of birthdays.** The table returned *Capricorn* for every date after a sign's cutoff day (e.g. Jul 23 → Capricorn instead of Leo). Rewritten and verified at the cutoffs. Existing saves get their sign recalculated from the birth date.
+- **Replying to older messages did nothing.** After the phase 5a renaming, replies looked people up by their old "Mia • neighbor" name. Messages now store the sender's ID; old messages are linked on load, preferring non-family people with the matching role, because a parent can share a first name with a friend.
+- **Person window layout**: memory dates no longer run into the text ("age 6Hang out"), and the Closeness / Trust / Fun / Conflict tiles sit on one row.
+
+### Changes
+- Personal phone use now starts at **13** (was 15).
+
+
 ## v7.2 (phase 5b) — Prom, dates as scenes, romance with safety rules, neighborhood, friend groups, rivals, awards, gift reactions
 
 ### Safety rules (enforced in game logic, not just hidden in the UI)

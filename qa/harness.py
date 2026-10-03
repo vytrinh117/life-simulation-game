@@ -1,6 +1,6 @@
 import json, asyncio, datetime
 from playwright.async_api import async_playwright
-URL='file:///home/claude/proj/index.html'
+URL='file:///home/claude/proj/index.html?qa=1'
 CHROME='/opt/pw-browsers/chromium-1194/chrome-linux/chrome'
 RESULTS=[]
 def check(name,cond,detail=''):

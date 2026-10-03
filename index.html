@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <script>try{var u=JSON.parse(localStorage.getItem("lifeSim_ui")||"{}"),t=u.theme||"light";if(t==="auto")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";if(["light","dark","life"].indexOf(t)<0)t="light";document.documentElement.setAttribute("data-theme",t)}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
-  <title>Life Sim — Living World v7.2</title>
+  <title>Life Sim — Living World v7.3</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,24 +13,24 @@
 <div id="app">
   <section id="creator" class="screen">
     <div class="hero">
-      <div class="eyebrow">LIFE SIMULATION • LIVING WORLD v7.2</div>
+      <div class="eyebrow">LIFE SIMULATION • LIVING WORLD v7.3</div>
       <h1>A Life of Your Own</h1>
       <p>Start at birth. Everyday life, other people, deadlines and consequences continue around you.</p>
     </div>
     <div class="panel creator-panel">
-      <div class="mode-row"><button class="mode active" data-mode="custom">CUSTOM</button><button class="mode" data-mode="mixed">MIXED</button><button class="mode" data-mode="true">TRUE RANDOM</button></div>
+      <p class="muted-text creator-note">Fill in what you care about. Each <b>Random</b> button changes only its own field. <b>Fill the rest</b> randomizes only empty fields.</p>
       <div class="grid">
         <label>Name<div class="input-with-button"><input id="c-name" placeholder="Your character's name"><button class="small" data-random="name">Random</button></div></label>
         <label>Birth date<div class="input-with-button"><input id="c-dob" type="date"><button class="small" data-random="dob">Random</button></div></label>
-        <label>Birthplace<div class="input-with-button"><input id="c-place" placeholder="Any city, town or country"><button class="small" data-random="place">Random</button></div></label>
-        <label>Horoscope<div class="input-with-button"><select id="c-zodiac"><option value="auto">Auto from birth date</option><option>Aries</option><option>Taurus</option><option>Gemini</option><option>Cancer</option><option>Leo</option><option>Virgo</option><option>Libra</option><option>Scorpio</option><option>Sagittarius</option><option>Capricorn</option><option>Aquarius</option><option>Pisces</option></select><button class="small" data-random="zodiac">Random</button></div></label>
-        <label>Gender<div class="input-with-button"><select id="c-gender"><option>Girl</option><option>Boy</option><option>Non-binary</option><option>Other</option></select><button class="small" data-random="gender">Random</button></div></label>
-        <label>Romantic attraction<div class="input-with-button"><select id="c-attraction"><option>Men</option><option>Women</option><option>All genders</option><option>Not sure yet</option><option>Asexual / romantic</option></select><button class="small" data-random="attraction">Random</button></div></label>
-        <label>Family wealth<div class="input-with-button"><select id="c-wealth"><option>Struggling</option><option>Modest</option><option>Middle class</option><option>Comfortable</option><option>Wealthy</option><option>Extremely wealthy</option></select><button class="small" data-random="wealth">Random</button></div></label>
-        <label>Childhood environment<div class="input-with-button"><select id="c-home"><option>Warm and stable</option><option>Busy but loving</option><option>Strict</option><option>Chaotic</option><option>Quiet</option><option>Highly privileged</option><option>Unpredictable</option></select><button class="small" data-random="home">Random</button></div></label>
+        <label>Birthplace<div class="input-with-button place-pick"><select id="c-country" aria-label="Country"></select><select id="c-city" aria-label="City or state"></select><button class="small" data-random="place">Random</button></div><input id="c-place" type="hidden"></label>
+        <label>Horoscope<div class="zodiac-view"><span id="c-zodiac-view">Set a birth date</span><small>Automatic from your birth date</small></div><input id="c-zodiac" type="hidden" value="auto"></label>
+        <label>Gender<div class="input-with-button"><select id="c-gender"><option value="">Choose…</option><option>Girl</option><option>Boy</option><option>Non-binary</option><option>Other</option></select><button class="small" data-random="gender">Random</button></div></label>
+        <label>Romantic attraction<div class="input-with-button"><select id="c-attraction"><option value="">Choose…</option><option>Men</option><option>Women</option><option>All genders</option><option>Not sure yet</option><option>Asexual / romantic</option></select><button class="small" data-random="attraction">Random</button></div></label>
+        <label>Family wealth<div class="input-with-button"><select id="c-wealth"><option value="">Choose…</option><option>Struggling</option><option>Modest</option><option>Middle class</option><option>Comfortable</option><option>Wealthy</option><option>Extremely wealthy</option></select><button class="small" data-random="wealth">Random</button></div></label>
+        <label>Childhood environment<div class="input-with-button"><select id="c-home"><option value="">Choose…</option><option>Warm and stable</option><option>Busy but loving</option><option>Strict</option><option>Chaotic</option><option>Quiet</option><option>Highly privileged</option><option>Unpredictable</option></select><button class="small" data-random="home">Random</button></div></label>
       </div>
-      <div class="choices"><div><h3>Personality <span>up to 5</span></h3><div id="personality" class="chips"></div></div><div><h3>Talents <span>up to 5</span></h3><div id="talents" class="chips"></div></div></div>
-      <div class="creator-actions"><button id="random-all" class="secondary">SURPRISE ME</button><button id="begin" class="primary">BEGIN LIFE AT BIRTH →</button></div>
+      <div class="choices"><div><h3>Personality <span>up to 5</span> <button class="small ghost" data-random="personality">Random</button></h3><div id="personality" class="chips"></div></div><div><h3>Talents <span>up to 5</span> <button class="small ghost" data-random="talents">Random</button></h3><div id="talents" class="chips"></div></div></div>
+      <div class="creator-actions"><button id="random-all" class="secondary">SURPRISE ME</button><button id="fill-rest" class="secondary">FILL THE REST</button><button id="begin" class="primary">BEGIN LIFE AT BIRTH →</button></div>
       <div id="creator-error" class="error" hidden></div>
     </div>
     <div class="save-import panel"><h3>Existing life</h3><p>v7 can migrate the previous v6.x browser autosave. Export saves for portability.</p><button id="load-last">Load Autosave</button> <button id="import-btn">Import Save</button><input id="import-file" type="file" accept=".json" hidden></div>
