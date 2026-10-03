@@ -87,7 +87,7 @@ async def main():
     t0=s['family']['trust']; check('96: trust shown in House rules', True)
     await pg.close()
     # ---------- §120 clubs ----------
-    pg=await new_page(b); await new_life(pg); await T(pg,"setAge(14)"); s=await st(pg)
+    pg=await new_page(b); await new_life(pg); await T(pg,"setAge(15)"); s=await st(pg)
     await M(pg,"S.school.activityOffers=[];['Art Club','Basketball','Drama'].forEach(n=>S.school.activityOffers.push({id:'off-'+n.replace(' ',''),name:n,status:'Offered',createdDate:S.clock.dateISO,decisionDate:S.clock.dateISO.slice(0,8)+'28'}))")
     await M(pg,"S.school.activityOffers.forEach(o=>o.decisionDate='2099-01-01')")
     await C(pg,'signUpForActivity','off-ArtClub'); s=await st(pg)

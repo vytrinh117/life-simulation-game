@@ -1,5 +1,15 @@
 # Life Simulator Update Log
 
+## v7.3 (batch A2) — Prom for Grades 8–12, election grades, attendance tab, Grade 12 fix
+
+- **Prom is planned from the first day of the school year** and appears on the calendar immediately. Before, it was only created at the first midnight after turning 16, so it was missing on the birthday and in Grades 8–10.
+- **Prom every year from Grade 8 to Grade 12.** Grades 8–9 have a **Junior Prom**; Grades 10–12 have **Prom**. It falls on the **last Saturday of April** (the middle of the second half of the school year), and every birthday gets a prom inside its school year. Prom candidates are age-appropriate peers (within 2 years, 13–18).
+- **School elections only in Grade 8 and Grades 10–12** (Student Council and club leadership). Grade 9 and younger see a clear message instead.
+- **Attendance moved to its own Education tab** (Today / Subjects / Assessments / **Attendance** / Clubs & events), with this year's record, warning highlights and attendance history by past grade. The Calendar → History tab no longer duplicates it.
+- **Fixed: "Grade 12" was repeated at age 18.** High school now ends after Grade 12 (age 17). At 18 the school year closes with end-of-year awards and a high-school graduation milestone. Existing saves still in school at 18 graduate on load.
+- **Fixed: assessments were scheduled after the school year ended** and then showed up as "Cancelled • School year ended". Rolling assessments now stay inside the current school year.
+
+
 ## v7.3 (batch A) — Character creator fixes, zodiac fix, phone at 13, message reply fix, layout
 
 ### Character creator

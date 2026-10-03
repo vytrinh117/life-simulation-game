@@ -82,3 +82,8 @@ The original legacy browser key is not silently deleted during migration. Restar
 - `S.version` → 7.3. `S.zodiac` is recalculated from `S.dob` on load, because the old calculation was wrong for many dates and the sign is now always automatic.
 - Messages gain `fromId`. Older messages are linked to the sender by name and role, preferring non-family people; their `from` becomes the person's full name.
 - Existing characters keep their birth year. Only new lives start in the current year.
+
+
+## v7.3 batch A2
+- Saves aged 18+ that are still enrolled close the school year on load: awards, a high-school graduation, and `S.school = null`.
+- A prom record (`S.school.prom`) is created for the current school year on load for Grades 8–12, if its late-April date is still ahead.

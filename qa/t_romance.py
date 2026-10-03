@@ -139,7 +139,8 @@ async def main():
         await M(pg,"S.neighborhood.cooldown=null"); await C(pg,'neighborhoodTick'); s=await st(pg)
         nb=[e for e in s['events'] if e['type']=='nbh' and e['status']=='Open']
         if nb: got=nb[0]; break
-    check('91: neighborhood events happen with persistent named households', got and any(w in got['text'] for w in [h['surname'] for h in s['households']]+['neighbor','street','square','dark','snow','water','repair','Jackhammer','label','complain','lemonade','sign']), got and got['text'][:100])
+    nbh=[h for h in s['households'] if h['id'] in s['neighborhood']['households']]
+    check('91: neighborhood events happen, with persistent named neighbor households', got and got['payload']['kind'] and len(nbh)>=4 and all(h['surname'] for h in nbh), got and (got['payload']['kind'],len(nbh)))
     if got:
         await T(pg,f"eventChoice('{got['id']}','{got['choices'][0]['id']}')"); s=await st(pg)
         check('91: neighborhood choice produces a narrated outcome', s['log'][0]['title']==got['title'] and len(s['log'][0]['text'])>25, s['log'][0]['text'][:90])
@@ -147,12 +148,13 @@ async def main():
     # groups, rivals, agency, stories
     await M(pg,"S.people.filter(p=>p.role==='friend').forEach(p=>p.rel=70);S.groups=[];while(S.people.filter(p=>p.role==='friend').length<3){const n=S.npcs.find(x=>!S.people.some(p=>p.npcId===x.id));S.people.push({id:'g'+n.id,npcId:n.id,name:n.fullName,fullName:n.fullName,firstName:n.firstName,surname:n.surname,role:'friend',roleLabel:'classmate',age:S.age,rel:70,trust:60,fun:50,conflict:0,history:[],memory:'',traits:['Funny'],mood:'good',knownSince:S.age})}")
     await C(pg,'groupTick'); s=await st(pg); check('106: a friend group forms from close friends', len(s.get('groups',[]))==1 and len(s['groups'][0]['members'])>=3)
-    rv=s['npcs'][-1]['id']; await C(pg,'maybeRival',rv,'basketball'); s=await st(pg)
+    known={x.get('npcId') for x in s['people']}; rv=[n for n in s['npcs'] if n['id'] not in known][-1]['id']; await C(pg,'maybeRival',rv,'basketball'); s=await st(pg)
     ev=[e for e in s['events'] if e['type']=='rivalMoment' and e['status']=='Open']
     check('114: rivalry created with a person record', ev and any(x.get('npcId')==rv and x.get('roleLabel')=='rival' for x in s['people']))
     await T(pg,f"eventChoice('{ev[0]['id']}','shake')"); s=await st(pg); check('114: sportsmanship turns rivalry toward respect', s['rivals'][0]['type'] in ('respect','friendly competition','friendship'))
     for _ in range(150): await C(pg,'npcAgencyTick')
-    s=await st(pg); check('62: NPCs date other NPCs on their own', any(x.get('datingNpc') for x in s['people']))
+    s=await st(pg); elig=[(x['name'],x.get('age'),x.get('datingNpc')) for x in s['people'] if x['role']=='friend']
+    check('62: NPCs date other NPCs on their own', any(x.get('datingNpc') for x in s['people']), elig)
     await C(pg,'personAction',other['id'],'talk'); s=await st(pg)
     check('123: relationship action narrates what happened (not just stats)', len(s['log'][0]['text'])>40 and not s['log'][0]['text'].startswith('Closeness'), s['log'][0]['text'][:90])
     # awards
