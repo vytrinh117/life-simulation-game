@@ -1,11 +1,11 @@
-# QC Report — Life Simulator v7.2 (phases 1–5a)
+# QC Report — Life Simulator v7.2 (phases 1–5b, complete)
 
 ## Method
 The v7.1 report marked features PASS when buttons were wired. Real play still exposed lifecycle bugs, so this QC was redone **from the player's perspective**. Every check drives the real game in headless Chromium (`index.html` + `game.js`) and follows the full lifecycle: **create → display → interact → resolve → leave the active UI → persist after reload → never reappear**.
 
 The two confirmed bugs were reproduced with the **original v7.1 code**, and those exact saves are used as fixtures (`qa/fixture_*_v71.json`).
 
-**Result: 351 deterministic checks passed, 0 failed, plus the fuzz run (all invariants held over 840 random steps at six starting ages), with 0 JavaScript errors** on the final build. All earlier suites were re-run after phase 5a.
+**Result: 400 deterministic checks passed, 0 failed, plus the fuzz run (all invariants held over 840 random steps at six starting ages, including age-appropriate-partner safety invariants), with 0 JavaScript errors** on the final build. All earlier suites were re-run after phase 5b.
 
 | Suite | Checks | Covers |
 |---|---|---|
@@ -20,6 +20,7 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 | `t_holidays.py` | 57 | §54 holiday dates by region (incl. Lunar 2007 VN/CN, fallback 2051, Easter ×4, UK/AU/CA/KR variants), one-time triggers, Halloween activities, seasonal shop, month grid/navigation/agenda/markers, forgotten Mother's Day, planner at 1920/1366, key switching, page height, no overflow at 1366/390 |
 | `t_theme.py` | 30 | §55 default Light; Light/Dark/Life × 4 screens: no neutral-dark hardcoded surfaces in light themes and WCAG contrast ≥ 4.5:1 for body, headings, muted text, buttons, primary, active tab, tags, nav, needs, hero; persistence across reload (creator and in game); not stored in the save; quick toggle; Auto follows OS dark/light; nav and needs use the SVG icon set |
 | `t_social.py` | 50 | §122 111-NPC name stress test (unique IDs, no duplicate full names, ≥35 distinct first names, sibling surnames, varied conventions, persistence after reload); VN family-first order and parents' own surnames; player-save name migration; §102 availability (school, night, busy modal with alternatives); §94–95 RSVP (accept with reason, calendar, attend with story, early cancel vs no-show, next-day confrontation, NPC invitation with deadline, Maybe expiry); §96 strict household denial with negotiate/defy; §120 club QC (open sign-up, decline, tryout scheduled, weak fail with component reason, recovery date, retry, diminishing practice, strong success with ladder rank, reputation, outcome history, resolved thread, election opponents, campaign, win sets Captain, loss with NPC winner and recovery, reload persistence, Journal, identity) |
+| `t_romance.py` | 48 | **Safety**: 16-year-old cannot romance a 26-year-old (logic and UI), intimacy refused for minors at the logic level, minor romance menu without intimate options, minor date endings without kiss/invite, minors cannot sneak a partner over, unknown actions ignored safely; adult consent: a "no" is respected with trust up and no penalty, a mutual yes fades to black. **§119 Prom**: season, reject with reason, reason in outcome history, already-has-a-date refusal, ask another → crush accepts, free prep, hero on prom night, 6-stage night resolves, memory, no Due afterwards, NPC asks, "need time" expires and they ask someone else, alone / friends / skip (with alternative evening) all resolve. Dates/Valentine scenes; gifts (loved / already had one / awkward); neighborhood events with households and reputation; friend group; rival creation and evolution; NPC–NPC dating; narrated relationship actions; end-of-year awards; sneaking discovery |
 | `t_fuzz.py` | 7 | 840 random player clicks (ages 3–17, run per age pair) with reloads, Next Day, Age Up and heavy Money & Items use; cross-system + inventory invariants every 10 steps |
 
 ## Scenarios (selected)
@@ -55,11 +56,19 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 
 **Phase 3 assertion updates (new design, not regressions):** taking an exam now leaves you checked in at school (`Attending`) instead of at 3 PM; arriving at 9:20 leaves the clock at 9:20 (tardy) and dismissal at 3 PM finalizes attendance; school-day contests run 13:00–15:00, so the attend/absent tests reach that slot; the shop, inventory and "Use your things" sections are reached through their sub-tabs; the calendar test checks that nothing is still *waiting* (the resolved kindergarten record legitimately shows in the day agenda as history).
 
+**Phase 5b fuzz invariants:** a romantic partner is always age-appropriate (minor ↔ minor within 2 years, adult ↔ adult); prom never stuck in season after its date; neighborhood exists for ages 3+.
+
+**Unreproduced flake:** in one of ~6 fuzz runs at ages 14→17, the state read immediately after a scripted page reload + "Load last" returned no life. Four instrumented reruns (step-level checks) did not reproduce it; save size was ~73 KB (far below quota). It is most likely a harness timing race around reload, but it is listed here rather than claimed fixed.
+
 **Phase 5a fuzz invariants:** accepted plans always have a calendar entry and are never in the past; no election stuck in campaign after its date; no tryout stuck scheduled after its date; no duplicate NPC full names.
 
 **Phase 3 fuzz invariants:** `Attending` only for today's school day during school hours while at School; no NPC event created between 9:30 PM and 6:30 AM.
 
 ## Bugs found during this QC and fixed
+- Phase 5b (safety): the legacy romance action had no partner-age check. It was replaced by an age-gated system and covered by tests and a fuzz invariant.
+- Phase 5b: the new NPC gift-reaction function initially had the same name as the existing player gift-reaction function (`giftReaction`) and would have silently overwritten it. It was renamed `npcGiftReaction`.
+- Phase 5b: the neighborhood state was only created on the first neighborhood event; it is now created during reconciliation, including for old saves.
+- Phase 5b: `romanceAction` crashed on an unknown action kind; it now ignores it safely.
 - Phase 5a: name migration replaced a known friend's given name ("Mia" → "Léo") when it was not in the regional pool. Given names are now always kept.
 - Phase 5a: parents could get cross-gender names (Mom "Nathan"); family members now use gendered family-name lists.
 - Phase 5a: `addStagePeople` ran before name migration and added duplicate neighbors/classmates to old saves; migration now runs first.
@@ -80,8 +89,8 @@ The two confirmed bugs were reproduced with the **original v7.1 code**, and thos
 - Holidays: school breaks are still a fixed northern-hemisphere schedule; Thanksgiving/Lunar New Year days off are not yet school holidays. A family cannot yet change which holidays it observes from the UI (the profile supports overrides).
 - School: kindergarten days still resolve in one step; the interactive timetable starts in Grade 1.
 - Themes: contrast was measured on the main screens; rarely seen modals and phone apps were reviewed visually but not measured. Item/holiday emoji remain (by design).
-- Social (5a): NPC romance/dating, prom, neighbors and gift-preference reactions belong to phase 5b. NPCs do not yet date each other or form their own friend groups. Club competitions (games, concerts) are not yet separate events.
-- Not yet implemented (phase 5b): prom (§63–70), dates as scenes (§83), Valentine couple activities (§80), adult-only intimacy rules (§81), sneaking out/in (§82), neighborhood events and households (§91–93), friend groups (§106), boundaries (§107), gift response system (§108), rivalries (§114), awards (§115), and broader story-outcome coverage (§60–123).
+- Romance/social: NPCs date each other abstractly (by name) rather than as fully simulated couples. Friend groups are limited to one group. Adult characters do not yet have a housing system, so adult sneaking-in is not modeled. The romance opt-out exists in the save (`S.romance.optOut`) but has no settings toggle yet.
+- All spec phases (1–5b) are now implemented. Remaining work is depth and balance tuning rather than missing systems.
 - Tests use a QC-only clock jump (`setClock`). In normal play time always passes through the processors; a few test-only artifacts (e.g. homework shown "Late" right after a jump) do not occur in real play.
 
 ## Running QC

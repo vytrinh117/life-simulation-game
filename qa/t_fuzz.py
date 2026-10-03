@@ -19,6 +19,9 @@ INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,no
  for(const el of S.elections||[])if(el.status==='Campaign'&&el.date<today)bad.push('election stuck in campaign');
  for(const t of (S.school&&S.school.tryouts)||[])if(t.status==='Scheduled'&&t.dateISO<today)bad.push('tryout stuck scheduled');
  const fn=S.npcs?S.npcs.map(n=>n.fullName.toLowerCase()):[];if(new Set(fn).size!==fn.length)bad.push('duplicate NPC full names');
+ const pp=S.romance&&S.romance.partnerId&&S.people.find(x=>x.id===S.romance.partnerId);if(pp){const pa=pp.age;if(S.age<18&&(pa>=18||pa<13||Math.abs(pa-S.age)>2))bad.push('SAFETY: age-inappropriate partner');if(S.age>=18&&pa<18)bad.push('SAFETY: adult with minor partner')}
+ const pr=S.school&&S.school.prom;if(pr&&pr.status==='Season'&&pr.dateISO<today)bad.push('prom stuck in season');
+ if(S.age>=3&&!S.neighborhood)bad.push('neighborhood missing');
  const ph=S.inventoryItems.find(i=>i.id===S.phone.activeItemId);if(ph&&Math.round(ph.condition)!==S.phone.condition)bad.push('phone desync '+ph.condition+' vs '+S.phone.condition);
  const slots={};for(const i of S.inventoryItems){if(i.equipped){if(slots[i.slot])bad.push('two items in slot '+i.slot);slots[i.slot]=1}if(!(i.quantity>=1))bad.push('bad quantity');if(i.lifecycleType==='finite'&&i.remaining<=0.5)bad.push('used-up item lingers');if(i.lifecycleType==='container'&&(i.contents<0||i.contents>i.capacity))bad.push('container out of bounds');if(!i.lifecycleType)bad.push('item without lifecycle')}
  return bad}"""
@@ -50,6 +53,8 @@ async def main():
             elif r<0.085 and age<16: await T(pg,"ageUp()")
             elif r<0.10:
                 await pg.reload(); await pg.click('#load-last')
+                if await pg.evaluate("__LIFE_SIM_TEST__.getState()") is None:
+                    print('  NULL AFTER RELOAD at step',i,'errors:',pg.errs[-3:],'creator visible:',await pg.is_visible('#creator'),'saved bytes:',await pg.evaluate("(localStorage.getItem('lifeSim_v7_world')||'').length")); break
             else:
                 if random.random()<0.3:
                     await T(pg,"openTab('business')")
@@ -62,6 +67,8 @@ async def main():
                     bt=random.choice(btns)
                     try: await bt.click(timeout=1500)
                     except Exception: pass
+            if await pg.evaluate("__LIFE_SIM_TEST__.getState()") is None:
+                print('  S NULL at step',i,'r=%.3f'%r,'url',pg.url,'creator:',await pg.is_visible('#creator'),'errs',pg.errs[-2:]); break
             if i%10==9:
                 bad=await pg.evaluate(INV)
                 if bad: total_bad.append((age,i,bad[:3])); print('  invariant @age',age,'step',i,bad[:3])

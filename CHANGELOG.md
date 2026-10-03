@@ -1,5 +1,50 @@
 # Life Simulator Update Log
 
+## v7.2 (phase 5b) — Prom, dates as scenes, romance with safety rules, neighborhood, friend groups, rivals, awards, gift reactions
+
+### Safety rules (enforced in game logic, not just hidden in the UI)
+- **Fixed a real issue:** the old "romance" action did not check the other person's age, so a teen could "flirt" with an adult acquaintance. Romance now requires the player to be 13+ and an age-appropriate partner: minors only with other minors aged 13–17 within two years; adults only with adults.
+- Teen romance stays wholesome (hanging out, holding hands, hugs, slow dances). Kissing goodnight and any intimacy options exist only when **both** people are adults, and the logic refuses them otherwise, even if called directly.
+- **Adult intimacy** (§81) needs mutual consent every time and fades to black with no explicit description. A "no" is always respected and never punished: trust goes up, closeness does not drop, and there is no "push" option.
+- **Sneaking out** (§82) for minors is about friends and parties only. Sneaking a romantic partner over is blocked for minors.
+- Players can opt out of romance content (`S.romance.optOut`).
+
+### Romance & dates (§83, §107)
+- Each NPC has an attraction level, a stage (none → crush → dating → partner → ex), whether they are open to romance, and **boundaries** (no public affection, no expensive gifts, needs time, no big parties, not ready). Ignoring a boundary costs trust; once you know someone well, you learn their boundaries.
+- **Dates are multi-step scenes**: pick a place (picnic, café, movie, walk, arcade; dinner and cooking together for adults; beach 16+) → choose a conversation topic (fit depends on their personality and trust) → a random moment (spill, run-in, perfect view, buzzing phone…) → how you say goodbye. The result (great / good / awkward / rough date) is narrated with the reasons. Weather and money matter; a very bad date can end a new relationship.
+- NPC partners break up if the relationship is neglected (with a reason); relationships can be made official or ended.
+
+### Prom (§63–70)
+- For high-schoolers 16+, prom is scheduled each school year (a Saturday evening, with venue, formal dress code and ticket). Prom season opens 4 weeks before.
+- **Ask someone** with an approach (casual, private, promposal, text, in front of friends, with a gift, jokingly); what works depends on their personality. Responses always come with a reason: accepted (crush, hoping you would ask, impressed by the promposal), accepted **as friends**, "let me think" (decided later), or rejected (already has a date, dating someone, not going, embarrassed by a public ask, recent argument, no attraction, low relationship).
+- **Second chances**: ask someone else, go with friends, go alone, or skip. Asking several people in one week starts gossip, and others may mention it.
+- **NPCs act on their own**: they pair up, decide not to go, and ask you (accept / as friends / need time / decline / "I already have a date"). If you take too long, they ask someone else.
+- **Preparation** with free alternatives: ticket or waiver; buy / borrow / wear your own outfit; salon or DIY hair; makeup if owned; corsage where it is a tradition; ride (caregiver / carpool / split a limo); dinner; photos; prom committee work (leadership).
+- **Prom night** is a 6-stage scene: getting ready (possible outfit mishap) → meeting up (date may be late) → arrival and dancing (crush with someone else, a friend in trouble, a compliment) → slow song (possible confession) → prom court (based on reputation) → after (diner / home / after-party with a curfew check). Drama is not guaranteed; good nights happen.
+- **Memories**: "You attended prom with …", "You skipped prom and spent the evening gaming with friends." No prom record ever stays Due.
+
+### Valentine's (§79–80)
+- Couples (13+) get a Valentine date scene and a card exchange. Singles can hang out with friends, treat themselves, go to a singles mixer (18+, may meet someone new), or receive a secret-admirer card (teens). Nothing is forced.
+
+### Neighborhood (§91–93)
+- Four persistent named neighbor households (some with pets), plus ~20 event types: a new family moves in, neighbors move away, block party, garage sale (real bargains), cleanup, lost pet, misdelivered package, power and water outages, street repairs, festival, fundraiser, lemonade stand, noise complaint, neighbor argument, kids playing, snow (cold regions in winter), community garden, market, and neighborhood watch (18+). Every choice is narrated and can introduce new people.
+- **Neighborhood reputation** has 7 dimensions (helpful, friendly, quiet, social, troublemaker, local business, well-known), shown in World.
+
+### Friend groups, rivals, NPC agency (§62, §106, §114)
+- With 3+ close friends, a **friend group** forms with a name. It develops inside jokes, group-chat banter, someone feeling left out, internal arguments (mediate or take sides), new members and group outings.
+- **Rivals** come from competitions (tryouts, elections): handshake, trash talk or ignore. Rivalries can become respect, resentment, or friendship.
+- NPCs date other NPCs and break up (they may need comfort), ask for favors, and occasionally send you small gifts.
+
+### Gifts (§108)
+- Gift reactions consider personality and club interests, occasion, price versus closeness, the "no expensive gifts" boundary, handmade or sentimental value, duplicates ("already have one from you!"), wear and spoilage. Results: loved / liked / appreciated the effort / awkward / already had one / not their thing, always explained, and recorded in outcome history.
+
+### Awards (§115)
+- At the end of each school year: Honor Roll, Perfect Attendance, Competition Winner, Club Leadership, Art & Creativity, Athlete of the Year, Student Government Service, and Kindness. Awards update reputation; parents and friends react; they appear in milestones and the Journal.
+
+### Story coverage (§60, §123)
+- Everyday relationship actions (talk, hang out, play, confide, gossip, argue, apologize, message, call) now narrate what happened, using traits, shared memories and group jokes, instead of only listing stat changes.
+
+
 ## v7.2 (phase 5a) — People with real names and lives, plans/RSVP, house rules, tryouts, elections, school reputation
 
 ### Names (§97–101)

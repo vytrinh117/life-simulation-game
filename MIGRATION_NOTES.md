@@ -70,3 +70,9 @@ The original legacy browser key is not silently deleted during migration. Restar
 - People: `firstName`, `surname`, `fullName`, `nickname`, `roleLabel`, `npcId`, `goals` are added. Legacy names like "Mia • neighbor" keep the given name (Mia) and gain a surname; `name` becomes the full name. Mom/Dad/Grandmother keep their `name` (used for address) and gain a gender-appropriate full name.
 - New containers: `S.npcs` (school roster), `S.households`, `S.plans`, `S.elections`, `S.threads`, `S.outcomes`, `S.schoolRep`, `S.family.trust` (default 60), `S.school.tryouts`, `S.familyName`.
 - Existing friends count as filled social slots (no duplicate "classmate" is added on load). Existing club positions not on the new ladders are mapped on the next promotion check.
+
+
+## v7.2 phase 5b
+- People gain romance fields lazily (`attraction`, `romanceStage`, `romanceOpen`, `boundaries`), plus `promWith`, `datingNpc`, `giftsReceived` and `movedAway` as they come up. `S.romance.partnerId` is added; the legacy `S.romance.partner` name string is kept for display.
+- New containers: `S.neighborhood` (households and reputation, created on load for ages 3+), `S.groups`, `S.rivals`, `S.awards`, `S.scene` (a date or prom night in progress; resumable from the hero), `S.school.prom`, and `S.family.ruleBreaks`.
+- The old romance action (which had no partner-age check) is replaced; any existing `S.romance.status` text is preserved.
