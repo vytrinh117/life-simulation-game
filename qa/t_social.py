@@ -77,14 +77,20 @@ async def main():
     check('94: ignored Maybe expires (NPC stops waiting)', pm['status']=='Expired', pm['status'])
     check('rsvp: no JS errors', not pg.errs, pg.errs[:3]); await pg.close()
     # ---------- §96 curfew & permission ----------
-    pg=await new_page(b); await new_life(pg); await T(pg,"setAge(13)"); s=await st(pg)
+    pg=await new_page(b); await new_life(pg); await T(pg,"setAge(12)"); s=await st(pg)
     f=[x for x in s['people'] if x['role']=='friend'][0]
     await M(pg,"S.family.rules.strictness=100;S.family.rules.respect=0;S.family.closeness=0;S.family.trust=0")
-    await C(pg,'makePlan',f['id'],'party','weekend'); txt=await pg.inner_text('#choice-content') if await pg.is_visible('#choice-overlay') else ''
-    check('96: strict household says no to a party → Accept / Go anyway', 'says no' in (await pg.inner_text('#choice-title')).lower() and 'Go anyway' in txt, txt[:100])
+    await C(pg,'makePlan',f['id'],'sleepover','weekend'); txt=await pg.inner_text('#choice-content') if await pg.is_visible('#choice-overlay') else ''
+    check('96: under 13, a strict household says no to a sleepover → Accept / Go anyway', 'says no' in (await pg.inner_text('#choice-title')).lower() and 'Go anyway' in txt, txt[:100])
     await pg.click('[data-plan-defy]'); s=await st(pg); pd=s['plans'][0]
     check('96: defying is tracked on the plan', pd.get('defy') is True)
-    t0=s['family']['trust']; check('96: trust shown in House rules', True)
+    await pg.close()
+    pg=await new_page(b); await new_life(pg); await T(pg,"setAge(15)"); s=await st(pg); f=[x for x in s['people'] if x['role']=='friend'][0]
+    await M(pg,"S.family.rules.strictness=100;S.family.trust=50")
+    perm=await C(pg,'needsPermission','party',{'dateISO':s['clock']['dateISO'],'start':1140})
+    check('L43: at 15 a party needs no permission (only telling your parents) when it ends before curfew', not perm['need'], perm)
+    cf=await C(pg,'curfewMinute'); check('L44: teen curfew with strict parents is 10:30 PM', cf==1350, cf)
+    await M(pg,"S.family.rules.strictness=20"); cf=await C(pg,'curfewMinute'); check('L44: teen curfew with easygoing parents is midnight', cf==1439, cf)
     await pg.close()
     # ---------- §120 clubs ----------
     pg=await new_page(b); await new_life(pg); await T(pg,"setAge(15)"); s=await st(pg)

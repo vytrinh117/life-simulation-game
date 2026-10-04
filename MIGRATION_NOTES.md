@@ -109,3 +109,8 @@ The original legacy browser key is not silently deleted during migration. Restar
 ## v7.3 batch K + N + X
 - People gain `tier`, `battery`, `invites`, `reliability`, `bday` (NPCs get `bday` too), `bdayWished` and `giftsReceived` lazily. New: `S.chats`, `S.callLog`, `S.whiteLies`, `S.outings`.
 - Old `S.messages` are copied once into `S.chats` (`S.chatsMigrated`), after being linked to their senders.
+
+
+## v7.3 batch L + M + P + Q
+- New: `S.programs`, `S.trip`, `S.tripOffer`, `S.family.anniversary` and `lastTripOffer`, item `wrapped`, skill `baking`. Catalog additions: bakedCookies, cupcakes, heartCookies (not sold in the store) and heartWrap (Valentine's seasonal).
+- The teen curfew changes on load (22:30–24:00 by strictness). Existing plans are unchanged.

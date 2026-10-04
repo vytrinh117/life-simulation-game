@@ -49,11 +49,11 @@ async def main():
     check('X: own phone usable from age 13', (await st(pg))['phone']['owned'])
     await T(pg,"openTab('phone')"); txt=await pg.inner_text('#panel-host'); check('X: phone apps open at 13 (no age lock message)', 'starts around high school' not in txt, txt[:120])
     s=await st(pg); f=[x for x in s['people'] if x['role']=='friend'][0]
-    await pg.evaluate("c=>__LIFE_SIM_TEST__.mutate(c)",f"S.messages.unshift({{id:'legacy1',from:'{f['firstName']} • {f.get('roleLabel') or 'classmate'}',text:'Want to hang out?',dateISO:S.clock.dateISO,minute:600,read:false}})")
+    await pg.evaluate("c=>__LIFE_SIM_TEST__.mutate(c)",f"S.messages.unshift({{id:'legacy1',from:'{f['firstName']} • {f.get('roleLabel') or 'classmate'}',text:'Want to hang out?',dateISO:S.clock.dateISO,minute:600,read:false}});S.chatsMigrated=false")
     await T(pg,"reconcile()"); s=await st(pg); m=[x for x in s['messages'] if x['id']=='legacy1'][0]
     check('X: legacy message linked to the right person by ID', m.get('fromId')==f['id'], m)
     r0=f['rel']; await pg.evaluate("c=>__LIFE_SIM_TEST__.mutate(c)","S.permissions.dailyAccess={dateISO:S.clock.dateISO,phone:true,tv:false,sharedDevice:false,stove:false}")
-    await T(pg,"openTab('phone')"); await pg.click("#panel-host button:has-text('Messages')"); await pg.click("[data-message-reply='legacy1']")
+    await T(pg,"openTab('phone')"); await pg.click("#panel-host button:has-text('Messages')"); await pg.click(f"[data-chat-open='{f['id']}']"); await pg.click("#choice-content [data-chat-reply='warm']"); await T(pg,"call('closeChoiceModal')")
     s=await st(pg); r1=[x for x in s['people'] if x['id']==f['id']][0]['rel']
     check('X: replying to an old message now affects that friend', r1>r0, (r0,r1))
     # person modal layout

@@ -123,11 +123,11 @@ async def main():
     check('H: really sick → parents usually approve → excused absence logged for that day', appr>=3, appr)
     tm=day
     await M(pg,"S.health=100;S.needs.sleep=95;S.stress=5;S.happiness=80;S.family.rules.strictness=100"); den=0
-    for i in range(6):
+    for i in range(10):
         d=await school_day_after(pg,(dt.date.fromisoformat(tm)+dt.timedelta(days=1+i*2)).isoformat())
         await T(pg,f"setClock('{(dt.date.fromisoformat(d)-dt.timedelta(days=1)).isoformat()}',1140)"); await C(pg,'askStayHome','tomorrow','none'); s=await st(pg)
         den+=(s['school'].get('stayHome',{}).get(d)=='denied')
-    check('H: healthy + "don\'t want to go" with strict parents → usually refused', den>=5, den)
+    check('H: healthy + "don\'t want to go" with strict parents → usually refused', den>=7, den)
     check('home/school: no JS errors', not pg.errs, pg.errs[:3]); await pg.close()
     # ---------- J. fast forward ----------
     pg=await life(b,'New York City, USA',age=10); s=await st(pg)

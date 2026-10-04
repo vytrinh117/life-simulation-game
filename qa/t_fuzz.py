@@ -24,6 +24,10 @@ INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,no
  if(!(S.happiness>=0&&S.happiness<=100))bad.push('mood out of range');
  for(const [cd,why] of Object.entries(S.closures||{}))if(S.calendar.some(e=>e.type==='schoolDay'&&e.dateISO===cd&&!['Cancelled','Expired'].includes(e.status)))bad.push('closure day has school '+cd);
  if(S.weather&&!(S.weather.severity>=0&&S.weather.severity<=3))bad.push('weather severity invalid');
+ for(const [id,c] of Object.entries(S.chats||{}))if(c.msgs.length>60)bad.push('chat over cap '+id);
+ for(const p of S.people)if(p.battery!=null&&!(p.battery>=0&&p.battery<=100))bad.push('battery out of range');
+ if(S.trip&&S.trip.len>30)bad.push('trip too long');
+ for(const r of S.programs||[])if(r.attended>r.total)bad.push('program over-attended '+r.name);
  const pp=S.romance&&S.romance.partnerId&&S.people.find(x=>x.id===S.romance.partnerId);if(pp){const pa=pp.age;if(S.age<18&&(pa>=18||pa<13||Math.abs(pa-S.age)>2))bad.push('SAFETY: age-inappropriate partner');if(S.age>=18&&pa<18)bad.push('SAFETY: adult with minor partner')}
  const pr=S.school&&S.school.prom;if(pr&&pr.status==='Season'&&pr.dateISO<today)bad.push('prom stuck in season');
  if(S.age>=3&&!S.neighborhood)bad.push('neighborhood missing');

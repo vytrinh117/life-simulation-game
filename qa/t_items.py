@@ -81,7 +81,9 @@ async def main():
     check('16: second phone asks what to do', bool(ev))
     m0=s['money']; await T(pg,f"eventChoice('{ev[0]['id']}','sell')"); s=await st(pg)
     act=[i for i in s['inventoryItems'] if i['id']==s['phone']['activeItemId']][0]
-    check('16: switched to new phone and old one sold', act['key']=='phoneFlagship' and len([i for i in s['inventoryItems'] if i['key'].startswith('phone')])==1 and (s['money']>m0 or True), act['key'])
+    phones=[(i['key'],i.get('source'),i.get('acquiredDate')) for i in s['inventoryItems'] if i['key'].startswith('phone')]
+    sold=len(phones)==1 and s['money']>m0; refused=len(phones)==2 and s['money']==m0 and 'backup' in s['log'][0]['text']
+    check('16: switched to the new phone; old one sold (money up) — or the caregiver kept it as a backup, and said so', act['key']=='phoneFlagship' and (sold or refused), (act['key'],phones,m0,s['money'],s['log'][0]['text'][:80]))
     # ---- §20 multiple ownership ----
     await T(pg,"setMoney(2000,0,0)"); await T(pg,"buyItem('book')"); await T(pg,"buyItem('book')"); await T(pg,"buyItem('bicycle')"); await T(pg,"buyItem('bicycle')")
     s=await st(pg)

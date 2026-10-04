@@ -1,5 +1,43 @@
 # Life Simulator Update Log
 
+## v7.3 (batch L + M + P + Q) — Teen autonomy, summer programs & jobs, baking/wrapping/Valentine's, family outings & trips
+
+### L. Teen autonomy (13–17)
+- **Curfew**: 10:30 PM (strict parents), 11:00 PM, or midnight (easygoing). Under 13 is unchanged.
+- **Sleepovers, parties and game nights need no permission from 13** — you tell your parents instead ("Letting them know", a little trust). Plans that would break curfew still need an OK, and sneaking out still exists.
+- Teens already joined clubs without a caregiver's approval. Club/activity offers must now be answered within **2 days** (was 4).
+
+### M. Summer & holiday activities
+- **Casual practice** (Daily Life → Activities): shoot hoops, run, sketch, music, library, coding, dance, try a recipe. Free and flexible, but slower skill growth.
+- **Formal programs**, open from about 3 weeks before summer break: basketball camp, soccer league, swim lessons, art class, music lessons, theater camp, coding camp, science camp, baking class, summer school.
+  - Each has a cost (a caregiver may pay), a real schedule of sessions on the calendar, coaching (much faster skill growth), 1–2 teammates on day one, and a final event (tournament, show, exhibition, recital, demo day…) with a result, a milestone and reputation.
+  - Missing 3 sessions in a row drops you (no refund).
+  - Summer school also lifts your weakest subject.
+- **Summer jobs**: babysitting (13+), mowing lawns (12+), café (16+), lifeguard (16+, needs fitness), paid per shift.
+- Fast Forward attends program sessions on autopilot.
+
+### P. Baking, wrapping, Valentine's
+- **Baking at home**: cookies, cupcakes, and heart cookies in Valentine season.
+  - New **Baking** skill (boosted by the Cooking talent).
+  - Kitchen rules by age: under 8 with a caregiver, under 12 supervised.
+  - Quality depends on skill. Makes a batch of perishable homemade treats.
+- **Gift wrapping is a real action** (Money & Items → Your things → More → "Wrap as gift"). It uses gift wrap or the new **heart wrapping paper**; the recipient opens it when you give it. You can also unwrap.
+- **One main Valentine's plan** per year (partner date, friends, singles mixer or treating yourself); cards and small gestures are still separate.
+- **Secret admirer note or baked treats in someone's locker/desk** (Valentine season, school, 10+, an age-appropriate peer), signed or anonymous, once per person per year. Anonymous gifts may be guessed. Signed ones from 13+ can start a crush; under 13 they stay friendly.
+
+### Q. Family outings & trips
+- **Family outing** (replaces the old "Trip" action for under-18s, which jumped 1–3 days instantly): a few hours to the park, zoo, museum, beach (warm days), hiking trail or amusement park (by wealth). Costs energy and needs, not allowed during school hours, and outdoor options depend on the weather.
+- **Vacations are proposed by your parents only on occasions**: their wedding anniversary, a family member's birthday, sometimes your birthday, before a break or summer, or time off work. There is a cooldown of at least 120 days, so not daily or monthly. Each proposal shows the destination (near / far / abroad by wealth), transport (plane, cruise, car, camper van, camping), dates and length (≤ 30 days).
+- You answer **Yes / No / Tell you tomorrow** (asked again the next evening).
+  - **Yes**: school days on the trip are logged as excused, and plans in that period are cancelled.
+  - **No**: your parents may go anyway. You stay **home alone (13+)** or with an older sibling, or **a grandparent/relative looks after you (under 13)**. Home alone at 13+ may bring a party temptation, which neighbors may report.
+- On the trip, your location is the trip and outings are blocked. Coming home brings a souvenir and a milestone.
+
+### Bugs fixed
+- **The store listed homemade treats for $0.** The store now respects items that are not for sale.
+- **"Homemade" gift reactions only partly worked.** Items record where they came from in `source`, but the reaction only checked `origin` (which is set only in some cases) or the name. It now checks all three.
+
+
 ## v7.3 (batch K + N + X) — Scheduling with real answers, relationship tiers, birthdays, chats & calls
 
 ### K. Free time & scheduling
