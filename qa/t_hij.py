@@ -53,10 +53,14 @@ async def main():
         moved=[e for e in s['exams'] if e['id']==ex[0]['id']][0]; check('I: assessment on the closure day is rescheduled', moved['dateISO']>d and moved['status'] in ('Scheduled','Due'), moved['dateISO'])
     check('I: closure announced', any('School closed' in l['title'] for l in s['log'][:10]))
     # severe (not extreme): parents ask in the morning
-    d2=await school_day_after(pg,(dt.date.fromisoformat(d)+dt.timedelta(days=1)).isoformat())
-    await T(pg,f"setClock('{(dt.date.fromisoformat(d2)-dt.timedelta(days=1)).isoformat()}',1300)")
-    await M(pg,f"S.weather.forecast=[{{dateISO:'{d2}',type:'Stormy',temp:12,humidity:90,severity:2}},...S.weather.forecast.slice(1)]")
-    await T(pg,"advanceMinutes(560)"); s=await st(pg); ask=[e for e in s['events'] if e['type']=='weatherSchool' and e['status']=='Open']
+    dd=(dt.date.fromisoformat(d)+dt.timedelta(days=1)).isoformat()
+    for attempt in range(4):  # forecasts are right ~90% of the time by design
+        d2=await school_day_after(pg,dd)
+        await T(pg,f"setClock('{(dt.date.fromisoformat(d2)-dt.timedelta(days=1)).isoformat()}',1300)")
+        await M(pg,f"S.weather.forecast=[{{dateISO:'{d2}',type:'Stormy',temp:12,humidity:90,severity:2}},...S.weather.forecast.slice(1)]")
+        await T(pg,"advanceMinutes(560)"); s=await st(pg); ask=[e for e in s['events'] if e['type']=='weatherSchool' and e['status']=='Open']
+        if s['weather']['type']=='Stormy': break
+        dd=(dt.date.fromisoformat(d2)+dt.timedelta(days=1)).isoformat()
     check('I: severe weather → caregiver asks if you want to go', bool(ask) and s['weather']['type']=='Stormy', s['weather']['type'])
     if ask:
         await T(pg,f"eventChoice('{ask[0]['id']}','stay')"); s=await st(pg); sd=[c for c in s['calendar'] if c['type']=='schoolDay' and c['dateISO']==d2][0]
@@ -132,14 +136,19 @@ async def main():
     # ---------- J. fast forward ----------
     pg=await life(b,'New York City, USA',age=10); s=await st(pg)
     await pg.click('#ff-btn'); opts=await pg.evaluate("[...document.querySelectorAll('#choice-content [data-ff]')].map(x=>x.dataset.ff)")
-    check('J: Fast forward menu offers week / month / term / major / birthday', set(opts)=={'week','month','term','major','birthday'}, opts)
+    check('J: Fast forward menu offers week / month / a school-calendar target (next term or end of break) / major / birthday', {'week','month','major','birthday'}<=set(opts) and bool({'nextTerm','endBreak'}&set(opts)) and not any('eason' in o for o in opts), opts)
     await pg.click('[data-close-modal], #close-choice') if await pg.query_selector('#close-choice') else None
     await T(pg,"call('closeChoiceModal')")
     await M(pg,"S.events.forEach(e=>{if(e.status==='Open')e.status='Resolved'})")
     d0=s['clock']['dateISO']; ex=sorted([e for e in s['exams'] if e['status']=='Scheduled'],key=lambda e:e['dateISO'])
-    await C(pg,'fastForward','week'); s=await st(pg); txt=await pg.inner_text('#choice-content')
+    await C(pg,'fastForward','week')
+    for i in range(12):  # Phase 1B: invitations/important events pause the session; continue each time
+        s=await st(pg); ses=s.get('ffSession')
+        if not ses or ses['status']!='paused': break
+        await C(pg,'ffPauseChoice','decline' if ses['pause']['tier']=='soft' else 'simulate')
+    s=await st(pg); txt=await pg.inner_text('#choice-content')
     moved=(dt.date.fromisoformat(s['clock']['dateISO'])-dt.date.fromisoformat(d0)).days
-    check('J: fast forward moves time and shows a summary', moved>=1 and 'passed' in txt, (moved,txt[:80]))
+    check('J: fast forward moves time and shows a summary', moved>=1 and 'day' in txt and not s.get('ffSession'), (moved,txt[:80]))
     if ex and ex[0]['dateISO']<=(dt.date.fromisoformat(d0)+dt.timedelta(days=7)).isoformat():
         check('J: stops on the morning of an assessment day', s['clock']['dateISO']==ex[0]['dateISO'] and 'Stopped' in txt, (s['clock']['dateISO'],ex[0]['dateISO']))
     rec=s['school']['record']; sdays=0; x=dt.date.fromisoformat(d0)
@@ -147,17 +156,21 @@ async def main():
         sdays+=bool(await T(pg,f"call('isSchoolDay','{x.isoformat()}')")); x+=dt.timedelta(days=1)
     check('J: every school day passed on autopilot was attended (none turned into absences)', rec['daysAttended']>=sdays-1 and rec['absences']==0, (rec['daysAttended'],sdays,rec['absences']))
     await T(pg,"call('closeChoiceModal')")
-    await C(pg,'npcInvitesPlayer',[x for x in s['people'] if x['role']=='friend'][0]['id']); d1=(await st(pg))['clock']['dateISO']
+    await M(pg,"S.inviteLog=[]")  # Phase 1B throttle: earlier runs in this test used the weekly invitation budget
+    await C(pg,'npcInvitesPlayer',[x for x in s['people'] if x['role']=='friend'][0]['id']); s1=await st(pg); d1=s1['clock']['dateISO']
+    check('J (setup): an invitation is waiting', any(e['type']=='invitation' and e['status']=='Open' for e in s1['events']))
     await C(pg,'fastForward','month'); s=await st(pg)
     check('J: refuses to skip ahead while an invitation waits for an answer', s['clock']['dateISO']==d1)
     check('J: no JS errors', not pg.errs, pg.errs[:3]); await pg.close()
     # summer → next term
     pg=await life(b,'New York City, USA',dob='2010-03-10',age=12); await T(pg,"setClock('2022-07-01',600)"); await M(pg,"S.events.forEach(e=>{if(e.status==='Open')e.status='Resolved'})")
-    target=await C(pg,'ffTarget','term'); stops=0
-    for i in range(25):
-        await M(pg,"S.events.forEach(e=>{if(e.status==='Open')e.status='Resolved'})"); await C(pg,'fastForward','term'); await T(pg,"call('closeChoiceModal')"); s=await st(pg)
-        if s['clock']['dateISO']>=target: break
-        stops+=1
+    target=await C(pg,'ffTarget','endBreak'); stops=0
+    await M(pg,"S.events.forEach(e=>{if(e.status==='Open')e.status='Resolved'})"); await C(pg,'fastForward','endBreak')
+    for i in range(25):  # one session; pauses are answered and the session continues to the original target
+        s=await st(pg); ses=s.get('ffSession')
+        if not ses or ses['status']!='paused': break
+        stops+=1; await C(pg,'ffPauseChoice','decline' if ses['pause']['tier']=='soft' else 'simulate')
+    await T(pg,"call('closeChoiceModal')"); s=await st(pg)
     check('J: "End of break" from summer reaches the first school day (stopping for decisions on the way)', s['clock']['dateISO']==target and s['clock']['minute']<480, (s['clock'],target,stops))
     check('J (summer): no JS errors', not pg.errs, pg.errs[:3]); await b.close()
 asyncio.run(main())

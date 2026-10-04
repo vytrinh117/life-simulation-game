@@ -21,6 +21,9 @@
       <p class="muted-text creator-note">Fill in what you care about. Each <b>Random</b> button changes only its own field. <b>Fill the rest</b> randomizes only empty fields.</p>
       <div class="grid">
         <label>Name<div class="input-with-button"><input id="c-name" placeholder="Your character's name"><button class="small" data-random="name">Random</button></div></label>
+        <label>Surname<div class="input-with-button"><input id="c-surname" placeholder="Family name"><button class="small" data-random="surname">Random</button></div></label>
+        <label>Looks (0–100)<div class="input-with-button"><input id="c-looks" type="number" min="0" max="100" placeholder="0–100"><button class="small" data-random="looks">Random</button></div></label>
+        <label>Smart (0–100)<div class="input-with-button"><input id="c-smart" type="number" min="0" max="100" placeholder="0–100"><button class="small" data-random="smart">Random</button></div></label>
         <label>Birth date<div class="input-with-button"><input id="c-dob" type="date"><button class="small" data-random="dob">Random</button></div></label>
         <label>Birthplace<div class="input-with-button place-pick"><select id="c-country" aria-label="Country"></select><select id="c-city" aria-label="City or state"></select><button class="small" data-random="place">Random</button></div><input id="c-place" type="hidden"></label>
         <label>Horoscope<div class="zodiac-view"><span id="c-zodiac-view">Set a birth date</span><small>Automatic from your birth date</small></div><input id="c-zodiac" type="hidden" value="auto"></label>
@@ -44,7 +47,7 @@
     <main class="life-shell">
       <aside class="life-nav">
         <div class="nav-caption">YOUR LIFE</div><nav id="tabs" class="side-nav" aria-label="Life areas"></nav>
-        <div class="panel mini identity-mini"><h3>Identity</h3><p><b>Born:</b> <span id="i-place"></span></p><p><b>Birthday:</b> <span id="i-dob"></span></p><p><b>Zodiac:</b> <span id="i-zodiac"></span></p><p><b>Family:</b> <span id="i-family"></span></p></div>
+        <div class="panel mini identity-mini"><h3>Identity</h3><p><b>Born:</b> <span id="i-place"></span></p><p><b>Birthday:</b> <span id="i-dob"></span></p><p><b>Zodiac:</b> <span id="i-zodiac"></span></p><p><b>Family:</b> <span id="i-family"></span></p><p><b>Looks:</b> <span id="i-looks"></span></p><p><b>Smart:</b> <span id="i-smart"></span></p><p><b>Health:</b> <span id="i-health"></span></p></div>
       </aside>
       <section class="life-main">
         <div class="life-hud panel">

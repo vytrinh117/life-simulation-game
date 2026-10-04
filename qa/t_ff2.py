@@ -68,9 +68,10 @@ async def main():
         pg=await setup(b); await M(pg,f"S.routine={{study:'{lvl}',exercise:'{lvl}',social:'normal',spending:'balanced',bedtime:'normal',free:'mixed'}};S.people.filter(p=>p.role==='friend').forEach(p=>{{p.rel=30}})")
         d0=(await st(pg))['clock']['dateISO']; await C(pg,'fastForward','month'); await drive(pg,soft='decline',hard='simulate')
         s=await st(pg); txt=await pg.inner_text('#choice-content')
-        att=[e for e in s['calendar'] if e['type']=='schoolDay' and d0<e['dateISO']<s['clock']['dateISO'] and e['status'] in ('Attended','Late','Tardy')]
-        res[lvl]=(txt,len(att),(dt.date.fromisoformat(s['clock']['dateISO'])-dt.date.fromisoformat(d0)).days); ERR.extend(pg.errs); await pg.close()
-    check('F: Next month really simulates ~a month of days, including school attendance', res['high'][2]>=27 and res['high'][1]>=12, res['high'][1:])
+        sdays=[e for e in s['calendar'] if e['type']=='schoolDay' and d0<e['dateISO']<s['clock']['dateISO']]
+        att=[e for e in sdays if e['status'] in ('Attended','Late','Tardy','Excused')]
+        res[lvl]=(txt,len(att) if len(att)==len(sdays) else str([(e['dateISO'],e['status'],e.get('attendanceStatus')) for e in sdays if e not in att]),(dt.date.fromisoformat(s['clock']['dateISO'])-dt.date.fromisoformat(d0)).days); ERR.extend(pg.errs); await pg.close()
+    check('F: Next month really simulates ~a month of days, and every school day in it was attended or excused (none skipped/left due)', res['high'][2]>=27 and res['high'][1]>=10, res['high'][1:])
     check('F: routine matters — "high" study/exercise appears in the summary, "low" does not', 'Studied' in res['high'][0] and 'Studied' not in res['low'][0], (res['high'][0][:200],))
     check('F: no JS errors on any page in this suite', not ERR, ERR[:3]); await b.close()
 asyncio.run(main())

@@ -1,5 +1,57 @@
 # Life Simulator Update Log
 
+## v7.3+ Phase 2A — checkpoint 2A.2 (Phase 2A INCOMPLETE)
+
+### 2A.1 Health from birth, Looks, Smart, surname
+- **The Health tab is available at every age**, showing what fits the age: 0–4 health, sleep quality and current sickness; children add energy; teens add fitness and stress. Health is described as long-term wellbeing, separate from energy, sleep, mood and stress.
+- **Health changes slowly**: good sleep and fitness help a little each day; poor sleep, severe stress, neglected needs and illness lower it (capped to small daily changes — a skipped meal does not wreck it).
+- **Looks (0–100) and Smart (0–100)** for the player and for persistent NPCs, with labels (Plain … Striking; Struggles … Brilliant). The creator has fields with their own Random buttons; existing characters get stable values once. Shown in the Identity card. (Their gameplay effects come in later phases; Smart is aptitude, not grades.)
+- **Surname field** in the character creator (Random draws from the chosen country's name pool); it becomes the family name.
+
+### 2A.2 Illness engine
+- One central system: daily risk from health, sleep, stress, hygiene, season, age and exhaustion (high health lowers it but never to zero), a **14-day cooldown** after recovering, and season-weighted illnesses: **common cold, flu-like illness, stomach bug, food poisoning, headache episode, seasonal allergy, minor fever, minor respiratory infection**, plus injuries (**sprained ankle, cut/scrape**).
+- Each condition has **symptoms, a severity (mild / moderate / severe; emergency is rare), a recovery bar and a trend**. You only know your symptoms until someone checks you.
+- Illness **drains energy** (differently per illness), can **reduce appetite**, raises stress, sets a "Unwell"/"Miserable" mood and **lowers focus** for studying, class and exams.
+- **Recovery takes days**: faster with rest, good sleep and looking after yourself; going out while moderately sick slows it; moderate illness can worsen if you push through with low health. A rare emergency is a hard Fast Forward interruption.
+- Sick actions: **Rest (1 h)**, **Drink water**, **Eat something light**, **Tell your parent**.
+
+
+## v7.3+ Phase 1B (part 2 of 2) — Fast Forward sessions: original target kept, interruption tiers, real Continue, routine, summaries
+
+### The destination survives interruptions
+- Choosing a Fast Forward target starts a **session** that remembers where you were going. If something stops the clock, you answer it and then **Continue** — straight on to the **original** target. The Fast Forward button shows "→ date" while a session is paused, and paused sessions survive save/reload.
+- **Context-aware targets**: Next week • Next month • **Next school term** (start of the next semester) • **End of summer/winter break (classes resume)** (only during a break) • **Start of next school year** • Next major event • Next birthday. No generic "next season".
+
+### Three interruption tiers
+- **Hard** — exams, school events you registered for, tryouts, prom, weddings, elections, accepted plans, and big decisions (family trip offers, prom invitations, discipline talks, the counselor…): **Stop & play it / Simulate & continue / Cancel fast forward**. "Simulate" resolves it the way a skipped day would and carries on.
+- **Soft** — invitations and social moments (friends' invitations, birthday parties, help requests, relationship advice, campus concerts, calls…): **Stop & respond / Decline politely & continue / Let your character decide & continue / Decide for me for the rest of this fast forward**.
+- **Background** — routine NPC and neighborhood events never stop the clock; your character handles them by your routine, and they are listed in the summary under "Handled by your character".
+
+### Skipped days are simulated, not frozen
+- **Routine while skipping** (shown in the Fast Forward menu, editable): Study low/normal/high • Exercise low/normal/high • Socialize low/normal/high • Spending save/balanced/spend • Bedtime early/normal/late • Free time friends/hobbies/rest/mixed.
+- Each skipped day really happens: meals and hygiene vary, school and clubs are attended, study sessions happen during term (to your weakest subject), exercise, time with friends, hobbies or rest, small spending, and bedtime shifts sleep.
+
+### Grouped summary
+- Days and dates; **Programs** (sessions per program); **Skills** gained; **Routine** (study and exercise counts); **Social** (who you spent time with, friendships that leveled up, new people); **Family**; **Money** (change and spending); **Interruptions** and how each was handled; **Handled by your character**; **Coming up** (birthdays of people you care about, exams in the next two weeks).
+
+
+## v7.3+ Phase 1B (part 1 of 2) — School-event registration lifecycle, annual school events, invitation throttle
+
+### Annual school events publish themselves
+- Nine major events now appear automatically once per school year, at realistic points in the semester, by grade: **Sports Day, School Play Auditions, Math Olympiad (semester 1, ~week 9), Debate Competition, Art Exhibition, Science Fair (semester 2, ~week 7), Music Festival, Talent Show, Coding Challenge**. No more "Find event" needed for them, and no random repeats (Math Olympiad once a year).
+- "Find event" now offers smaller events instead (Spelling Bee, Poetry Slam, Photography Contest, Chess Tournament, Quiz Bowl, Short Film Contest, Robotics Mini-Challenge…).
+
+### A real registration lifecycle
+- **Upcoming → Registration open** (one notification, ~3 weeks before) **→ Registered / Not participating → Registration closed** (a week before) **→ Withdrawn / attended / No-show**.
+- **Fixed: someone who never registered was marked "Missed".** Late registration attempts, letting the deadline pass, or a caregiver decision that never came now give **"Registration closed"** — no penalty. **"No-show" only applies when you registered and did not attend.**
+- **Withdraw** from an event you registered for; it cancels its calendar entry. Withdrawing within 3 days of the event disappoints the teacher.
+- When registration closes, there is **exactly one** "Registration for … has closed" notification, and it **leaves the active list after about 2 days** (the record stays in history).
+- Old saves: contests previously marked "Missed" without registering become "Registration closed".
+
+### Social-invitation throttle
+- Unsolicited invitations from friends are capped: **at most 3 per 7 days overall**, **the same friend at most once every 5 days**, and a **cooldown per type** (hangout/study ~6 days, mall/movie ~8, game night ~10, picnic ~12, party ~21, sleepover ~25). Birthday parties, prom and other special occasions are not counted.
+
+
 ## v7.3+ Phase 1A — Life Context Engine, school-break gating, moved-out household gating, location rules
 
 ### Life Context Engine (new `context73` layer)
