@@ -34,13 +34,15 @@ A full requirement-traceability audit of the master specification was produced b
 
 | Issue (verified in code during Phase 0) | Status |
 |---|---|
-| Fast Forward "Continue" only closed the dialog | Open — Phase 1B |
+| Fast Forward "Continue" only closed the dialog | **Fixed in 1B** (sessions keep the original target) |
 | Parents sent household commands after moving out | **Fixed in 1A** |
 | Studying with a teacher had no location/time/break check (found in 1A verification) | **Fixed in 1A** |
 | School-event discovery worked during summer (found in 1A verification) | **Fixed in 1A** |
 | Grandmother created in every family | Open — Phase 2B |
 | Troublemaker shown as a skill level | Open — Phase 2A |
 | Health tab only from 18 | Open — Phase 2A |
-| No social-invitation throttle | Open — Phase 1B |
+| No social-invitation throttle | **Fixed in 1B** |
 | Major bonus multiplies with the talent bonus (above the ~×1.5 cap) | Open — Phase 8 |
 | School homework/assessments/clubs/contests during breaks | Verified correct; now covered by `t_context` |
+
+| Unregistered contests marked "Missed" (3 places) | **Fixed in 1B** |

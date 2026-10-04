@@ -158,3 +158,7 @@ The original legacy browser key is not silently deleted during migration. Restar
 ## v7.3+ Phase 1B part 1
 - Contests gain `annual`, `openDate`, `closedDate`, `closedNotified`, `closedNoticeCleared`, `withdrawnDate`; new status values "Upcoming", "Registration Closed", "Withdrawn". `S.school.annual` records which annual events were published per school year. `S.inviteLog` (last 40 days).
 - An unregistered contest previously marked "Missed" becomes "Registration Closed" on the next daily tick.
+
+
+## v7.3+ Phase 1B part 2
+- New: `S.ffSession` (kind, label, target, start, status running/paused/done, pause info, days, start snapshot, routine stats, interrupts, background, autoSoft) and `S.routine` (defaults: normal/balanced/mixed). Old saves start with no session and the default routine.

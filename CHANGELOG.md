@@ -1,5 +1,24 @@
 # Life Simulator Update Log
 
+## v7.3+ Phase 1B (part 2 of 2) — Fast Forward sessions: original target kept, interruption tiers, real Continue, routine, summaries
+
+### The destination survives interruptions
+- Choosing a Fast Forward target starts a **session** that remembers where you were going. If something stops the clock, you answer it and then **Continue** — straight on to the **original** target. The Fast Forward button shows "→ date" while a session is paused, and paused sessions survive save/reload.
+- **Context-aware targets**: Next week • Next month • **Next school term** (start of the next semester) • **End of summer/winter break (classes resume)** (only during a break) • **Start of next school year** • Next major event • Next birthday. No generic "next season".
+
+### Three interruption tiers
+- **Hard** — exams, school events you registered for, tryouts, prom, weddings, elections, accepted plans, and big decisions (family trip offers, prom invitations, discipline talks, the counselor…): **Stop & play it / Simulate & continue / Cancel fast forward**. "Simulate" resolves it the way a skipped day would and carries on.
+- **Soft** — invitations and social moments (friends' invitations, birthday parties, help requests, relationship advice, campus concerts, calls…): **Stop & respond / Decline politely & continue / Let your character decide & continue / Decide for me for the rest of this fast forward**.
+- **Background** — routine NPC and neighborhood events never stop the clock; your character handles them by your routine, and they are listed in the summary under "Handled by your character".
+
+### Skipped days are simulated, not frozen
+- **Routine while skipping** (shown in the Fast Forward menu, editable): Study low/normal/high • Exercise low/normal/high • Socialize low/normal/high • Spending save/balanced/spend • Bedtime early/normal/late • Free time friends/hobbies/rest/mixed.
+- Each skipped day really happens: meals and hygiene vary, school and clubs are attended, study sessions happen during term (to your weakest subject), exercise, time with friends, hobbies or rest, small spending, and bedtime shifts sleep.
+
+### Grouped summary
+- Days and dates; **Programs** (sessions per program); **Skills** gained; **Routine** (study and exercise counts); **Social** (who you spent time with, friendships that leveled up, new people); **Family**; **Money** (change and spending); **Interruptions** and how each was handled; **Handled by your character**; **Coming up** (birthdays of people you care about, exams in the next two weeks).
+
+
 ## v7.3+ Phase 1B (part 1 of 2) — School-event registration lifecycle, annual school events, invitation throttle
 
 ### Annual school events publish themselves
@@ -15,9 +34,6 @@
 
 ### Social-invitation throttle
 - Unsolicited invitations from friends are capped: **at most 3 per 7 days overall**, **the same friend at most once every 5 days**, and a **cooldown per type** (hangout/study ~6 days, mall/movie ~8, game night ~10, picnic ~12, party ~21, sleepover ~25). Birthday parties, prom and other special occasions are not counted.
-
-### Not yet in this checkpoint
-- The **Fast Forward session** (keep the original target, hard/soft/background interruptions, a Continue that really continues, routine preferences, month/break summaries) is **Phase 1B part 2**.
 
 
 ## v7.3+ Phase 1A — Life Context Engine, school-break gating, moved-out household gating, location rules
