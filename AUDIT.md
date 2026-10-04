@@ -27,3 +27,20 @@
 
 ## Approach
 v7 keeps compatibility fields where useful but introduces structured canonical records for time, calendar, pending decisions and inventory. UI gating is paired with logic validation. Systems are connected through time costs, needs, money, relationships, memories, weather, calendar and delayed outcomes.
+
+
+## Phase 0 audit (master specification) and Phase 1A status
+A full requirement-traceability audit of the master specification was produced before coding (see the conversation record). Summary of confirmed issues and their status:
+
+| Issue (verified in code during Phase 0) | Status |
+|---|---|
+| Fast Forward "Continue" only closed the dialog | Open — Phase 1B |
+| Parents sent household commands after moving out | **Fixed in 1A** |
+| Studying with a teacher had no location/time/break check (found in 1A verification) | **Fixed in 1A** |
+| School-event discovery worked during summer (found in 1A verification) | **Fixed in 1A** |
+| Grandmother created in every family | Open — Phase 2B |
+| Troublemaker shown as a skill level | Open — Phase 2A |
+| Health tab only from 18 | Open — Phase 2A |
+| No social-invitation throttle | Open — Phase 1B |
+| Major bonus multiplies with the talent bonus (above the ~×1.5 cap) | Open — Phase 8 |
+| School homework/assessments/clubs/contests during breaks | Verified correct; now covered by `t_context` |

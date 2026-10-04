@@ -149,3 +149,7 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3 phase P3
 - NPCs and people gain `gender` and `orientation` (derived from the name, plus a stable per-person roll); people gain `loveKnown`. On first load (`S.identityMigrated`), people who are not into the player's gender become not romantically open (not the current partner), and incompatible NPC couples split up.
+
+
+## v7.3+ Phase 1A
+- No new saved fields. The household is derived from the existing `S.housing` (no housing record = living with parents). Messages already in chats keep their kind; only new messages follow the current household.

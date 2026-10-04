@@ -1,5 +1,22 @@
 # Life Simulator Update Log
 
+## v7.3+ Phase 1A — Life Context Engine, school-break gating, moved-out household gating, location rules
+
+### Life Context Engine (new `context73` layer)
+- One authoritative source for: **term vs break** (`termPhase`, `isSchoolTermActive`, `isSchoolBreak`, `isSummerBreak`, `breakName`, with weekends inside term counted as term), **household** (`livesWithParents`, `currentHouseholdId`: family / own / partner / dorm), **location** (`isAtHome`, `isAtSchool`, `teacherAvailable`) and **whether an action is possible now** (`canPerformAction(id)` → `{ok, why}`, `requireAction(id)` shows the reason).
+- Systems now ask this layer instead of guessing on their own (first users: studying with a teacher, school-event discovery, household chores, parents' messages). Later phases will move more checks onto it.
+
+### Fixes
+- **Studying with a teacher** was possible anywhere at any time (e.g. at home at 9 PM, or in summer). Now only on school days, at school, 7:45 AM–4:30 PM, never during a break, and the refusal says why ("Summer break — teachers are not at school. Classes resume …").
+- **"Find a school event"** worked during summer and other breaks. It is now blocked in breaks, with the date classes resume.
+- **After moving out, parents stopped sending household commands** ("Dinner is ready in 20 minutes", "Don't forget your homework tonight"). Instead they keep in touch socially: dinner invitations, "how is the new place?", asking you to visit. Replying warmly brings the family closer.
+- **Found by the new fuzz invariant:** a household message scheduled earlier in the day (while still living at home) could still arrive after moving out. Message type is now decided when it arrives, not when it was scheduled.
+- **House chores** for your parents' household are no longer offered after moving out.
+
+### Verified (already correct, now locked by tests)
+- Over a full summer walked day by day: no school-day attendance, no homework assigned, no regular assessments, no club sessions, no new school contests. Summer programs still work.
+
+
 ## v7.3 (phase P3) — Age, gender and love interest on people cards
 
 - **Every people card and person window shows age and gender**, e.g. "16 • Female". Gender comes from the person's name, classified for every name pool (English, Vietnamese, Korean, Japanese, Chinese, French, Thai). Unisex names (e.g. Minh, An, Khánh, Jordan, Camille) can be either, and a small share of people are non-binary. Moms, grandmothers and aunts are female; dads, grandfathers and uncles are male. Existing characters keep their names; genders are derived to match them.
