@@ -80,7 +80,8 @@ async def main():
     # couples
     singles=[x for x in s['people'] if x['role']=='friend' and x.get('npcId')]
     a,bq=singles[0],singles[1]
-    await M(pg,f"[['{a['id']}'],['{bq['id']}']].forEach(([id])=>{{const p=S.people.find(x=>x.id===id);const n=S.npcs.find(x=>x.id===p.npcId);n.birthYear={yr-15};p.age=15;p.rel=80;p.datingNpc=null}});S.npcCouples=[]")
+    await M(pg,f"[['{a['id']}','Female','Men'],['{bq['id']}','Male','Women']].forEach(([id,g,o])=>{{const p=S.people.find(x=>x.id===id);const n=S.npcs.find(x=>x.id===p.npcId);n.birthYear={yr-15};n.gender=g;n.orientation=o;p.age=15;p.rel=80;p.datingNpc=null}});S.npcCouples=[]")
+    check('P3: two NPCs whose love interests match each other are compatible', await C(pg,'npcsCompatible',a['npcId'],bq['npcId']))
     ok=False
     for i in range(12):
         await C(pg,'matchmake',a['id'],bq['id']); s=await st(pg)

@@ -30,6 +30,7 @@ INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,no
  if((S.businesses||[]).filter(b=>b.status!=='Retired').length>3)bad.push('too many businesses');
  if(S.uniApps&&Object.keys(S.uniApps.applied||{}).length>10)bad.push('too many applications');
  if(S.uniApps?.scholarship&&![0,25,50,75,100].includes(S.uniApps.scholarship.pct))bad.push('scholarship pct invalid');
+ {const inc=(o,g)=>o==='All genders'||(o==='Men'&&g==='Male')||(o==='Women'&&g==='Female')||o==='Not sure yet'||g==='Non-binary';for(const c of S.npcCouples||[]){if(c.status!=='dating')continue;const A=S.npcs.find(n=>n.id===c.a),B=S.npcs.find(n=>n.id===c.b);if(A&&B&&A.orientation&&B.orientation&&(!inc(A.orientation,B.gender)||!inc(B.orientation,A.gender)))bad.push('incompatible NPC couple')}}
  if(S.housing&&!['parents','apartment','condo','dorm','withPartner'].includes(S.housing.type))bad.push('invalid housing');
  if(S.age<18&&S.housing&&S.housing.type!=='parents')bad.push('minor moved out');
  {const j=S.career&&S.career.job;if(j&&j.career&&!(j.level>=0&&j.level<=9))bad.push('career level out of range');if(!(j&&j.career)&&S.calendar.some(e=>e.type==='workDay'&&['Scheduled','Due'].includes(e.status)))bad.push('workday without a job');}
@@ -50,7 +51,7 @@ async def main():
     b=await p.chromium.launch(executable_path=CHROME)
     import sys
     AGES=[int(x) for x in sys.argv[1:]] or [3,6,8,11,14,17]
-    for run,age in [(i,a) for i,a in enumerate([3,6,8,11,14,17]) if a in AGES]:
+    for run,age in enumerate(AGES):
         pg=await new_page(b,1366,768); pg.on('dialog',lambda d:asyncio.ensure_future(d.dismiss()))
         await new_life(pg,dob=f'200{run}-0{run+2}-1{run}'); await T(pg,f"setAge({age})"); await T(pg,"setMoney(3000,0,0)")
         for k in ['snackPack','waterBottle','book','toy','artSupplies','bicycle','sweater','raincoat','phone','laptop','sandwich','greetingCard']: await T(pg,f"call('addItem','{k}','QC grant')")
@@ -93,6 +94,6 @@ async def main():
         s=await st(pg)
         check(f'fuzz start-age {age}: no JS errors ({s["age"]} now)', not pg.errs, pg.errs[:3])
         await pg.close()
-    check(f'fuzz: invariants held over {steps} random player steps', not total_bad, total_bad[:5])
+    check(f'fuzz: invariants held over {steps} random player steps', steps>0 and not total_bad, total_bad[:5] if total_bad else ('' if steps else 'no steps ran'))
     await b.close()
 asyncio.run(main())

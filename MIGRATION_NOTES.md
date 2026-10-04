@@ -137,3 +137,15 @@ The original legacy browser key is not silently deleted during migration. Restar
 ## v7.3 phase V3
 - `S.uniApps` gains `schEssay`, `schApplied` and `scholarship` ({pct, why}). `S.education` gains `honors`, `rankAwardAtGrad` and `tierAidEligible`, stored at high-school graduation (class rank cannot be computed after school ends).
 - `S.uni` gains `semKey`, `semGpas`, `semStudy`, `lastSemGpa`, `awardWindow`, `nextSemAid`, `club`, `rankAward` and `tierAid`. A university year already in progress continues: the first semester change closes the current semester.
+
+
+## v7.3 phase B1
+- University data gains brochure fields and new prices. Students already enrolled keep the tuition stored when they enrolled (`S.uni.tuition`). New: `S.uni.concerts` (one annual concert per school year).
+
+
+## v7.3 phase B2
+- `S.uni.major` and `majorChanged`; `S.education.degree.major`. Students already enrolled are asked to declare a major on the University panel. Older degrees without a major get no career bonus.
+
+
+## v7.3 phase P3
+- NPCs and people gain `gender` and `orientation` (derived from the name, plus a stable per-person roll); people gain `loveKnown`. On first load (`S.identityMigrated`), people who are not into the player's gender become not romantically open (not the current partner), and incompatible NPC couples split up.

@@ -15,7 +15,9 @@ async def main():
     yr=2027; peers=[n for n in s['npcs'] if abs((yr-n['birthYear'])-17)<=1]
     check('V3: rank 1 with the highest average → Valedictorian', cr['rank']==1 and (await C(pg,'honorsTitle',cr)) in ('Valedictorian','Co-Valedictorian'), cr)
     check('V3: rank 1 earns the top class-rank award ($15,000/yr)', (await C(pg,'rankAward',cr))['amount']==15000)
-    top=sorted([round(await pg.evaluate("id=>{let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;return 60+(h%3900)/100}",n['id']),1) for n in peers],reverse=True)
+    import math
+    jsround=lambda x:math.floor(x*10+0.5)/10  # same as Math.round(x*10)/10 in the game
+    top=sorted([jsround(await pg.evaluate("id=>{let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;return 60+(h%3900)/100}",n['id'])) for n in peers],reverse=True)
     for target,(exp_rank,exp_amt) in [(0,(2,12000)),(1,(3,10000))]:
         g=top[target]; await M(pg,f"S.school.subjects.forEach(x=>x.score={g})"); cr=await C(pg,'classRank')
         check(f'V3: tying the #{target+1} classmate → rank {target+1} (tied); competition ranking', cr['rank']==target+1 and cr['tied'], cr)
@@ -45,7 +47,7 @@ async def main():
     check('V3: scholarship results arrive even without any university application', sc is not None)
     check('V3: results arrive with the decisions — an outstanding valedictorian gets a full (100%) scholarship', sc and sc['pct']==100, sc)
     check('V3: the result states a reason', sc and len(sc['why'])>10)
-    pr=await C(pg,'scholarshipProfile'); check('V3: honors (valedictorian) count in the profile', pr['parts']['honors']>=10, pr['parts'])
+    await M(pg,"S.school.subjects.forEach(x=>x.score=99.9)"); pr=await C(pg,'scholarshipProfile'); check('V3: honors (valedictorian) count in the profile', pr['parts']['honors']>=10, pr['parts'])
     await pg.close()
     tiers=set()
     for avg,essay in [(99,95),(95,70),(90,50),(85,40),(72,5)]:
@@ -55,9 +57,11 @@ async def main():
     # ---------- stacking & university semesters ----------
     pg=await senior(b,99); await M(pg,"S.uniApps.scholarship={pct:100,why:'test'};S.uni={enrolled:true,school:'Riverside State University',tier:'state',tuition:12000,year:1,yearKey:2028,semKey:'2028-1',gpa:0,semGpas:[],semStudy:0,rankAward:15000,tierAid:false,nextSemAid:0}")
     a=await C(pg,'aidFor','uni8'); f=await C(pg,'funding','uni8')
-    check('V3: a full scholarship covers all tuition; other awards become a living stipend (≤ $3,000)', f['scholarship']==12000 and f['parents']==0 and f['gap']==0 and a['stipend']==3000, (a,f))
+    tu8=(await C(pg,'uniById','uni8'))['tuition']
+    check('V3: a full scholarship covers all tuition; other awards become a living stipend (≤ $3,000)', f['scholarship']==tu8 and f['parents']==0 and f['gap']==0 and a['stipend']==3000, (a,f))
     await M(pg,"S.uniApps.scholarship={pct:50,why:'t'};S.uni.rankAward=0;S.uni.nextSemAid=0;S.wealth='Middle class'"); f=await C(pg,'funding','uni5')
-    check('V3: order = scholarships → parents → loan → you (50% of $28k → parents cover half the rest)', f['scholarship']==14000 and f['parents']==7000, f)
+    tu5=(await C(pg,'uniById','uni5'))['tuition']
+    check('V3: order = scholarships → parents → loan → you (50% scholarship, middle-class parents cover half the rest)', f['scholarship']==round(tu5/2) and f['parents']==round((tu5-round(tu5/2))*.5), f)
     await M(pg,"S.uni.semStudy=12"); await C(pg,'closeUniSemester'); s=await st(pg)
     check('V3: semester GPA recorded, cumulative GPA computed', len(s['uni']['semGpas'])==1 and s['uni']['gpa']==s['uni']['semGpas'][0]['gpa'])
     check('V3: a 2-week scholarship window opens after the semester', s['uni']['awardWindow']['to']>s['clock']['dateISO'])

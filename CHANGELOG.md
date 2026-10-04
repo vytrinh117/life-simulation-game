@@ -1,5 +1,55 @@
 # Life Simulator Update Log
 
+## v7.3 (phase P3) — Age, gender and love interest on people cards
+
+- **Every people card and person window shows age and gender**, e.g. "16 • Female". Gender comes from the person's name, classified for every name pool (English, Vietnamese, Korean, Japanese, Chinese, French, Thai). Unisex names (e.g. Minh, An, Khánh, Jordan, Camille) can be either, and a small share of people are non-binary. Moms, grandmothers and aunts are female; dads, grandfathers and uncles are male. Existing characters keep their names; genders are derived to match them.
+- **Love interest** ("Interested in: Men / Women / All genders / Not interested in romance / Not sure yet") is **Unknown until you find out**:
+  - It is revealed naturally once you are Good Friends (closeness 60+), with a short story.
+  - Or use **"Ask about their love life"**: with enough trust they tell you; with low trust they say it is personal.
+  - Younger teens may be "Not sure yet" and figure it out by 17.
+- **Hidden entirely when you or they are under 13** (age and gender only).
+- **It matters for romance**:
+  - If someone is not interested in your gender, a confession or date request gets a kind "I really like you — just not like that", and you learn who they are into. Going to prom as friends still works.
+  - NPC couples only form when both are into each other's gender; incompatible couples in old saves split up once (with a reason).
+  - Your current partner is never affected.
+
+
+## v7.3 (phase B2) — Majors with talent and school-strength bonuses, degrees that matter for careers
+
+- **16 majors**: Computer Science, Engineering, Business, Economics, Law & Politics, Fine Arts, Design, Music, Communications & Media, Literature, Education, Psychology, Biology, Nursing, Sports Science, Culinary Arts.
+- **Declare your major** in Education → University (a reminder appears on your first day). **You can change it once, during your first year.**
+- **Study bonuses**: **+30% if the major matches one of your talents** (e.g. Programming → Computer Science, Art → Fine Arts, Cooking → Culinary Arts), **+10% if it is one of your university's strengths** (from the brochure's "Known for"). Bonuses stack (+40%), raise both the major's skill and your semester GPA, and are shown on every study session. Talent matches are marked ★ in the major list.
+- **Your degree records your major.** A matching degree makes job offers more likely (+15%, on top of +8% for any degree) and **starts you one career level higher** (e.g. a CS degree for a developer job).
+
+
+## v7.3 (phase B1) — University brochures, a unique price for every school, campus life that matters
+
+- **Every university has its own tuition and application fee** (no more identical prices), and its own admission bar, even within the same tier. Prices still follow prestige: Elite $54,900–$58,400 → Top $38,900–$46,200 → Strong $26,800–$31,300 → State $10,900–$14,200 → Community college $4,300.
+- **"Learn more" opens a brochure** for each school: setting and city, **distance from the city center**, campus size, style and number of students, tuition and fee, **dorms** (with that school's monthly price, or none), **Greek life** (none → big), how often there are **campus events**, **facilities** (cafeteria, gym, pool, stadium, 24/7 library, labs, makerspace, theater, art studios, concert hall, boathouse — missing ones are shown crossed out), **signature clubs**, what the school is **known for**, and **big events** (e.g. an annual concert headlined by a famous alumnus or alumna).
+- **Facilities depend on the school, as in real life**: elite schools have almost everything; the art school has studios, a theater and a concert hall but no stadium or gym; the tech institute has labs, a makerspace and hackathons but little Greek life; the community college has no dorms or fraternities.
+- **It matters once you study there**:
+  - Campus gym and pool (fitness, stress relief), only where they exist.
+  - Greek Row parties in the evening (more likely to meet people at big-Greek schools).
+  - Campus clubs come from that school's signature clubs.
+  - Dorm rent is that school's price; no dorm at commuter schools.
+  - Random campus events, more often at lively schools.
+  - The **annual concert or festival** (with a memory if you go).
+  - The University panel adds a **Campus guide**.
+
+
+## v7.3 (phase O + loose ends) — Clear invitation details, several friend groups, romance toggle, adult fuzzing
+
+### O. Every invitation says who / what / where / when / answer by
+- Invitations and interruptions now show a details box on the hero and on "Waiting for you" cards: **From** (name and relationship tier, or family role), **What**, **Where**, **When** (date and time, or "Right now"), **Answer by**.
+- Covered: friends' invitations and group outings, birthday parties, prom invitations (venue and date), family trip proposals (destination and dates), neighborhood events (which family, where, now or this weekend), parent–teacher conference notices, the counselor, incoming calls ("Right now, your phone"), surprise parties, severe-weather questions, and more.
+
+### Several friend groups (up to 3)
+- New groups form from close friends who are not yet in a group (no one is in two groups at once). Each group has its own inside jokes and its own "Plan a group outing" button, which invites that group's members.
+
+### Romance content on/off
+- Family & Relationships → Love life → **Turn romance content off / on**. When off, crushes, dates and romantic events do not appear. It cannot be turned off while you are in a relationship (end it first).
+
+
 ## v7.3 (phase V3) — Scholarships: senior-year awards for all years, class-rank awards with ties, per-semester university scholarships
 
 ### Senior-year scholarship (apply in the middle of semester 2)
