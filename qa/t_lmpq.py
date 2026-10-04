@@ -53,7 +53,11 @@ async def main():
     # full program to final
     await M(pg,"S.programs=[];S.calendar=S.calendar.filter(e=>e.type!=='program')")
     await pg.click("[data-subtab='activities']") if await pg.query_selector("[data-subtab='activities']") else None
-    await C(pg,'enrollProgram','scienceCamp'); s=await st(pg); ev=sorted([e for e in s['calendar'] if e['type']=='program'],key=lambda e:e['dateISO'])
+    for i in range(6):
+        await C(pg,'enrollProgram','scienceCamp'); s=await st(pg)
+        if any(r['progId']=='scienceCamp' for r in s.get('programs',[])): break
+        print('   (caregiver said no to science camp; asking again)', s['log'][0]['title'])
+    ev=sorted([e for e in s['calendar'] if e['type']=='program'],key=lambda e:e['dateISO'])
     for e in ev:
         await T(pg,f"setClock('{e['dateISO']}',530)"); await C(pg,'attendProgram',e['id'])
     s=await st(pg); check('M: the final event resolves with a result and a milestone', any('Science camp' in m['title'] for m in s['milestones']) and any(o['category']=='Program' for o in s['outcomes']))

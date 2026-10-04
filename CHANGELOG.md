@@ -1,5 +1,87 @@
 # Life Simulator Update Log
 
+## v7.3 (phase V3) — Scholarships: senior-year awards for all years, class-rank awards with ties, per-semester university scholarships
+
+### Senior-year scholarship (apply in the middle of semester 2)
+- Opens together with the student loan. You write a **separate scholarship essay**.
+- Judged on grades, the essay, achievements (awards, club leadership, contests, finished summer programs), teacher recommendations and **graduation honors** (Valedictorian / Salutatorian count strongly).
+- Results arrive with the university decisions, **even if you applied to no university**: **100% (full) / 75% / 50% / 25% of tuition for every year of university**, or not awarded — always with the reason (including your weakest part).
+- **Keep a GPA of 3.0+**: below that, the award drops one tier per year (100 → 75 → 50 → 25) instead of disappearing at once.
+
+### Class rank awards (per year, for all years)
+- **#1 in class $15,000, #2 $12,000, #3 $10,000**; otherwise **top 10 in the school $5,000** (unchanged). Only the highest one applies.
+- **Ties use competition ranking** (two people tied for #1 are both #1 and the next person is #3); tied students all get that rank's award, shown as "(tied)".
+- **Valedictorian** (#1) and **Salutatorian** (#2), "Co-" when tied, become a graduation milestone with a speech you choose (heartfelt, funny, short).
+
+### University: semesters and per-semester scholarships
+- University now runs in **two semesters a year** (Freshman, Sophomore, Junior, Senior). Tuition is charged each semester. **Semester GPA** comes from your study sessions that semester; the cumulative GPA is their average.
+- **After every semester (8 times in total)**, a **2-week window** opens to apply for: **Dean's List award** ($1,000, semester GPA ≥ 3.7), **Department scholarship** ($2,500, GPA ≥ 3.5, better with effort), **Leadership & activities** ($1,500, join a campus club), **Financial-need grant** ($3,000, by family situation). **Results after 2 weeks**; awards reduce the next semester's tuition.
+
+### Stacking
+- Order: **scholarships → parents → student loan → your money**, so scholarships reduce the loan first.
+- Total aid never exceeds tuition. **With a full scholarship, other awards become a living stipend** (up to $3,000/year, paid each semester).
+
+### Bug fixed
+- Senior-scholarship results were only sent together with university decisions, so a student who applied for the scholarship but to no university never got a result. Found by a test.
+
+
+## v7.3 (phase V2, final) — Adult careers: workdays, manager & coworkers, Intern → CEO, promotions, raises, monthly salary
+
+- **Full-time careers from 18** (office, developer, designer, and other adult jobs). A job offer for an adult becomes a real career at a named company. Teen part-time jobs keep the hourly shift system.
+- **Starting level depends on education**: Intern without a degree, Junior with one, Associate with a degree from an Elite or Top university.
+- **10 levels**: Intern → Junior → Associate → Senior → Lead → Manager → Senior Manager → Director → VP → **CEO**, each with a higher monthly salary.
+- **Workdays on the calendar** (Monday–Friday, 9:00–5:00; public holidays off). The workday takes the hero at 9:00:
+  - **Go to work**: focus (more job points, more stress), normal, or socialize (closer to coworkers).
+  - **Late** after 9:15 (your manager notices).
+  - **Call in sick**: 5 paid sick days a year; faking may be noticed.
+  - **Take today off** (short notice costs a little goodwill) or **request tomorrow off** (12 paid leave days a year).
+  - **No-show** if you are not there by 11:00: performance −10, a cold call from your manager. **3 no-shows in 30 days, or very low performance, gets you fired.**
+- **Your manager and two coworkers are real people** (in People, with closeness/trust bars); the work panel shows those bars.
+- **Job points** fill from workdays (scaled by performance and focus). With a full bar you can **request a promotion**: success depends on performance, your manager relationship and tenure. It brings a new title and a salary jump; if refused, you get a reason and a 60-day cooldown.
+- **Ask for a raise** every 6 months (3–8% when performance and your manager relationship are good).
+- **Monthly salary on the 1st**, prorated for unpaid days (no-shows and days off beyond your allowance), with a payslip. **Student loans are repaid automatically** (5% of salary, interest-free) until cleared.
+- Quitting cancels upcoming workdays and records the outcome. Fast Forward goes to work on autopilot.
+
+
+## v7.3 (phase V1) — Living arrangements, university applications in senior year, scholarships & loans, university years
+
+### Where you live (18+)
+- Family & Relationships → **Where you live**: live with your parents (free), rent an apartment (~$1,020/month with bills), rent a condo (~$1,780/month), or a university **dorm** ($650/month, enrolled students only). Living with your partner comes from the love progression.
+- Moving out needs a deposit of one month's rent. Rent and bills are charged on the 1st of each month. After **two missed months you are evicted** and move back in with your parents. No moving out before 18.
+
+### University applications (all within high-school senior year, Grade 12)
+- **Semester 1**: a meeting with the **school counselor** (a balanced list of reach, match and safe schools), and you build a list of **up to 10 schools** (Education → University).
+- **12 schools in 5 tiers** (Elite / Top / Strong / State / Community college), each with an application fee (higher for more prestigious schools; caregivers may pay) and tuition.
+- **Start of semester 2**: a **2-month application window**, at most 10 applications. **Work on your essay** to strengthen them.
+- **Middle of semester 2**: apply for the **interest-free student loan**.
+- **Late semester 2**: decisions (Accepted / Waitlisted / Rejected) arrive **by email** (if you own a laptop), **on your phone**, or **as letters in the mailbox**. Waitlists resolve two weeks later.
+- Admission depends on your grade average, clubs, awards and leadership, essay quality, teacher relationships and a bit of luck, against each tier's bar.
+- **Family reaction**: an acceptance brings a celebration. If you are rejected everywhere, a close family comforts you, a very strict one is angry, otherwise there is silence.
+
+### Paying for it
+- **Parents** contribute by family wealth (from nothing when struggling to everything when wealthy).
+- **Merit scholarships**: $10,000/year for the **top 3 in your class**, or $5,000/year for the **top 10 in the school** (class rank is computed against your classmates). Elite and top schools add aid for near-perfect averages.
+- **Interest-free loan** for the remaining gap, then **your own money**. The loan balance is tracked.
+- **Enroll** at a school that accepted you (you need to cover year one).
+
+### University years
+- University starts on the first day of the next school year, after you graduate from high school. Tuition is charged each year.
+- Study to raise your GPA (max 4.00). After **4 years** you graduate with a bachelor's degree (milestone), and leaving the dorm returns you home.
+- **Education stays in the menu after high school** to show university (it used to disappear).
+
+
+## v7.3 (phase U) — Small businesses: choose from a dropdown, up to 3 at once, open/close any time
+
+- **Pick a business type from a dropdown**: Lemonade stand, Cookie stand, Cupcake stand, Bead jewelry (8+), Art prints & crafts, Yard sale (8+). Choose a location (outside home, near the park, community event, school fundraiser — by age), price and starting stock.
+- **Run up to 3 at once** (one of each type). Each card shows location, stock, price, quality, revenue, profit and reputation.
+- **Open / close any time**, and **retire** one to free a slot; retiring records the final tally in your outcome history.
+- **Work a 2-hour shift** to sell (costs time and energy). Open businesses also make a few sales on their own some days.
+- **Restock** for the cost of supplies. Under 16, a caregiver may pay or say no; from 12 you can pay yourself.
+- **Sales depend on**: weather (lemonade loves hot days), location traffic, price versus the usual price, quality (your Baking or Art skill raises it), reputation, the Social/Shy personality, the Business talent, and luck. Severe weather stops outdoor selling.
+- **Yard sale** uses your real items: put up to 8 things from Your things on the table (priced at 80% of their value). Sold items leave your inventory and pay you.
+- The old single stand is converted into one of your businesses (stock, revenue and reputation kept).
+
+
 ## v7.3 (batch R + S + T) — Full love progression, real NPC couples & families, two-column person window, UI reorganization
 
 ### R. Love progression (every step needs both of you; a "no" is never punished)

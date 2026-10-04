@@ -120,3 +120,20 @@ The original legacy browser key is not silently deleted during migration. Restar
 - People gain `love` ({stage, progress, since}). It is derived from the existing `romanceStage` on first use: crush → one-sided/mutual by attraction, dating → Going out, partner → Boyfriend/girlfriend.
 - New: `S.npcCouples` (old `datingNpc` name strings are converted when both NPCs exist and fit the age rules; otherwise cleared), `S.romance.promiseRing / spareRing / livingTogether / married`, `S.housing` (when living together), and child people from starting a family.
 - The person history cap is raised from 30 to 60. The UI preference for the removed "development" tab still renders safely.
+
+
+## v7.3 phase U
+- New: `S.businesses` (up to 3 active). An existing `S.stall` stand is converted once (`S.stallMigrated`) and the old stall is switched off so it never sells twice.
+
+
+## v7.3 phase V1
+- New: `S.housing` (default: parents), `S.uniApps` (list, applied, decisions, essay, loan, choice, year), `S.uni` (enrolled, school, year, gpa), `S.finance.uniDebt`, `S.education.degree`. A save in the middle of senior year keeps any list it builds: the application record is tied to the current school year from the start.
+
+
+## v7.3 phase V2
+- An adult's existing simple job (from the adult job list) becomes a career job on the next day (`S.career.job.career = true` with company, level, points, salary, boss and coworker person ids, sick/leave allowances, and a month log). Teen jobs are unchanged.
+
+
+## v7.3 phase V3
+- `S.uniApps` gains `schEssay`, `schApplied` and `scholarship` ({pct, why}). `S.education` gains `honors`, `rankAwardAtGrad` and `tierAidEligible`, stored at high-school graduation (class rank cannot be computed after school ends).
+- `S.uni` gains `semKey`, `semGpas`, `semStudy`, `lastSemGpa`, `awardWindow`, `nextSemAid`, `club`, `rankAward` and `tierAid`. A university year already in progress continues: the first semester change closes the current semester.

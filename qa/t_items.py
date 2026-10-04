@@ -21,10 +21,11 @@ async def main():
     # ---- §53 toy (age 7) ----
     pg2=await new_page(b); await new_life(pg2); await T(pg2,"setAge(7)"); await grant(pg2,'toy'); s=await st(pg2); toy=items(s,'toy')[0]
     after10=None; labels=set()
-    for i in range(120):
+    for i in range(220):
+        if 'Worn' in labels: break
         await C(pg2,'performItemUse',toy['id'],'play')
         if i==9: after10=items(await st(pg2),'toy')[0]['condition']
-        if i%10==0: await T(pg2,"advanceMinutes(600)")
+        if i%3==2: await T(pg2,"advanceMinutes(1440)")  # anti-farming: 3 uses per day per item
         t=items(await st(pg2),'toy')
         if not t: break
         labels.add('Good' if 70<=t[0]['condition']<90 else 'Worn' if 45<=t[0]['condition']<70 else 'Exc' if t[0]['condition']>=90 else 'Low')

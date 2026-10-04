@@ -27,6 +27,13 @@ INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,no
  for(const [id,c] of Object.entries(S.chats||{}))if(c.msgs.length>60)bad.push('chat over cap '+id);
  for(const p of S.people)if(p.battery!=null&&!(p.battery>=0&&p.battery<=100))bad.push('battery out of range');
  if(S.trip&&S.trip.len>30)bad.push('trip too long');
+ if((S.businesses||[]).filter(b=>b.status!=='Retired').length>3)bad.push('too many businesses');
+ if(S.uniApps&&Object.keys(S.uniApps.applied||{}).length>10)bad.push('too many applications');
+ if(S.uniApps?.scholarship&&![0,25,50,75,100].includes(S.uniApps.scholarship.pct))bad.push('scholarship pct invalid');
+ if(S.housing&&!['parents','apartment','condo','dorm','withPartner'].includes(S.housing.type))bad.push('invalid housing');
+ if(S.age<18&&S.housing&&S.housing.type!=='parents')bad.push('minor moved out');
+ {const j=S.career&&S.career.job;if(j&&j.career&&!(j.level>=0&&j.level<=9))bad.push('career level out of range');if(!(j&&j.career)&&S.calendar.some(e=>e.type==='workDay'&&['Scheduled','Due'].includes(e.status)))bad.push('workday without a job');}
+ for(const b of S.businesses||[])if(b.stock<0)bad.push('negative stock '+b.name);
  const yr=Number(today.slice(0,4));for(const c of S.npcCouples||[]){if(c.status!=='dating')continue;const A=S.npcs.find(n=>n.id===c.a),B=S.npcs.find(n=>n.id===c.b);if(!A||!B)continue;const x=yr-A.birthYear,y=yr-B.birthYear;const ok=(x>=18&&y>=18)||(x>=13&&y>=13&&x<18&&y<18&&Math.abs(x-y)<=2);if(!ok)bad.push('SAFETY: NPC couple age '+x+'/'+y)}
  if(S.age<18)for(const p of S.people)if(p.love&&['livingTogether','engaged','married','family'].includes(p.love.stage))bad.push('SAFETY: adult love stage for a minor');
  for(const r of S.programs||[])if(r.attended>r.total)bad.push('program over-attended '+r.name);
