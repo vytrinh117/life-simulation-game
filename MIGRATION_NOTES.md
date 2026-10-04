@@ -104,3 +104,8 @@ The original legacy browser key is not silently deleted during migration. Restar
 - `S.weather` gains `severity` and a real 5-day `forecast`; old saves get a new forecast at the next day change. New: `S.closures` (closure dates with reasons).
 - The school record gains `lateReasons`, `stayHomeAsks`, `expulsionHearing` and `probation`; the school gains `behaviorCalls`, `conf` (conference per semester) and `stayHome`.
 - Per-absence caregiver talks now follow the threshold schedule (1 notice, 4 and 7 talks, 10 call, 20 meeting, 35 warning, 45 hearing) instead of a talk after every absence.
+
+
+## v7.3 batch K + N + X
+- People gain `tier`, `battery`, `invites`, `reliability`, `bday` (NPCs get `bday` too), `bdayWished` and `giftsReceived` lazily. New: `S.chats`, `S.callLog`, `S.whiteLies`, `S.outings`.
+- Old `S.messages` are copied once into `S.chats` (`S.chatsMigrated`), after being linked to their senders.

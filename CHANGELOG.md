@@ -1,5 +1,49 @@
 # Life Simulator Update Log
 
+## v7.3 (batch K + N + X) — Scheduling with real answers, relationship tiers, birthdays, chats & calls
+
+### K. Free time & scheduling
+- **Named relationship tiers**: Acquaintance → Friend (40) → Good Friend (60) → Close Friend (75) → Best Friend (88); partners show Dating / Serious. Level-ups and drifting down are announced; Close and Best Friend become milestones. The tier is shown on every person card.
+- **Free-time blocks on the calendar** ("Free 3:30–9:00 PM"), computed from school, clubs, plans, events, curfew/bedtime and sleep.
+- **Make plans in 3 steps**: what → which day (today or up to 10 days ahead, each showing your free time) → **offer two times** (from 9:00, only inside your free time). When you know their schedule (closeness 50+), shared free times are marked ✓ and **"Find a time we're both free"** picks them. **"Let them pick"** gives them the choice (more likely yes, a little trust).
+- **Free does not mean willing.** Answers: enthusiastic yes / yes / **reluctant yes** (the outing goes worse) / **counter-offer** (accepting adds closeness, declining costs some) / maybe / no with a reason.
+- What shapes the answer: closeness, trust, their **social battery** (drained by recent time together, faster for shy/quiet people), how often you asked this week, lead time (same-day asks are harder unless you are close), **reciprocity**, your **reliability** with them (show-ups up, lateness and cancellations down, a no-show −15), personality, goals and boundaries.
+- **"I'm busy" can be found out**: declining with "I'm busy" while actually free, then being seen out at that time, may be discovered (trust and closeness drop).
+- **Group outings** from the friend-group card pick the time most can make; anyone who could not make it feels a bit left out.
+
+### N. Birthdays
+- **Everyone has a birthday.** People you care about (Good Friend+, family, partner) show on the calendar and in Next up.
+- **Reminders**: 3 days before and on the day.
+- On their birthday you can **wish them happy birthday** in person or by text, and give a gift.
+- **Close friends invite you to their birthday party** 5 days ahead, with an RSVP.
+- **Forgetting costs closeness**, scaled by how close you are (partner −10, best friend −8, close friend −5, good friend −2, parent −3).
+- **Your birthday**:
+  - possible **surprise party at school** from your friends (on a school day);
+  - **gifts** from close friends;
+  - **happy-birthday texts**;
+  - **invitations** to celebrate;
+  - your **partner** gives a gift and plans something.
+- More ways to celebrate your own birthday: **party at home, go out with friends, small family dinner, sleepover (7–17), nothing special**.
+
+### X. Phone: chats & calls
+- **Per-person chat threads** with real messages that arrive through the day. How many depends on your age, friends and closeness. Parents text too ("Dinner in 20", "grab milk").
+- **Reply with 3–4 options that fit the message** (chitchat, homework help, gossip, a friend asking for advice, parents). Or **write your own** reply and pick what you mean (Warm / Joke / Agree / Comfort / Ask) so the game knows how it lands.
+- Advice conversations continue into a second turn when handled well. Sending your homework answers can be noticed.
+- **Response time matters with close friends**: replying after 6+ hours is noticed; leaving them "on read" costs a little.
+- **Incoming calls**: Answer / Decline / Text "call you later":
+  - **a parent calls if you are out past curfew**;
+  - a close friend in distress may call;
+  - missed calls go to a **call log with voicemail**;
+  - calls during class are missed automatically (phone on silent).
+- **Outgoing calls respect people**: asleep, in class or busy means no answer (voicemail); late-night calls annoy anyone who is not close.
+- **Phone in class can be confiscated** until the end of the day (behavior −2).
+- **Kids**: a **kids' smartwatch** (family-only calls and messages) is a common Grade 1 gift from 2025 on. Under 13, you can **video-call grandparents and relatives on a parent's phone**.
+
+### Bugs fixed
+- **Old messages were never moved into chats.** The migration of pre-chat messages ran before old messages were linked to their senders, so exactly the "Mia • neighbor"-style messages were skipped. Found by the regression suite.
+- **The Games app created "online friends" in the old name format** ("Mia • online friend"), with no surname or NPC record. They are now real, age-appropriate people.
+
+
 ## v7.3 (batch H + I + J) — School–home communication, real weather, Fast Forward
 
 ### H. Attendance, behavior & school–home communication

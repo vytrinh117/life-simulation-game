@@ -20,7 +20,7 @@ async def main():
     await T(pg,f"setClock('{d.isoformat()}',460)"); await T(pg,"openTab('school')")
     await pg.click("#panel-host [data-act='school']"); s=await st(pg)
     sd=[c for c in s['calendar'] if c['type']=='schoolDay' and c['dateISO']==d.isoformat()][0]
-    check('J: check-in records attendance and keeps time running (8:00, not 3 PM)', sd['status']=='Attending' and s['clock']['minute']==480 and s['location']=='School', (sd['status'],s['clock']['minute']))
+    check('J: check-in records attendance and keeps time running (morning, not 3 PM; a random late arrival has a reason)', sd['status']=='Attending' and 480<=s['clock']['minute']<600 and s['location']=='School' and (s['clock']['minute']<=495 or bool(sd.get('lateReason'))), (sd['status'],s['clock']['minute'],sd.get('lateReason')))
     hero=await pg.inner_text('#event-title'); check('J: hero shows current period', 'Period 1' in hero, hero)
     await pg.click("#panel-host [data-class='participate']"); s=await st(pg)
     check('J: a class period takes one period of time', s['clock']['minute']==540, s['clock']['minute'])

@@ -271,3 +271,11 @@ body.planner-open .planner-close{display:inline-flex}
 .ff-list{display:grid;gap:6px;margin-top:8px}.ff-opt{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:10px 12px}.ff-opt small{color:var(--muted);font-weight:500}
 .stayhome{margin-top:10px;padding:9px 11px;border:1px dashed var(--line-strong);border-radius:12px}.stayhome small{color:var(--muted);font-size:11px;display:block;margin-bottom:5px}
 @media(max-width:760px){.ff-btn span{display:none}}
+.day-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}.day-pick button{display:grid;gap:2px;text-align:left;padding:8px 10px}.day-pick small{color:var(--muted);font-size:10.5px;font-weight:500}
+.time-chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}.time-chips .active{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.time-chips .shared{border-color:var(--good)}
+.tier-tag{color:var(--accent);font-weight:800}
+.chat-row{display:grid;grid-template-columns:1fr auto;gap:2px 8px;width:100%;text-align:left;padding:9px 11px;margin-bottom:5px}.chat-row small{grid-column:1;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chat-row em{grid-row:1/3;grid-column:2;align-self:center}
+.chat-thread{display:flex;flex-direction:column;gap:6px;max-height:44vh;overflow:auto;padding:4px 2px;margin-bottom:8px}
+.bubble{max-width:78%;padding:7px 11px;border-radius:14px;font-size:13px;line-height:1.35}.bubble small{display:block;font-size:9.5px;opacity:.65;margin-top:2px}
+.bubble.them{align-self:flex-start;background:var(--surface-sunken);border:1px solid var(--line)}.bubble.me{align-self:flex-end;background:var(--accent);color:var(--on-accent)}
+.chat-replies{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.chat-custom input{width:100%;margin-bottom:5px}.intent-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:3px}
