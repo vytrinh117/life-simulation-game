@@ -1,5 +1,44 @@
 # Life Simulator Update Log
 
+## v7.3 (batch R + S + T) — Full love progression, real NPC couples & families, two-column person window, UI reorganization
+
+### R. Love progression (every step needs both of you; a "no" is never punished)
+- **Stages, each with its own progress bar**: Noticing → One-sided crush → Mutual crush → Going out / getting to know each other → Boyfriend/girlfriend → In love → Super in love → Serious (promise ring, 16+).
+- **Adult-only stages** (both people 18+): Living together → Engaged (proposal with or without a ring, or eloping) → wedding planning (courthouse / small / medium / big, on the calendar) → Married → Starting a family (have a baby or adopt; non-explicit, months later the child joins the family).
+- **How it moves**:
+  - Admitting you like someone → at least a one-sided crush (mutual when they like you back).
+  - A yes to going out → Going out.
+  - Good dates, time together, gifts they love and talking about the relationship fill the bar.
+  - Neglect (7+ days without contact) slowly drains it.
+  - In love and Super in love happen on their own when the bond is strong; the other steps are questions you ask.
+- **Breaking up** resets the stage. If you gave a promise ring, you choose whether to ask for it back. A ring that was turned down is kept for later.
+- **Safety in logic**: adult steps are refused for minors even if triggered directly; no promise ring under 16. The fuzz run checks that no minor is ever in an adult stage.
+
+### R. NPCs, families and NPC couples
+- **More people your age**: about 28 peers (was 18).
+- **NPCs have families**: who they live with, their siblings (with ages) and pets, shown in the person window.
+- **NPC couples are real**:
+  - two-way, with a strength that changes over time;
+  - breakups with reasons (and a heartbroken friend may need you);
+  - couples go to prom together;
+  - age rules always apply (minors only with minors within 2 years, adults with adults).
+  - Old name-only "dating" data is converted.
+- **You can get involved**:
+  - a friend asks for relationship advice (it changes how their relationship goes);
+  - **matchmaking** ("Set them up with someone" — both single and close in age, and it is their choice);
+  - when your crush starts dating someone else, you choose how to react (including confessing anyway).
+
+### S. Person window
+- **Two columns**: **History together** on the left (the full log, up to 60 entries), **Shared memories** on the right (only milestones and moments that changed the relationship; generic lines filtered out).
+- A love-stage bar and the NPC's family line at the top.
+- Your partner's card shows the love stage instead of a tier label. There is no "set them up" button on your own partner.
+
+### T. UI reorganization
+- **The "Growing Up" tab is gone.** Self-care skills and early education now live in **Daily Life → Independence**.
+- **House rules** moved from People to **Family & Relationships**, together with a **Love life** card (stage, progress, relationship steps) and the current **Family trip**.
+- People now holds People, Plans and (when relevant) Rivals.
+
+
 ## v7.3 (batch L + M + P + Q) — Teen autonomy, summer programs & jobs, baking/wrapping/Valentine's, family outings & trips
 
 ### L. Teen autonomy (13–17)

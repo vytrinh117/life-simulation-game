@@ -114,7 +114,8 @@ async def main():
     # ---- gifts ----
     await grant(pg,'greetingCard',2); s=await st(pg); fr=[x for x in s['people'] if x['role']=='friend'][0]; card=items(s,'greetingCard')[0]
     await C(pg,'giveInventoryItem',card['id'],fr['id']); s=await st(pg)
-    check('gift: one card from the stack given, trust up', items(s,'greetingCard')[0]['quantity']==1 and [x for x in s['people'] if x['id']==fr['id']][0]['trust']>fr['trust'])
+    cards=[(i.get('quantity'),i.get('source')) for i in items(s,'greetingCard')]; tr=[x for x in s['people'] if x['id']==fr['id']][0]['trust']
+    check('gift: one card from the stack given, trust up', items(s,'greetingCard')[0]['quantity']==1 and tr>fr['trust'], (cards,fr['trust'],tr,s['outcomes'][0] if s['outcomes'] else None))
     # ---- store UI ----
     await T(pg,"openTab('business')"); await pg.click("[data-subtab='shop']"); await pg.click("[data-shop-cat='Food & drinks']")
     cards=await pg.query_selector_all('.product-card'); check('23: category filter works', 3<=len(cards)<=5, len(cards))

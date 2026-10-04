@@ -152,9 +152,11 @@ async def main():
     ev=[e for e in s['events'] if e['type']=='rivalMoment' and e['status']=='Open']
     check('114: rivalry created with a person record', ev and any(x.get('npcId')==rv and x.get('roleLabel')=='rival' for x in s['people']))
     await T(pg,f"eventChoice('{ev[0]['id']}','shake')"); s=await st(pg); check('114: sportsmanship turns rivalry toward respect', s['rivals'][0]['type'] in ('respect','friendly competition','friendship'))
-    for _ in range(150): await C(pg,'npcAgencyTick')
-    s=await st(pg); elig=[(x['name'],x.get('age'),x.get('datingNpc')) for x in s['people'] if x['role']=='friend']
-    check('62: NPCs date other NPCs on their own', any(x.get('datingNpc') for x in s['people']), elig)
+    for _ in range(120): await C(pg,'npcCoupleTick')
+    s=await st(pg); cps=[c for c in s.get('npcCouples',[]) if c['status']=='dating']
+    yr=int(s['clock']['dateISO'][:4]); age=lambda i:yr-[n for n in s['npcs'] if n['id']==i][0]['birthYear']
+    check('62/R60: NPCs form real couples on their own', len(cps)>=1, len(cps))
+    check('R60: every NPC couple follows the age rules (minors ±2 years, or both adults)', all((age(c['a'])>=18 and age(c['b'])>=18) or (13<=age(c['a'])<18 and 13<=age(c['b'])<18 and abs(age(c['a'])-age(c['b']))<=2) for c in cps), [(age(c['a']),age(c['b'])) for c in cps][:5])
     await C(pg,'personAction',other['id'],'talk'); s=await st(pg)
     check('123: relationship action narrates what happened (not just stats)', len(s['log'][0]['text'])>40 and not s['log'][0]['text'].startswith('Closeness'), s['log'][0]['text'][:90])
     # awards

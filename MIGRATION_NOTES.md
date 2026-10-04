@@ -114,3 +114,9 @@ The original legacy browser key is not silently deleted during migration. Restar
 ## v7.3 batch L + M + P + Q
 - New: `S.programs`, `S.trip`, `S.tripOffer`, `S.family.anniversary` and `lastTripOffer`, item `wrapped`, skill `baking`. Catalog additions: bakedCookies, cupcakes, heartCookies (not sold in the store) and heartWrap (Valentine's seasonal).
 - The teen curfew changes on load (22:30–24:00 by strictness). Existing plans are unchanged.
+
+
+## v7.3 batch R + S + T
+- People gain `love` ({stage, progress, since}). It is derived from the existing `romanceStage` on first use: crush → one-sided/mutual by attraction, dating → Going out, partner → Boyfriend/girlfriend.
+- New: `S.npcCouples` (old `datingNpc` name strings are converted when both NPCs exist and fit the age rules; otherwise cleared), `S.romance.promiseRing / spareRing / livingTogether / married`, `S.housing` (when living together), and child people from starting a family.
+- The person history cap is raised from 30 to 60. The UI preference for the removed "development" tab still renders safely.

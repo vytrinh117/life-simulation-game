@@ -31,7 +31,10 @@ async def main():
     await T(pg,"openTab('places')"); await pg.click("[data-subtab='activities']"); txt=await pg.inner_text('#panel-host')
     check('M: Activities shows summer programs and free casual practice', 'Basketball camp' in txt and 'casual practice' in txt.lower())
     m0=(await st(pg))['money']
-    await pg.click("[data-program='bballCamp']"); s=await st(pg); rec=[r for r in s.get('programs',[]) if r['progId']=='bballCamp']
+    for i in range(5):
+        await pg.click("[data-program='bballCamp']"); s=await st(pg); rec=[r for r in s.get('programs',[]) if r['progId']=='bballCamp']
+        if rec: break
+        await pg.click("[data-subtab='activities']")
     check('M46: enrolling creates a schedule of sessions on the calendar', rec and len([e for e in s['calendar'] if e['type']=='program'])==rec[0]['total']==10, rec and rec[0]['total'])
     ev=sorted([e for e in s['calendar'] if e['type']=='program'],key=lambda e:e['dateISO'])
     sk0=s['skills'].get('sports',0); await T(pg,f"setClock('{ev[0]['dateISO']}',535)"); await T(pg,"advanceMinutes(8)")

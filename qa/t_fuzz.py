@@ -27,6 +27,8 @@ INV="""()=>{const S=__LIFE_SIM_TEST__.getState(),bad=[],today=S.clock.dateISO,no
  for(const [id,c] of Object.entries(S.chats||{}))if(c.msgs.length>60)bad.push('chat over cap '+id);
  for(const p of S.people)if(p.battery!=null&&!(p.battery>=0&&p.battery<=100))bad.push('battery out of range');
  if(S.trip&&S.trip.len>30)bad.push('trip too long');
+ const yr=Number(today.slice(0,4));for(const c of S.npcCouples||[]){if(c.status!=='dating')continue;const A=S.npcs.find(n=>n.id===c.a),B=S.npcs.find(n=>n.id===c.b);if(!A||!B)continue;const x=yr-A.birthYear,y=yr-B.birthYear;const ok=(x>=18&&y>=18)||(x>=13&&y>=13&&x<18&&y<18&&Math.abs(x-y)<=2);if(!ok)bad.push('SAFETY: NPC couple age '+x+'/'+y)}
+ if(S.age<18)for(const p of S.people)if(p.love&&['livingTogether','engaged','married','family'].includes(p.love.stage))bad.push('SAFETY: adult love stage for a minor');
  for(const r of S.programs||[])if(r.attended>r.total)bad.push('program over-attended '+r.name);
  const pp=S.romance&&S.romance.partnerId&&S.people.find(x=>x.id===S.romance.partnerId);if(pp){const pa=pp.age;if(S.age<18&&(pa>=18||pa<13||Math.abs(pa-S.age)>2))bad.push('SAFETY: age-inappropriate partner');if(S.age>=18&&pa<18)bad.push('SAFETY: adult with minor partner')}
  const pr=S.school&&S.school.prom;if(pr&&pr.status==='Season'&&pr.dateISO<today)bad.push('prom stuck in season');
