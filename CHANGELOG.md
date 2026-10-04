@@ -1,5 +1,25 @@
 # Life Simulator Update Log
 
+## v7.3+ Phase 1B (part 1 of 2) — School-event registration lifecycle, annual school events, invitation throttle
+
+### Annual school events publish themselves
+- Nine major events now appear automatically once per school year, at realistic points in the semester, by grade: **Sports Day, School Play Auditions, Math Olympiad (semester 1, ~week 9), Debate Competition, Art Exhibition, Science Fair (semester 2, ~week 7), Music Festival, Talent Show, Coding Challenge**. No more "Find event" needed for them, and no random repeats (Math Olympiad once a year).
+- "Find event" now offers smaller events instead (Spelling Bee, Poetry Slam, Photography Contest, Chess Tournament, Quiz Bowl, Short Film Contest, Robotics Mini-Challenge…).
+
+### A real registration lifecycle
+- **Upcoming → Registration open** (one notification, ~3 weeks before) **→ Registered / Not participating → Registration closed** (a week before) **→ Withdrawn / attended / No-show**.
+- **Fixed: someone who never registered was marked "Missed".** Late registration attempts, letting the deadline pass, or a caregiver decision that never came now give **"Registration closed"** — no penalty. **"No-show" only applies when you registered and did not attend.**
+- **Withdraw** from an event you registered for; it cancels its calendar entry. Withdrawing within 3 days of the event disappoints the teacher.
+- When registration closes, there is **exactly one** "Registration for … has closed" notification, and it **leaves the active list after about 2 days** (the record stays in history).
+- Old saves: contests previously marked "Missed" without registering become "Registration closed".
+
+### Social-invitation throttle
+- Unsolicited invitations from friends are capped: **at most 3 per 7 days overall**, **the same friend at most once every 5 days**, and a **cooldown per type** (hangout/study ~6 days, mall/movie ~8, game night ~10, picnic ~12, party ~21, sleepover ~25). Birthday parties, prom and other special occasions are not counted.
+
+### Not yet in this checkpoint
+- The **Fast Forward session** (keep the original target, hard/soft/background interruptions, a Continue that really continues, routine preferences, month/break summaries) is **Phase 1B part 2**.
+
+
 ## v7.3+ Phase 1A — Life Context Engine, school-break gating, moved-out household gating, location rules
 
 ### Life Context Engine (new `context73` layer)

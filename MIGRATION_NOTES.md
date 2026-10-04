@@ -153,3 +153,8 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3+ Phase 1A
 - No new saved fields. The household is derived from the existing `S.housing` (no housing record = living with parents). Messages already in chats keep their kind; only new messages follow the current household.
+
+
+## v7.3+ Phase 1B part 1
+- Contests gain `annual`, `openDate`, `closedDate`, `closedNotified`, `closedNoticeCleared`, `withdrawnDate`; new status values "Upcoming", "Registration Closed", "Withdrawn". `S.school.annual` records which annual events were published per school year. `S.inviteLog` (last 40 days).
+- An unregistered contest previously marked "Missed" becomes "Registration Closed" on the next daily tick.
