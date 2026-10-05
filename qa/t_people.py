@@ -15,12 +15,12 @@ async def main():
     first_non=[i for i,x in enumerate(order) if x not in fam]; check('3A.1: family first, then friends by closeness', not first_non or all(o in fam for o in order[:first_non[0]]))
     await pg.click(f"[data-profile-open='{f['id']}']"); prof=await pg.inner_text('#choice-content')
     check('3A.1: profile for someone you barely know — private info is Unknown (interests, smart, health, birthday)', all(f'{k}\nUnknown' in prof or f'{k}Unknown' in prof.replace('\n','') for k in ['Interests','Smart','Health','Birthday']), prof[:300])
-    check('3A.1: profile shows the core fields (full name, age, gender, looks, relationship, where met, known since) and all relationship stats incl. Respect/Reliability/Conflict', all(k in prof for k in ['Full name','Age','Gender','Looks','Relationship','Where met','Known since','Respect','Reliability','Conflict']))
+    check('3A.1 (header per 3A.5/H): profile shows full name, relationship descriptor, age • gender • known since, looks, where met, and all relationship stats incl. Respect/Reliability/Conflict', all(k in prof for k in ['Looks','Where met','Respect','Reliability','Conflict']) and 'known since' in prof.lower() and ' • ' in prof, prof[:200])
     await T(pg,"call('closeChoiceModal')"); await M(pg,f"S.people.find(x=>x.id==='{f['id']}').rel=80"); pr=await C(pg,'profileHtml',f['id'])
     check('3A.1: once close, you know their interests, how smart they are, their birthday', 'Unknown' not in pr.split('Interests')[1][:120] and 'Unknown' not in pr.split('Smart')[1][:80], pr[:200])
     # milestones
     await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.rel=45;p.tier='Acquaintance'"); await C(pg,'tierTick'); await C(pg,'tierTick'); s=await st(pg); ms=[m['type'] for m in [x for x in s['people'] if x['id']==f['id']][0].get('milestones',[])]
-    check('3A.2: becoming friends creates one milestone (no duplicates)', ms.count('friends')==1, ms)
+    check('3A.2 (label per 3A.5/G): becoming casual friends creates one milestone (no duplicates)', ms.count('casualFriends')==1, ms)
     await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.rel=78"); await C(pg,'tierTick'); s=await st(pg); ms=[m['type'] for m in [x for x in s['people'] if x['id']==f['id']][0].get('milestones',[])]
     check('3A.2: becoming close friends is a milestone too', 'closeFriends' in ms, ms)
     await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.romanceInit=true;p.romanceOpen=true;p.orientationMismatch=false"); await C(pg,'setLoveStage',f['id'],'official'); s=await st(pg); ms=[m['type'] for m in [x for x in s['people'] if x['id']==f['id']][0].get('milestones',[])]

@@ -186,3 +186,11 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3+ Phase 3A (checkpoint 3A.3)
 - Stored tiers Friend / Good Friend → Casual Friend; `respect` defaults to 50; new people met during play get `metDate`/`metVia`/`metAt`; `friendStatus` (Old Friend / Former Friend / Contact) with `statusSince`. Existing people keep no `metDate` (no time gates for them).
+
+
+## v7.3+ Phase 3A (checkpoint 3A.4)
+- People gain `convThreads` (lazy) and `supportEvidence`; `S.threadAskedOn`. No migration needed.
+
+
+## v7.3+ Phase 3A (checkpoint 3A.5)
+- People gain lazily: `observedTraits`, `counterSeen`, `goalsKnown`/`goalsAsked`, `relStatusKnown`, `parentsKnown`, `separatedSince`. New milestone types: acquaintances, casualFriends, closeAgain, faded, reconnected (old types unchanged). No migration needed.

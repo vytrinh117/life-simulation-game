@@ -1,6 +1,17 @@
 # Life Simulator Update Log
 
-## v7.3+ Phase 3A — checkpoint 3A.3 (Phase 3A INCOMPLETE)
+## v7.3+ Phase 3A — checkpoint 3A.5 (Phase 3A INCOMPLETE)
+- **Profiles know only what you know.** The header shows the full name, what they are to you (Girlfriend, Best Friend, Older sister, Mom…), then age, gender and how long you have known them — and their parents once you know them.
+- **Relationship status** (Single / Seeing someone / In a relationship) stays **Unknown** until you know them well; the person window no longer reveals who someone is dating to people who would not know.
+- **Personality** appears as you get to know someone — and through what they do (someone who keeps offering another time turns out to be **Busy**). **Life goals** appear when they tell you ("Ask about their plans for the future"); nothing is made up.
+- **Busy is a personality, "Right now" is availability**: shown separately (Free now / At school / Occupied right now).
+- **Friendship milestones**: Became acquaintances / casual friends / close / best friends — never duplicated when numbers wobble; **Friendship faded**, **Reconnected** and **Became close again** after a real separation.
+- Party invitations from the calendar now show who is throwing the party.
+
+## (earlier) v7.3+ Phase 3A — checkpoint 3A.4
+- **Friends remember what you tell them.** In a person's window, **On your mind** lists real things coming up (tryouts, elections, exams, competitions you signed up for, university applications, summer programs). Tell someone you're nervous, and after the real event they may ask "How did tryouts go?" — using the **actual** result (made it / not selected / missed it / called off / your real score). A postponed exam waits for the make-up. Friends who support you through hard moments can earn a **"Helped during a hard time"** milestone. Old threads quietly expire.
+
+## (earlier) v7.3+ Phase 3A — checkpoint 3A.3
 - **New friendship ladder: Stranger → Acquaintance → Casual Friend → Close Friend → Best Friend.** Old "Friend" and "Good Friend" became Casual Friend (history kept).
 - **Friendship is more than closeness**: trust, respect, reliability and unresolved conflict matter, and for people you meet during play so do time and real shared days — nobody becomes your best friend after a few button presses. High fun alone does not make a friendship.
 - **About 50 active friendships**: no "too many friends" wall; when the network gets too big, only the weakest, least-contacted casual friendships drift to **Old Friend** or **Contact**. Close and best friends are never demoted for that. A casual friend you have not talked to in months becomes an Old Friend; a friendship that went sour becomes a **Former Friend**. Nobody is deleted — **Reconnect** brings them back.
