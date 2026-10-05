@@ -101,7 +101,7 @@ async def main():
     got=False
     for i in range(6):
         await M(pg,f"const p=S.people.find(x=>x.id==='{fid}');p.bday='{in5}';p.rel=82"); await C(pg,'birthdayTick'); s=await st(pg)
-        if any('birthday party' in e['title'] for e in s['events'] if e['status']=='Open'): got=True; break
+        if any('birthday party' in e['title'].lower() for e in s['events'] if e['status']=='Open'): got=True; break
     check('N48: close friends invite you to their birthday party (with RSVP)', got)
     # player birthday extras
     await C(pg,'addItem','phone','QC')
@@ -112,9 +112,8 @@ async def main():
     # own celebration options
     await pg.evaluate("()=>{}")
     await M(pg,"S.events.forEach(e=>{if(e.status==='Open')e.status='Resolved'})")
-    await pg.evaluate("c=>__LIFE_SIM_TEST__.mutate(c)","S.events.unshift({id:'bp1',type:'birthdayParty',title:'Birthday',text:'',status:'Open',priority:3,choices:[{id:'outing',label:'Go out'}],createdAt:{dateISO:S.clock.dateISO,minute:600}})")
-    await T(pg,"eventChoice('bp1','outing')"); s=await st(pg)
-    check('N47: more ways to celebrate your own birthday (outing)', 'birthday' in s['log'][0]['title'].lower() and ('bowling' in s['log'][0]['text'] or 'arcade' in s['log'][0]['text'] or 'karaoke' in s['log'][0]['text'] or 'laser' in s['log'][0]['text'] or 'family' in s['log'][0]['text']), s['log'][0])
+    opts=[o['id'] for o in await pg.evaluate("()=>__LIFE_SIM_TEST__.call('birthdayCelebrationOptions')")]
+    check('N47 (updated by H1): own-birthday options depend on age and include family/home choices', 'big' in opts and 'skip' in opts and 'outing' not in opts, opts)
     check('birthdays: no JS errors', not pg.errs, pg.errs[:3]); await pg.close()
     # ---------- X: phone ----------
     pg=await life(b,14); await C(pg,'addItem','phone','QC'); await M(pg,"S.people.filter(p=>p.role==='friend').forEach(p=>p.rel=70);S.chats={};S.permissions.dailyAccess={dateISO:S.clock.dateISO,phone:true,tv:false,sharedDevice:false,stove:false}")

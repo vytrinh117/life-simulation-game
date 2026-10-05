@@ -160,13 +160,13 @@ window.LS_DATA = Object.freeze({
   eventDefs: [
     {id:'familyOrdinary',minAge:0,maxAge:5,weight:8,cooldown:8,title:'A small family moment',text:'An ordinary moment with family becomes part of your early memory.',choices:['Lean into it','Keep playing']},
     {id:'relativeBabyShower',minAge:0,maxAge:99,weight:1,cooldown:150,title:'A baby shower in the family',text:'A relative is expecting a baby, and the family is gathering to celebrate.',choices:['Attend with family','Help choose a gift','Stay home']},
-    {id:'birthdayInvite',minAge:3,maxAge:18,weight:4,cooldown:35,title:'Birthday invitation',text:'Someone your age invites you to a birthday party.',choices:['Go','Ask caregiver / make a plan','Decline']},
+    {id:'birthdayInvite',deprecated:true,minAge:3,maxAge:18,weight:4,cooldown:35,title:'Birthday invitation',text:'Someone your age invites you to a birthday party.',choices:['Go','Ask caregiver / make a plan','Decline']},
     {id:'neighborhoodDay',minAge:4,maxAge:99,weight:2,cooldown:80,title:'Something is happening nearby',text:'Neighbors are gathering for a small community event.',choices:['Go see','Help out','Stay home']},
     {id:'neighborMoves',minAge:3,maxAge:99,weight:4,cooldown:45,title:'Someone is moving in nearby',text:'A moving truck stops in the neighborhood. New people can change old routines.',choices:['Pay attention','Leave them alone']},
     {id:'findCoins',minAge:5,maxAge:99,weight:3,cooldown:35,title:'Something on the ground',text:'You notice some money near the pavement.',choices:['Pick it up','Leave it']},
     {id:'rainPlan',minAge:3,maxAge:99,weight:5,cooldown:14,weather:['Rainy','Stormy'],title:'The weather changes the plan',text:'Rain disrupts what people around you expected to do today.',choices:['Adapt the plan','Stay home']},
     {id:'schoolRumor',minAge:10,maxAge:18,weight:4,cooldown:21,school:true,title:'Two versions of the same story',text:'A rumor is spreading at school and people disagree about what actually happened.',choices:['Stay out of it','Ask what happened','Pass it on']},
-    {id:'friendInvite',minAge:6,maxAge:60,weight:5,cooldown:12,title:'An invitation',text:'Someone you know wants to spend time together soon.',choices:['Accept','Maybe later','Decline']},
+    {id:'friendInvite',deprecated:true,minAge:6,maxAge:60,weight:5,cooldown:12,title:'An invitation',text:'Someone you know wants to spend time together soon.',choices:['Accept','Maybe later','Decline']},
     {id:'parentGrades',minAge:7,maxAge:18,weight:3,cooldown:30,school:true,title:'A caregiver asks about school',text:'A caregiver wants to know how things are going academically.',choices:['Show everything','Downplay problems','Ask for help']},
     {id:'creativeNotice',minAge:10,maxAge:99,weight:1,cooldown:90,title:'Someone notices your work',text:'Something creative you made gets unexpected attention.',choices:['Share more','Keep it private']},
     {id:'celebritySighting',minAge:12,maxAge:99,weight:.35,cooldown:180,title:'A familiar face?',text:'You think you recognize a public figure nearby. It might become a story—or nothing at all.',choices:['Stay respectful','Say hello','Ignore it']}

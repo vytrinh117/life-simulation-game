@@ -1,5 +1,24 @@
 # Life Simulator Update Log
 
+## Hotfix H2 — Interpersonal events always have a real person
+- **Root cause fixed:** two parallel birthday invitation systems existed. The legacy random event `birthdayInvite` ("Someone your age invites you to a birthday party.") was created with no person, no plan and no place, so the invitation box had no FROM/WHERE. The legacy `friendInvite` ("Someone you know wants to spend time together soon.") had the same problem. Both are now **deprecated** (`deprecated:true`, filtered out of random-event selection). Birthday invitations come only from the real NPC birthday system (`birthdayTick → npcBirthdayInvite`), and friend invitations from `npcInvitesPlayer` (real person, plan, place, time and RSVP deadline). Other random events (coins, neighborhood, family…) are unchanged.
+- **No person, no interpersonal event:** `queueEvent` refuses invitations, calls, prom invitations, help requests, relationship advice, school social events and surprise parties that have no real person, and logs a console warning ("Interpersonal event missing actor").
+- **Consequences go to the right person:** the old fallback that applied an invitation's effects to "your best non-family friend" when the inviter was missing is removed; with no person there are no relationship effects.
+- **Birthday invitations show who and where**: FROM *Olivier Fournier • Close Friend*, WHAT *Olivier's Birthday Party*, WHERE *Olivier's house*, WHEN date and time, ANSWER BY deadline. The party date is the friend's real birthday, and **one invitation per friend per year** (`bdayInviteYear` guard). The FROM row now shows the full name and the relationship tier.
+- **Old saves:** an open anonymous `birthdayInvite` is turned into a proper invitation only if a known friend's real birthday falls in the next week; otherwise it is retired as Superseded. Anonymous `friendInvite` and invitations whose person no longer exists are retired too. No relationship penalty, the stale hero/notification is cleared, and they do not return after reload.
+
+
+## Hotfix H1 — Age-appropriate birthday celebrations (after Phase 2A)
+- **Fixed:** young children could choose "Go out with friends" and get e.g. "You celebrate out with Chloe, Jade — karaoke and food after." at age 5, with no caregiver, permission, supervision or transport involved.
+- Birthday options now come from one helper by age: **0–2** family celebration / family outing; **3–5** party at home organized by the family, a small playdate party (only with suitable friends), family restaurant, indoor play center with a grown-up, family outing; **6–9** party at home, **ask your parents to organize** an outing with friends, family dinner, family activity day, sleepover (7+); **10–12** ask to celebrate out with friends (caregiver approval), **13–17** go out with friends (still household approval), **18+** independent.
+- Friend options appear only when there are suitable friends (Friend tier or closer, similar age, still around); otherwise only family choices — no invented friends.
+- Invited friends answer for themselves (some have plans, are away, sick, or cannot get permission).
+- Caregiver approval uses the existing approval logic; a refusal does **not** take you anyway — you can choose another celebration, talk it over (once, if trust is decent), or accept.
+- Activities match age (no karaoke or laser tag for young kids), take real time, and the story includes the caregiver arranging, supervising, dropping off or picking up where the age calls for it.
+- **One authoritative resolver**: every birthday choice (`birthdayParty` and the refusal follow-up) goes through `ownBirthdayChoice`; the old label-based branch in `resolveEventChoice` is no longer reachable for birthdays.
+- The full occasion engine (preparation, gifts, surprises, guest lists) remains Phase 6.
+
+
 ## v7.3+ Phase 2A — COMPLETE (Health, illness, medicine, school nurse, medical care)
 
 ### 2A.6 Happiness vs Mood, Troublemaker, Fast Forward, final QC

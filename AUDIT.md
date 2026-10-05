@@ -50,3 +50,12 @@ A full requirement-traceability audit of the master specification was produced b
 | No illness system (illness field never set) — found in 2A | **Fixed in 2A** (central illness engine) |
 | "Checkup" cured illness instantly — found in 2A | **Fixed in 2A** (routine checkup or doctor visit; no instant cures) |
 | Happiness vs Mood | Already separate (`S.wellbeing` long-term, `S.happiness` mood) — verified in 2A.6 |
+
+
+## Hotfix H2 — interpersonal event audit (types shown with the invitation box)
+| Type | Source | Status after H2 |
+|---|---|---|
+| invitation, promInvite, incomingCall, helpRequest, loveAdvice, schoolSocial, surpriseParty | ACTOR REQUIRED | Created with participants by their systems; enforced by `queueEvent` validation |
+| birthdayInvite, friendInvite (legacy random) | ACTOR REQUIRED | Deprecated; old open ones repaired or retired |
+| vacationProposal, vacationAgain, weatherSchool, ptcNotice, counselor | FAMILY / STAFF SOURCE | Acceptable (shown as family / caregiver / teacher / counselor) |
+| nbh, meetPeople, party (calendar-converted) | GROUP / SYSTEM SOURCE | Acceptable for now. **Recorded for Phase 3A:** the calendar `party` conversion does not carry a host id. |
