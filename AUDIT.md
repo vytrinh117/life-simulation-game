@@ -38,7 +38,7 @@ A full requirement-traceability audit of the master specification was produced b
 | Parents sent household commands after moving out | **Fixed in 1A** |
 | Studying with a teacher had no location/time/break check (found in 1A verification) | **Fixed in 1A** |
 | School-event discovery worked during summer (found in 1A verification) | **Fixed in 1A** |
-| Grandmother created in every family | Open — Phase 2B |
+| Grandmother created in every family | **Fixed in 2B** (family tree vs household; co-residence by context) |
 | Troublemaker shown as a skill level | **Phase 0 finding was wrong** — re-checked in 2A.6: Troublemaker is already 0–100 with labels and excluded from levels; now locked by `t_2a6` |
 | Health tab only from 18 | **Fixed in 2A** (visible at every age, age-appropriate) |
 | No social-invitation throttle | **Fixed in 1B** |
@@ -59,3 +59,5 @@ A full requirement-traceability audit of the master specification was produced b
 | birthdayInvite, friendInvite (legacy random) | ACTOR REQUIRED | Deprecated; old open ones repaired or retired |
 | vacationProposal, vacationAgain, weatherSchool, ptcNotice, counselor | FAMILY / STAFF SOURCE | Acceptable (shown as family / caregiver / teacher / counselor) |
 | nbh, meetPeople, party (calendar-converted) | GROUP / SYSTEM SOURCE | Acceptable for now. **Recorded for Phase 3A:** the calendar `party` conversion does not carry a host id. |
+
+| Caregivers included relatives who live elsewhere — found in 2B | **Fixed in 2B** (household caregivers only) |

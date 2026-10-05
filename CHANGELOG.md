@@ -1,5 +1,24 @@
 # Life Simulator Update Log
 
+## v7.3+ Phase 3A — checkpoint 3A.2 (Phase 3A INCOMPLETE)
+- **Compact People cards**: name, age • gender, relationship tier, where you met, a mood face and a closeness word (Friendly / Good / Close…), with **Interact · Plans · Profile**. No number bars on the card. Family first, then friends by closeness.
+- **Profile**: full name, age, gender, birthday and zodiac, looks, how smart, health, mood, interests and dislikes, relationship with all six measures (closeness, trust, fun, respect, reliability, conflict), love interest (when known, 13+), where and how you met, who introduced you, known since. Private things show **Unknown** until you are close enough.
+- **Relationship log** (everything that happened) and **Milestones** (only the big, typed moments: became friends / good / close / best friends, first date, became official, engagement, marriage — and important moments from older saves).
+- Fixed the person window's **Conflict tile** (missing right/bottom border): four overlapping CSS rules were consolidated into one.
+
+
+## v7.3+ Phase 2B — COMPLETE (family tree, household, siblings, house rules)
+- **New siblings over time:** when the family wants more children and it fits (parents' ages, how many children they have, spacing, circumstances, chance), your parents may share the news at dinner — and months later a **baby brother or sister** arrives as a real family member who grows up with you.
+- **Younger siblings ask things:** to go to the park, come to the mall, borrow something of yours, or tag along with you and your friends. Answer **Yes / No / Ask Mom or Dad / Maybe later**. Easygoing siblings accept a reasonable no; stubborn or dramatic ones **negotiate** ("I'll do your chores tomorrow!"). Lent items come back (sometimes a little sticky); a "later" you forget is remembered.
+- **House rules** now sit in the **left dashboard under Identity** (bedtime, curfew, going out, sleepovers, strictness, trust); living on your own shows "your rules".
+- **Family tree vs household:** every relative now has a place to live. **Grandparents are no longer in every household** — both sides of the family exist, but they live at home only sometimes (more often in some regions and in struggling families). Aunts and uncles live elsewhere.
+- **Varied siblings:** 0–3 brothers and/or sisters, older or younger, with names that match their gender; how many depends on the family's preference for a small/medium/large family and chance, not on wealth.
+- **Mom's side carries her family name** (e.g. Robinson grandparents on Dad's side, Carter on Mom's).
+- **Caregivers are the adults who actually live with you** (and siblings 16+); a relative who lives elsewhere no longer gives permission or picks you up.
+- **Family & Relationships** shows **Household** (who lives with you) and a **Family tree** (Dad's side, Mom's side), with each person's age and relationship.
+- Old saves keep their families exactly (an existing grandmother keeps living at home).
+
+
 ## Hotfix H2 — Interpersonal events always have a real person
 - **Root cause fixed:** two parallel birthday invitation systems existed. The legacy random event `birthdayInvite` ("Someone your age invites you to a birthday party.") was created with no person, no plan and no place, so the invitation box had no FROM/WHERE. The legacy `friendInvite` ("Someone you know wants to spend time together soon.") had the same problem. Both are now **deprecated** (`deprecated:true`, filtered out of random-event selection). Birthday invitations come only from the real NPC birthday system (`birthdayTick → npcBirthdayInvite`), and friend invitations from `npcInvitesPlayer` (real person, plan, place, time and RSVP deadline). Other random events (coins, neighborhood, family…) are unchanged.
 - **No person, no interpersonal event:** `queueEvent` refuses invitations, calls, prom invitations, help requests, relationship advice, school social events and surprise parties that have no real person, and logs a console warning ("Interpersonal event missing actor").

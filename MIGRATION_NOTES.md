@@ -170,3 +170,15 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3+ Phase 2A (complete)
 - No destructive migration. New data is created lazily and once: player `looks`/`smart`/`surname`/`firstName`; NPC `looks`/`smart`; `S.healthState.condition/history/lastRecovered/lastCheckup`; school `nurse`, `nursePasses`, school-day `nurse` records and `'excused'` periods; `S.finance.medicalDebt`; calendar type `medicalFollowUp`; Pharmacy catalog items use the existing finite `remaining` (%) model. Existing `S.health` is preserved. The legacy `healthState.illness` string mirrors whether you are sick ("Unwell"/injury label) for older code paths (work call-in-sick).
+
+
+## v7.3+ Phase 2B (checkpoint 2B.2)
+- Relatives gain `residence` ('home'/'elsewhere'), new ones also `branch` and `roleLabel`; siblings gain `gender` once. Defaults for old saves: parents, siblings and grandparents 'home' (preserving the old implied household), aunts/uncles 'elsewhere'. New role value `younger sibling`. `S.family.sizePref`. Maternal-branch surnames are applied once (`S.familyBranchNamed`) and only to newly generated maternal relatives.
+
+
+## v7.3+ Phase 2B (complete)
+- `S.family.expecting` ({due, announced}), `S.family.lastBaby`, `S.family.lastSibReq`, `S.family.sibChoreHelp`; siblings gain a personality trait lazily; items gain `loanedTo` while lent. No destructive change.
+
+
+## v7.3+ Phase 3A (checkpoint 3A.2)
+- NPCs gain `interests`/`dislikes` (seeded once). People gain `milestones` (typed) — old saves get their importance-3 history moments copied once (`milestonesMigrated`). No other data changes.

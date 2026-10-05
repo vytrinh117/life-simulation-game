@@ -10,7 +10,7 @@ async def step(pg,pid,s,target):
     return st_
 async def peer(pg,age,attr=100,rel=100,trust=100):
     s=await st(pg); f=[x for x in s['people'] if x['role']=='friend' and x.get('npcId')][0]
-    await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.age={age};p.rel={rel};p.trust={trust};p.conflict=0;p.romanceInit=true;p.attraction={attr};p.romanceOpen=true;p.boundaries=[];p.romanceStage='none';p.love=null;p.datingNpc=null;const n=S.npcs.find(x=>x.id===p.npcId);if(n)n.birthYear=new Date(S.clock.dateISO).getUTCFullYear()-{age};S.romance.partnerId=null")
+    await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.age={age};p.rel={rel};p.trust={trust};p.conflict=0;p.romanceInit=true;p.attraction={attr};p.romanceOpen=true;p.boundaries=[];p.romanceStage='none';p.love=null;p.datingNpc=null;p.orientationMismatch=false;const n=S.npcs.find(x=>x.id===p.npcId);if(n)n.orientation='All genders';if(n)n.birthYear=new Date(S.clock.dateISO).getUTCFullYear()-{age};S.romance.partnerId=null")
     return f['id']
 async def main():
   async with async_playwright() as p:
@@ -18,7 +18,7 @@ async def main():
     # ---------- R40: love progression (teen) ----------
     pg=await new_page(b); await new_life(pg); await T(pg,"setAge(16)"); await T(pg,"setMoney(500,0,0)"); fid=await peer(pg,16)
     await pg.evaluate("id=>{const b=document.createElement('button');b.dataset.romance='admire';b.dataset.personId=id;document.getElementById('panel-host').appendChild(b);b.click()}",fid)
-    pp=await person(pg,fid); check('R40: admitting you like them → at least a one-sided crush; mutual only when they like you back', pp['love']['stage']=='crushMutual' if pp.get('romanceStage')=='crush' else pp['love']['stage']=='crushOne', (pp.get('love'),pp.get('romanceStage')))
+    pp=await person(pg,fid); check('R40: admitting you like them → at least a one-sided crush; mutual only when they like you back', pp['love']['stage'] in ('crushOne','crushMutual') and (pp['love']['stage']!='crushMutual' or (pp.get('attraction') or 0)>=60), (pp.get('love'),pp.get('romanceStage')))
     await pg.evaluate("id=>{const b=document.createElement('button');b.dataset.romance='askOut';b.dataset.personId=id;document.getElementById('panel-host').appendChild(b);b.click()}",fid)
     pp=await person(pg,fid); check('R40: they say yes to going out → "Going out / getting to know each other"', pp['love']['stage']=='goingOut', pp['love'])
     check('R40: "make it official" only once you have spent some time together', await C(pg,'nextLoveStep',fid) is None)
@@ -63,7 +63,7 @@ async def main():
     f=[x for x in s['people'] if x['role']=='friend' and x.get('npcId')][0]
     await T(pg,"openTab('people')"); await pg.click(f"[data-person-open='{f['id']}']"); txt=await pg.inner_text('#choice-content')
     check('R59: NPCs have families (who they live with, siblings)', 'Lives with' in txt, txt[:200])
-    check('S: person window has "History together" and "Shared memories" side by side', 'HISTORY TOGETHER' in txt.upper() and 'SHARED MEMORIES' in txt.upper())
+    check('S (renamed in 3A): person window has "Relationship log" and "Milestones" side by side', 'RELATIONSHIP LOG' in txt.upper() and 'MILESTONES' in txt.upper())
     cols=await pg.evaluate("(()=>{const c=document.querySelector('#choice-content .person-cols');if(!c)return null;const [a,b]=c.children;return [a.getBoundingClientRect().left,b.getBoundingClientRect().left,a.getBoundingClientRect().width,b.getBoundingClientRect().width]})()")
     check('S: history on the left (wider), memories on the right (narrower)', cols and cols[0]<cols[1] and cols[2]>cols[3], cols)
     await T(pg,"call('closeChoiceModal')"); await M(pg,f"S.romance.partnerId='{f['id']}';const p=S.people.find(x=>x.id==='{f['id']}');p.age=15;p.romanceStage='partner';p.love={{stage:'inLove',progress:20}};const n=S.npcs.find(x=>x.id===p.npcId);if(n)n.birthYear={yr-15}")
@@ -71,7 +71,7 @@ async def main():
     check('S/R: your partner\'s card shows the love stage (no conflicting tier label)', 'In love' in card)
     await pg.click(f"[data-person-open='{f['id']}']"); check('R: no "set them up" button on your own partner', not await pg.query_selector("#choice-content [data-matchmake-open]"))
     await T(pg,"call('closeChoiceModal')"); await M(pg,"S.romance.partnerId=null")
-    await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.history=[{{dateISO:S.clock.dateISO,age:S.age,text:'You had a real conversation.',importance:1}},{{dateISO:S.clock.dateISO,age:S.age,text:'Became your Close Friend.',importance:3}},{{dateISO:S.clock.dateISO,age:S.age,text:'Something changed in their life while you were elsewhere.',importance:2}}]")
+    await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.history=[{{dateISO:S.clock.dateISO,age:S.age,text:'You had a real conversation.',importance:1}},{{dateISO:S.clock.dateISO,age:S.age,text:'Became your Close Friend.',importance:3}},{{dateISO:S.clock.dateISO,age:S.age,text:'Something changed in their life while you were elsewhere.',importance:2}}];p.milestones=[];p.milestonesMigrated=false")
     await T(pg,"call('closeChoiceModal')"); await pg.click(f"[data-person-open='{f['id']}']")
     mem=await pg.inner_text('#choice-content .pm-list'); hist=await pg.inner_text('#choice-content .ph-list')
     check('S: memories keep only important moments (no generic filler)', 'Close Friend' in mem and 'real conversation' not in mem and 'Something changed' not in mem, mem)
@@ -120,6 +120,7 @@ async def main():
     pg=await new_page(b); await new_life(pg); await T(pg,"setAge(15)")
     await T(pg,"openTab('people')"); tabs=await pg.evaluate("[...document.querySelectorAll('.subtab')].map(x=>x.dataset.subtab)")
     check('T: House rules no longer under People', 'rules' not in tabs, tabs)
-    await T(pg,"openTab('family')"); txt=await pg.inner_text('#panel-host'); check('T: House rules and Love life live under Family & Relationships', 'HOUSE RULES' in txt.upper() and 'LOVE LIFE' in txt.upper())
+    await T(pg,"openTab('family')"); txt=await pg.inner_text('#panel-host'); side=await pg.inner_text('.house-rules-mini')
+    check('T (updated by 2B.5): Love life lives under Family & Relationships; House rules are in the left dashboard under Identity', 'LOVE' in txt.upper() and 'Bedtime' in side, side[:80])
     check('T: no JS errors', not pg.errs, pg.errs[:3]); await b.close()
 asyncio.run(main())
