@@ -1,5 +1,6 @@
 from harness import *
 async def C(pg,fn,*a): return await T(pg,"call("+",".join([json.dumps(fn)]+[json.dumps(x) for x in a])+")")
+async def M(pg,code): return await pg.evaluate("c=>__LIFE_SIM_TEST__.mutate(c)",code)
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(executable_path=CHROME); pg=await new_page(b); await new_life(pg); await T(pg,"setAge(14)")
@@ -13,5 +14,24 @@ async def main():
     await C(pg,'recoverIllness'); await T(pg,"setAge(8)"); await C(pg,'startIllness','fever',{'severity':'mild','symptoms':['Fever','Fatigue']})
     r=await C(pg,'applyMedicine','feverPain','self'); check('2A.3a: an 8-year-old cannot self-medicate (ask a parent)', not r['ok'] and 'parent' in r['why'].lower(), r)
     r=await C(pg,'applyMedicine','feverPain','caregiver'); check('2A.3a: a caregiver can give a suitable medicine', r['ok'], r)
-    check('2A.3a: no JS errors', not pg.errs, pg.errs[:3]); await b.close()
+    errs=list(pg.errs); await pg.close()
+    # ---------- 2A.3b pharmacy items in the existing inventory ----------
+    pg=await new_page(b); await new_life(pg); await T(pg,"setAge(14)"); await T(pg,"setMoney(100,0,0)")
+    await T(pg,"openTab('business')"); sub=await pg.query_selector("[data-subtab='shop']")
+    if sub: await sub.click()
+    txt=await pg.inner_text('#panel-host'); check('2A.3b: the store has a Pharmacy category with the medicines', 'Pharmacy' in txt and 'Cold Relief' in txt)
+    m0=(await st(pg))['money']; await T(pg,"buyItem('coldRelief')"); s=await st(pg); it=[i for i in s['inventoryItems'] if i['key']=='coldRelief']
+    check('2A.3b: buying adds it to the existing inventory (6 uses) and costs money', len(it)==1 and await C(pg,'medicineUses',it[0]['id'])==6 and s['money']==m0-9, (m0,s['money']))
+    iid=it[0]['id']; await C(pg,'performItemUse',iid,'takeMedicine'); s=await st(pg)
+    check('2A.3b: not sick → no benefit and no use consumed', await C(pg,'medicineUses',iid)==6)
+    await C(pg,'startIllness','cold',{'severity':'mild','symptoms':['Cough','Sore throat']}); await C(pg,'performItemUse',iid,'takeMedicine'); s=await st(pg)
+    check('2A.3b: sick → symptoms eased, one use consumed, illness NOT removed', await C(pg,'medicineUses',iid)==5 and s['healthState'].get('condition') and await C(pg,'reliefActive'))
+    await C(pg,'performItemUse',iid,'takeMedicine'); s=await st(pg); check('2A.3b: using it again right away is refused (no use consumed)', await C(pg,'medicineUses',iid)==5)
+    for k in range(5): await T(pg,"advanceMinutes(365)"); await C(pg,'performItemUse',iid,'takeMedicine')
+    s=await st(pg); check('2A.3b: when the last use is gone, the item leaves the inventory', not any(i['id']==iid for i in s['inventoryItems']), [i.get('remaining') for i in s['inventoryItems'] if i['id']==iid])
+    errs+=pg.errs; await pg.close()
+    pg=await new_page(b); await new_life(pg); await T(pg,"setAge(8)"); await C(pg,'addItem','feverPain','QC'); await C(pg,'startIllness','fever',{'severity':'mild','symptoms':['Fever','Fatigue']})
+    s=await st(pg); iid=[i for i in s['inventoryItems'] if i['key']=='feverPain'][0]['id']; await C(pg,'performItemUse',iid,'takeMedicine'); s=await st(pg)
+    check('2A.3b: an 8-year-old at home — a parent gives the medicine (logged), relief active', any('gives you' in l['title'] for l in s['log'][:3]) and await C(pg,'reliefActive'))
+    errs+=pg.errs; check('2A.3: no JS errors', not errs, errs[:3]); await b.close()
 asyncio.run(main())

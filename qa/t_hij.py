@@ -120,7 +120,8 @@ async def main():
     ok=await C(pg,'canAskStayHome','tomorrow'); check('H: you can ask the night before', ok)
     appr=0;day=tm
     for i in range(4):
-        await M(pg,"S.health=55;S.needs.sleep=20")
+        await M(pg,"S.healthState.condition=null;S.healthState.lastRecovered=null")  # Phase 2A: 'really sick' = an actual illness, not just low health
+        await C(pg,'startIllness','flu',{'severity':'moderate'})
         await T(pg,f"setClock('{(dt.date.fromisoformat(day)-dt.timedelta(days=1)).isoformat()}',1140)"); await C(pg,'askStayHome','tomorrow','sick'); s=await st(pg)
         sd=[c for c in s['calendar'] if c['type']=='schoolDay' and c['dateISO']==day]; appr+=bool(sd and sd[0]['status']=='Excused')
         day=await school_day_after(pg,(dt.date.fromisoformat(day)+dt.timedelta(days=2)).isoformat())
