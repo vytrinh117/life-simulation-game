@@ -1,6 +1,11 @@
 # Life Simulator Update Log
 
-## v7.3+ Phase 3A — checkpoint 3A.2 (Phase 3A INCOMPLETE)
+## v7.3+ Phase 3A — checkpoint 3A.3 (Phase 3A INCOMPLETE)
+- **New friendship ladder: Stranger → Acquaintance → Casual Friend → Close Friend → Best Friend.** Old "Friend" and "Good Friend" became Casual Friend (history kept).
+- **Friendship is more than closeness**: trust, respect, reliability and unresolved conflict matter, and for people you meet during play so do time and real shared days — nobody becomes your best friend after a few button presses. High fun alone does not make a friendship.
+- **About 50 active friendships**: no "too many friends" wall; when the network gets too big, only the weakest, least-contacted casual friendships drift to **Old Friend** or **Contact**. Close and best friends are never demoted for that. A casual friend you have not talked to in months becomes an Old Friend; a friendship that went sour becomes a **Former Friend**. Nobody is deleted — **Reconnect** brings them back.
+- **Respect** is a real measure now: keeping plans earns it, no-shows lose it.
+
 - **Compact People cards**: name, age • gender, relationship tier, where you met, a mood face and a closeness word (Friendly / Good / Close…), with **Interact · Plans · Profile**. No number bars on the card. Family first, then friends by closeness.
 - **Profile**: full name, age, gender, birthday and zodiac, looks, how smart, health, mood, interests and dislikes, relationship with all six measures (closeness, trust, fun, respect, reliability, conflict), love interest (when known, 13+), where and how you met, who introduced you, known since. Private things show **Unknown** until you are close enough.
 - **Relationship log** (everything that happened) and **Milestones** (only the big, typed moments: became friends / good / close / best friends, first date, became official, engagement, marriage — and important moments from older saves).

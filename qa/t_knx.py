@@ -17,10 +17,10 @@ async def main():
     b=await p.chromium.launch(executable_path=CHROME)
     # ---------- K: tiers ----------
     pg=await life(b); fid=await friend(pg,59)
-    check('K40: tier names from closeness (59 → Friend)', await C(pg,'friendTier',fid)=='Friend')
-    await T(pg,"advanceMinutes(1)"); await M(pg,f"S.people.find(x=>x.id==='{fid}').rel=62"); await T(pg,"advanceMinutes(1)"); s=await st(pg)
+    check('K40 (3A ladder): closeness 59 with ordinary trust → Casual Friend', await C(pg,'friendTier',fid)=='Casual Friend', await C(pg,'friendTier',fid))
+    await T(pg,"advanceMinutes(1)"); await M(pg,f"const q=S.people.find(x=>x.id==='{fid}');q.rel=80;q.trust=70;q.conflict=0"); await C(pg,'tierTick'); s=await st(pg)
     pp=[x for x in s['people'] if x['id']==fid][0]
-    check('K40: crossing 60 → "Good Friend" with a level-up notice', pp.get('tier')=='Good Friend' and any('Good Friend' in l['title'] for l in s['log'][:5]), (pp.get('tier'),[l['title'] for l in s['log'][:3]]))
+    check('K40 (3A ladder): reaching Close Friend (closeness + trust) gives a level-up notice', pp.get('tier')=='Close Friend' and any('Close Friend' in l['title'] for l in s['log'][:5]), (pp.get('tier'),[l['title'] for l in s['log'][:3]]))
     await M(pg,f"S.people.find(x=>x.id==='{fid}').rel=36"); await T(pg,"advanceMinutes(1)"); s=await st(pg); pp=[x for x in s['people'] if x['id']==fid][0]
     check('K40: drifting down is announced too', pp['tier']=='Acquaintance' and any('now Acquaintance' in l['title'] for l in s['log'][:5]))
     await T(pg,"openTab('people')"); txt=await pg.inner_text('#panel-host'); check('K40: tier shown on people cards', 'Acquaintance' in txt or 'Friend' in txt)
@@ -94,7 +94,7 @@ async def main():
     check('N48: wishing them adds closeness and is remembered', pp['rel']>r0 and pp.get('bdayWished'))
     # forgetting
     s=await st(pg); yd=(dt.date.fromisoformat(s['clock']['dateISO'])-dt.timedelta(days=1)).isoformat()[5:]
-    await M(pg,f"const p=S.people.find(x=>x.id==='{fid}');p.bday='{yd}';p.bdayWished={{}};p.rel=90"); await C(pg,'birthdayTick'); s=await st(pg); pp=[x for x in s['people'] if x['id']==fid][0]
+    await M(pg,f"const p=S.people.find(x=>x.id==='{fid}');p.bday='{yd}';p.bdayWished={{}};p.rel=90;p.trust=85;p.respect=60;p.reliability=80;p.conflict=0"); await C(pg,'birthdayTick'); s=await st(pg); pp=[x for x in s['people'] if x['id']==fid][0]
     check('N49: forgetting a best friend\'s birthday costs closeness (−8)', pp['rel']<=82.1, pp['rel'])
     # NPC party invite 5 days ahead
     in5=(dt.date.fromisoformat(s['clock']['dateISO'])+dt.timedelta(days=5)).isoformat()[5:]

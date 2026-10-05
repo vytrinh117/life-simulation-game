@@ -182,3 +182,7 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3+ Phase 3A (checkpoint 3A.2)
 - NPCs gain `interests`/`dislikes` (seeded once). People gain `milestones` (typed) — old saves get their importance-3 history moments copied once (`milestonesMigrated`). No other data changes.
+
+
+## v7.3+ Phase 3A (checkpoint 3A.3)
+- Stored tiers Friend / Good Friend → Casual Friend; `respect` defaults to 50; new people met during play get `metDate`/`metVia`/`metAt`; `friendStatus` (Old Friend / Former Friend / Contact) with `statusSince`. Existing people keep no `metDate` (no time gates for them).
