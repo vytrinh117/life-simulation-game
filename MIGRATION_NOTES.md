@@ -166,3 +166,7 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3+ Phase 2A (checkpoint 2A.2)
 - Player: `looks`, `smart` (stable seeded values, generated once), `surname`/`firstName` (from `familyName`/`name`). NPCs: `looks`, `smart` (seeded, once). `S.healthState` gains `condition`, `history`, `lastRecovered` lazily; the legacy `illness` string mirrors whether you are sick.
+
+
+## v7.3+ Phase 2A (complete)
+- No destructive migration. New data is created lazily and once: player `looks`/`smart`/`surname`/`firstName`; NPC `looks`/`smart`; `S.healthState.condition/history/lastRecovered/lastCheckup`; school `nurse`, `nursePasses`, school-day `nurse` records and `'excused'` periods; `S.finance.medicalDebt`; calendar type `medicalFollowUp`; Pharmacy catalog items use the existing finite `remaining` (%) model. Existing `S.health` is preserved. The legacy `healthState.illness` string mirrors whether you are sick ("Unwell"/injury label) for older code paths (work call-in-sick).

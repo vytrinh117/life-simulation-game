@@ -39,10 +39,14 @@ A full requirement-traceability audit of the master specification was produced b
 | Studying with a teacher had no location/time/break check (found in 1A verification) | **Fixed in 1A** |
 | School-event discovery worked during summer (found in 1A verification) | **Fixed in 1A** |
 | Grandmother created in every family | Open — Phase 2B |
-| Troublemaker shown as a skill level | Open — Phase 2A |
-| Health tab only from 18 | Open — Phase 2A |
+| Troublemaker shown as a skill level | **Phase 0 finding was wrong** — re-checked in 2A.6: Troublemaker is already 0–100 with labels and excluded from levels; now locked by `t_2a6` |
+| Health tab only from 18 | **Fixed in 2A** (visible at every age, age-appropriate) |
 | No social-invitation throttle | **Fixed in 1B** |
 | Major bonus multiplies with the talent bonus (above the ~×1.5 cap) | Open — Phase 8 |
 | School homework/assessments/clubs/contests during breaks | Verified correct; now covered by `t_context` |
 
 | Unregistered contests marked "Missed" (3 places) | **Fixed in 1B** |
+
+| No illness system (illness field never set) — found in 2A | **Fixed in 2A** (central illness engine) |
+| "Checkup" cured illness instantly — found in 2A | **Fixed in 2A** (routine checkup or doctor visit; no instant cures) |
+| Happiness vs Mood | Already separate (`S.wellbeing` long-term, `S.happiness` mood) — verified in 2A.6 |

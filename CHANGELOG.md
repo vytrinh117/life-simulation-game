@@ -1,6 +1,33 @@
 # Life Simulator Update Log
 
-## v7.3+ Phase 2A — checkpoint 2A.2 (Phase 2A INCOMPLETE)
+## v7.3+ Phase 2A — COMPLETE (Health, illness, medicine, school nurse, medical care)
+
+### 2A.6 Happiness vs Mood, Troublemaker, Fast Forward, final QC
+- Verified and locked by tests: **long-term Happiness** (slow) and **current Mood** (fast, with named reasons) are separate; being sick is a named mood reason, a sick day hurts Mood but barely moves Happiness, and Mood recovers quickly after you get better.
+- **Troublemaker** is a 0–100 reputation with labels (no levels); sick days and nurse passes never change it or Behavior.
+- **Fast Forward**: a mild illness while skipping is summarized under **Health** ("Had a common cold for N days, then recovered"); a medical emergency is a hard interruption.
+- Full regression (35 suites, 1,013 checks) and fuzz across childhood, teen and adult ages.
+
+### 2A.5 Staying home sick, medical care and costs
+- **Asking to stay home uses your real condition**: genuinely ill → usually approved ("Sick day", excused), a little less likely if there is an exam today. **Pretending** → your parent may believe you, refuse ("You're fine. Get dressed."), or **catch you later** that day (trust drops) — depending on how strict they are and how much they trust you.
+- **Levels of care**: home care → school nurse → **clinic/doctor** (moderate or lingering illness, injuries; may write a prescription that helps recovery) → **hospital** (serious only — a mild cold is redirected) → **emergency** (rare). Visits take real time and make the condition known.
+- **Costs** by household coverage: **Covered / Mostly covered / Out-of-pocket**. Children's care is paid by the family. Adults without money get a free **community clinic** (longer wait); **hospital and emergency care are never refused** — what you cannot pay becomes a bill.
+- **Follow-up appointments** go on the calendar; attend, miss, or they are cancelled automatically if you recover first.
+- The old "Checkup" no longer cures instantly: it is a routine checkup, or a doctor visit when you are sick.
+
+### 2A.4 School nurse and nurse passes
+- At school (only there) you can **see the school nurse** — during class you ask the teacher first. The nurse is a persistent staff member who checks you over, so your condition becomes known.
+- Not sick: back to class. Mild/moderate: a **NURSE PASS** (times, excused classes, reason) and rest on the nurse bed (real time passes; the nurse may give a suitable medicine). Severe: the nurse recommends going home. Injuries get first aid.
+- **Excused periods are never counted as skipped**: no behavior or troublemaker change, no truancy.
+- Not better after resting → the nurse **calls a caregiver**; whoever is available comes to pick you up (if nobody can, you rest in the office and the day is still excused). The **rest of the school day is medically excused**, any later assessment becomes a **make-up** (no duplicate, never "missed"), and **today's club session is excused**.
+- At home you can **ask your parent for medicine**: they use what is in the cabinet or buy it at the pharmacy (the household pays) — but not if a dose is still working.
+
+### 2A.3 Pharmacy and medicine
+
+### 2A.3 Pharmacy and medicine
+- New **Pharmacy** category in the store: **Cold Relief, Fever/Pain Relief, Allergy Relief, Cough Relief, Stomach Relief, Bandages/First Aid** — game items that ease symptom categories (no real dosing information).
+- Medicine lives in your normal inventory with a limited number of uses. A suitable medicine **eases matching symptoms for a few hours** (better focus, a small boost to recovery) but **never cures the illness**. Not sick, the wrong medicine, or taking it again while the last one still works: no effect, and no use is spent. The empty package is thrown away.
+- **Children under 12 do not take medicine on their own**: a parent at home gives it. Kids buying medicine go through the usual caregiver permission.
 
 ### 2A.1 Health from birth, Looks, Smart, surname
 - **The Health tab is available at every age**, showing what fits the age: 0–4 health, sleep quality and current sickness; children add energy; teens add fitness and stress. Health is described as long-term wellbeing, separate from energy, sleep, mood and stress.
