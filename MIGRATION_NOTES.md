@@ -198,3 +198,7 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3+ Phase 3A (checkpoint 3A.6)
 - New `S.dev` (origin, evidence, developing, emerging, histories). On every load `migrateDev` de-duplicates `S.personality`/`S.talents` and marks existing entries core / initial **only if unmarked** — idempotent; nothing is added, removed or rerolled.
+
+
+## Hotfix P1.1
+- Family members gain `relation` (and `gender` where implied): set at generation; for older saves converted once from the v7.1 generator's exact labels stored in `name` ("Mom", "Dad", "Grandmother", "Grandfather"). Player children get `relation:'child'`. Idempotent.

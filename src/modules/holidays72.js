@@ -102,7 +102,7 @@ function upcomingHolidays(n=6,from=currentDate()){const y=parseISO(from).getUTCF
 function holidayWindow(){const today=currentDate(),out=[];for(const x of upcomingHolidays(12,addDays(today,-3))){const days=daysBetween(today,x.dateISO),span=(x.h.durationDays||1)-1;const maxBefore=Math.max(0,...x.h.activities.map(a=>a.days||0));if(days<=maxBefore&&days>=-span)out.push(Object.assign({},x,{days}))}return out}
 function holidayFlag(x,a){return `hol-${x.h.id}-${x.year}-${a.id}`}
 function availableActivities(x){const days=x.days,reg=calendarProfile().region;return x.h.activities.filter(a=>S.age>=(a.minAge||0)&&S.age<=(a.maxAge??200)&&(!a.regions||a.regions.includes(reg))&&(a.on?days<=0&&days>=-((x.h.durationDays||1)-1):days<=(a.days||0)&&days>=-((x.h.durationDays||1)-1))&&!S.flags[holidayFlag(x,a)])}
-function relTarget(kind){if(kind==='mother')return S.people.find(p=>p.role==='parent'&&/Mom/.test(p.name))||S.people.find(p=>p.role==='parent');if(kind==='father')return S.people.find(p=>p.role==='parent'&&/Dad/.test(p.name))||S.people.find(p=>p.role==='parent');if(kind==='friend')return bestNonFamily();return null}
+function relTarget(kind){if(kind==='mother')return familyByRelation('mother')||S.people.find(p=>p.role==='parent');if(kind==='father')return familyByRelation('father')||S.people.find(p=>p.role==='parent');if(kind==='friend')return bestNonFamily();return null}
 function doHolidayActivity(key,arg){
  const [hid,aid]=String(key).split(':'),x=holidayWindow().find(w=>w.h.id===hid);if(!x){toast('That holiday is not happening right now.');return}
  const a=availableActivities(x).find(z=>z.id===aid);if(!a){toast('You already did that, or it is not available now.');return}

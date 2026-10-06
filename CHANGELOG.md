@@ -1,5 +1,11 @@
 # Life Simulator Update Log
 
+## Hotfix P1 — checkpoint P1.1 (hotfix incomplete)
+- **People cards**: one style for everyone — **Full Name (Age) | Relationship**, then gender (and love interest when you know it), then how you know them. Names are no longer shown in capitals. Cards no longer stretch next to the friend group.
+- **Family labels from real family data**: Mother, Father, Grandmother, Older Sister, Younger Brother, Daughter, Son… Your own children now count as family. Older saves are converted once.
+- **Profile**: the name appears once, followed by a compact two-column layout and a small grid of relationship measures. "Romantic status" is now separate from what someone is to you.
+
+
 ## v7.3+ Phase 3A — COMPLETE (people, friendship, narrative memory, profile knowledge, personality & talent development)
 - Final QA: full regression (45 suites, 1,201 checks, 0 failures), save/migration validation on a real legacy save and a rich Phase 3A state (no duplicates, idempotent), fuzz at ages 3, 8, 14, 17, 20, 30.
 - The project now ships its **build sources** (`src/`, `tools/`, `BUILD.md`); `game.js` and `style.css` are generated and reproduce byte-for-byte.
