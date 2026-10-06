@@ -58,3 +58,6 @@ Phase 5b adds prom (multi-stage, with reasons, second chances and NPC agency), d
 
 ## v7.3 complete
 All v7.3 items are implemented: creator fixes, real school years with semesters and regional calendars, talents/levels/study rules/mood/anti-farming, school–home communication, climate weather and school closures, Fast Forward, scheduling with real answers and relationship tiers, birthdays, chats and calls, teen autonomy, summer programs and jobs, baking/wrapping/Valentine, family outings and trips, the full love progression, real NPC couples and families, the two-column person window, UI reorganization, small businesses, housing, university applications and funding, and adult careers. See CHANGELOG.md and QC_REPORT.md.
+
+## Source layout
+`game.js` and `style.css` are generated. The sources are in `src/` (`src/base/game.js` + `src/modules/*.js` + `src/style_before_theme.css`) and the build tools in `tools/`; see `BUILD.md` to rebuild. Phase progress files (`PHASE_2A_PROGRESS.md`, `PHASE_2B_PROGRESS.md`, `PHASE_3A_PROGRESS.md`) refer to module files under `src/modules/`.

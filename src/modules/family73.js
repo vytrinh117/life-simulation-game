@@ -1,0 +1,74 @@
+
+// =====================================================================
+// v7.3+ PHASE 2B.1 — Family tree vs current household
+// Every relative has a residence ('home' = lives in the family home, 'elsewhere') and a branch (paternal/maternal).
+// Caregivers are adults who actually live with you. New lives get varied families; old saves keep theirs.
+// =====================================================================
+const SIB_ROLES=['older sibling','younger sibling','sibling'];
+function defaultResidence(p){return ['parent','older sibling','younger sibling','sibling'].includes(p.role)?'home':p.role==='grandparent'?'home':'elsewhere'}
+function inHousehold(p){return !!p&&!p.movedAway&&!p.deceased&&(p.residence??defaultResidence(p))==='home'}
+function householdMembers(){return livesWithParents()?S.people.filter(p=>isFamilyPerson(p)&&inHousehold(p)):[]}
+function householdCaregivers(){return S.people.filter(p=>inHousehold(p)&&(['parent','grandparent','aunt','uncle'].includes(p.role)||(SIB_ROLES.includes(p.role)&&personAge(p)>=16&&personAge(p)>S.age)))}
+function householdCaregiver(){const h=householdCaregivers();return h.find(p=>p.role==='parent')||h[0]||S.people.find(p=>p.role==='parent')||null}
+function isSibling(p){return !!p&&SIB_ROLES.includes(p.role)}
+function siblingLabel(p){const older=personAge(p)>S.age||(personAge(p)===S.age&&p.role==='older sibling'),g=p.gender||nameGender(p.firstName)||'';return `${older?'Older':'Younger'} ${g==='Female'?'sister':g==='Male'?'brother':'sibling'}`}
+// NOTE: runs while the new life's state is being built (S may still be null) — use the creator's inputs, never S here
+function creatorContext(){const country=(typeof document!=='undefined'&&document.getElementById('c-country')?.value)||(S&&S.birthCountry)||'',wealth=(typeof document!=='undefined'&&document.getElementById('c-wealth')?.value)||(S&&S.wealth)||'Middle class';const k={Vietnam:'VN','South Korea':'KR',Japan:'JP',China:'CN',France:'FR',Thailand:'TH',Singapore:'CN'}[country]||(S?poolKey():'EN');return {k,wealth}}
+function grandCoResidenceChance(ctx=creatorContext()){let c=['VN','KR','JP','CN','TH'].includes(ctx.k)?32:9;if(ctx.wealth==='Struggling')c+=10;if(['Wealthy','Extremely wealthy'].includes(ctx.wealth))c-=4;return Math.max(3,c)}
+function rollSiblingCount(){const pref=rand(['small','small','medium','medium','large']);rollSiblingCount.lastPref=pref;const w={small:[45,45,10,0],medium:[20,45,28,7],large:[8,30,37,25]}[pref];let x=Math.random()*100;for(let n=0;n<4;n++){x-=w[n];if(x<=0)return n}return 1}
+function famPerson(name,role,age,extra={}){const p=makePerson(name,role,age,0);return Object.assign(p,extra)}
+function generateFamily(age){
+ const people=[famPerson('Mom','parent',27+age+Math.floor(Math.random()*6),{residence:'home'}),famPerson('Dad','parent',29+age+Math.floor(Math.random()*7),{residence:'home'})];
+ const gp=[];for(const branch of ['paternal','maternal']){if(chance(85))gp.push(famPerson('Grandmother','grandparent',56+age+Math.floor(Math.random()*12),{branch,residence:'elsewhere',roleLabel:`${branch==='paternal'?"Dad's":"Mom's"} mother`}));if(chance(75))gp.push(famPerson('Grandfather','grandparent',59+age+Math.floor(Math.random()*12),{branch,residence:'elsewhere',roleLabel:`${branch==='paternal'?"Dad's":"Mom's"} father`}))}
+ if(gp.length&&chance(grandCoResidenceChance())){const br=gp.some(g=>g.branch==='paternal')&&chance(62)?'paternal':gp[0].branch;gp.filter(g=>g.branch===br).forEach(g=>{g.residence='home'})}
+ people.push(...gp);
+ const n=rollSiblingCount(),used=new Set();for(let i=0;i<n;i++){let off,tries=0;do{off=age>=3&&chance(35)?-(1+Math.floor(Math.random()*Math.max(1,age-1))):1+Math.floor(Math.random()*9);tries++}while(used.has(off)&&tries<12);used.add(off);
+  const g=chance(50)?'Female':'Male',older=off>0;people.push(famPerson(`${older?'Older':'Younger'} ${g==='Female'?'sister':'brother'}`,older?'older sibling':'younger sibling',Math.max(0,age+off),{gender:g,residence:'home',roleLabel:`${older?'older':'younger'} ${g==='Female'?'sister':'brother'}`}))}
+ const ua=Math.floor(Math.random()*3);for(let i=0;i<ua;i++){const fem=chance(50),br=chance(50)?'paternal':'maternal';people.push(famPerson(fem?'Aunt':'Uncle',fem?'aunt':'uncle',26+age+Math.floor(Math.random()*14),{branch:br,residence:'elsewhere',gender:fem?'Female':'Male',roleLabel:`${fem?'aunt':'uncle'} (${br==='paternal'?"Dad's":"Mom's"} side)`}))}
+ return people}
+// maternal relatives carry the mother's family name, not the player's (only where both are generated)
+function applyBranchSurnames(){if(S.familyBranchNamed)return;const mom=S.people.find(p=>p.role==='parent'&&/Mom/.test(p.name));if(!mom?.fullName)return;S.familyBranchNamed=true;const key=poolKey(),fam=S.familyName||'',momSur=(mom.surname&&mom.surname!==fam)?mom.surname:rand(((NAME_POOLS[key]||NAME_POOLS.EN).last).filter(x=>x!==fam));
+ for(const p of S.people)if(p.branch==='maternal'&&p.firstName&&p.fullName){p.surname=momSur;p.fullName=composeName(p.firstName,momSur,key)}}
+function migrateFamily(){migrateDev();if(!S.people)return;migrateFriendTiers();for(const q of S.people)if(typeof migrateMilestones==='function')migrateMilestones(q);S.family=S.family||{};if(!S.family.sizePref)S.family.sizePref=rollSiblingCount.lastPref||rand(['small','medium','medium','large']);for(const p of S.people){if(p.residence==null&&isFamilyPerson(p))p.residence=defaultResidence(p);if(isSibling(p)&&!p.gender){const first=p.firstName||String(p.name).split(/[ •]/)[0];p.gender=nameGender(first)||(hashOf(p.id)%2?'Female':'Male')}}applyBranchSurnames()}
+// ---------- 2B.2 Family UI ----------
+function familyPersonLine(p){const where=inHousehold(p)?'':' • lives elsewhere';const label=isSibling(p)?siblingLabel(p):(p.roleLabel||p.role);return `<div class="fam-row"><button class="linklike" data-person-open="${p.id}">${esc(p.fullName||p.name)}</button><small>${esc(cap(label))} • ${personAge(p)}${where}</small></div>`}
+function familyTreeHtml(){const fam=S.people.filter(isFamilyPerson),home=fam.filter(inHousehold),away=fam.filter(p=>!inHousehold(p));
+ const side=b=>away.filter(p=>p.branch===b),other=away.filter(p=>!p.branch);
+ return `<section class="card"><h3>Household</h3><p class="muted-text">${livesWithParents()?'Who lives with you at home:':'You live on your own now. Your family home:'}</p>${home.map(familyPersonLine).join('')||'<p class="muted-text">—</p>'}</section>
+ <section class="card"><h3>Family tree</h3>${side('paternal').length?`<h4>Dad's side</h4>${side('paternal').map(familyPersonLine).join('')}`:''}${side('maternal').length?`<h4>Mom's side</h4>${side('maternal').map(familyPersonLine).join('')}`:''}${other.length?`<h4>Other relatives</h4>${other.map(familyPersonLine).join('')}`:''}${!away.length?'<p class="muted-text">No other relatives you know of.</p>':''}</section>`}
+// ---------- 2B.3 — Future siblings (non-explicit: parents share news, a baby arrives months later) ----------
+function childrenAtHome(){return 1+S.people.filter(p=>isSibling(p)&&inHousehold(p)).length}
+function familyTarget(){return {small:2,medium:3,large:4}[S.family?.sizePref]||2}
+function babyEligible(){const mom=S.people.find(p=>p.role==='parent'&&/Mom/.test(p.name)),dad=S.people.find(p=>p.role==='parent'&&/Dad/.test(p.name));if(!mom||!dad||!livesWithParents()||S.family.expecting)return false;const ma=personAge(mom);if(ma<22||ma>43)return false;if(childrenAtHome()>=familyTarget())return false;const ages=[S.age,...S.people.filter(isSibling).map(personAge)];if(Math.min(...ages)<2)return false;if(S.family.lastBaby&&daysBetween(S.family.lastBaby,currentDate())<730)return false;return true}
+function babyChancePct(){let c=3.5;if(S.wealth==='Struggling')c*=.6;if((S.family.tension??0)>60)c*=.5;return c}
+function announceBaby(){const due=addDays(currentDate(),200+Math.floor(Math.random()*40));S.family.expecting={due,announced:currentDate()};if(!SIM.skipping)log('Big family news',`${S.people.find(p=>p.role==='parent'&&/Mom/.test(p.name))?.firstName||'Mom'} and ${S.people.find(p=>p.role==='parent'&&/Dad/.test(p.name))?.firstName||'Dad'} sit you down at dinner, smiling: "You're going to be a big ${S.gender&&/girl|woman/i.test(S.gender)?'sister':'brother'}." The baby is due around ${formatDate(due)}.`,true);return due}
+function siblingBabyArrives(){const g=chance(50)?'Female':'Male',p=famPerson(`Baby ${g==='Female'?'sister':'brother'}`,'younger sibling',0,{gender:g,residence:'home',roleLabel:`younger ${g==='Female'?'sister':'brother'}`,rel:70,trust:60,born:currentDate()});S.people.push(p);S.family.expecting=null;S.family.lastBaby=currentDate();S.happiness=clamp(S.happiness+6);S.family.closeness=clamp(S.family.closeness+4);S.milestones.unshift({dateISO:currentDate(),age:S.age,title:`👶 A new ${g==='Female'?'sister':'brother'}`,text:'The family grows.'});if(!SIM.skipping)log(`👶 Your baby ${g==='Female'?'sister':'brother'} is born`,'Tiny fingers, a lot of crying, and everyone suddenly whispering.',true);return p}
+function familyGrowthTick(){S.family=S.family||{};const t=currentDate();if(S.family.expecting){if(t>=S.family.expecting.due)siblingBabyArrives();return}if(t.slice(8)!=='01')return;if(babyEligible()&&chance(babyChancePct()))announceBaby()}
+// ---------- 2B.4 — Younger-sibling requests with negotiation ----------
+const SIB_TRAITS=['Kind','Calm','Cheerful','Clingy','Stubborn','Dramatic','Shy'];
+function sibTraits(p){if(!p.traits?.length||!p.traits.some(t=>SIB_TRAITS.includes(t)))p.traits=[...(p.traits||[]),SIB_TRAITS[hashOf(p.id)%SIB_TRAITS.length]];return p.traits}
+function easygoing(p){return sibTraits(p).some(t=>['Kind','Calm','Cheerful'].includes(t))}
+function siblingRequestTick(){if(!livesWithParents()||S.age<8||SIM.skipping)return;S.family.lastSibReq=S.family.lastSibReq||null;if(S.family.lastSibReq&&daysBetween(S.family.lastSibReq,currentDate())<3)return;if(S.events.some(e=>e.status==='Open'&&e.type==='siblingRequest'))return;
+ const sibs=S.people.filter(p=>isSibling(p)&&inHousehold(p)&&personAge(p)>=4&&personAge(p)<16&&personAge(p)<S.age);if(!sibs.length||!chance(8))return;const sib=rand(sibs);
+ const plan=(S.plans||[]).find(x=>x.status==='Accepted'&&x.dateISO>=currentDate()&&x.dateISO<=addDays(currentDate(),1)),item=(S.inventoryItems||[]).find(i=>['Toys & games','Electronics','Books'].includes(catalogItem(i.key)?.category)&&!i.equipped&&!i.loanedTo&&!i.wrapped);
+ const opts=[['park','Can you take me to the park?']];if(S.age>=13)opts.push(['mall','Can I come to the mall with you?']);if(item)opts.push(['borrow',`Can I borrow your ${item.name}?`]);if(plan)opts.push(['tagAlong',`Can I come with you and your friends ${plan.dateISO===currentDate()?'today':'tomorrow'}?`]);
+ const [kind,ask]=rand(opts);S.family.lastSibReq=currentDate();queueEvent({type:'siblingRequest',title:`${firstName(sib)} asks you something`,text:`"${ask}"`,participants:[sib.id],payload:{kind,itemId:item?.id,planId:plan?.id},priority:3,expiresDays:1,choices:[{id:'yes',label:'Yes'},{id:'no',label:'No'},{id:'askParent',label:'Ask Mom or Dad first'},{id:'later',label:'Maybe later'}]})}
+function siblingYes(sib,pl){const k=pl.kind,n=firstName(sib);sib.rel=clamp(sib.rel+4);
+ if(k==='park'){advanceTime(90,{silent:true});S.needs.fun=clamp(S.needs.fun+8);rememberPerson(sib,'You took them to the park.',2);return `You take ${n} to the park. They make you push the swing "higher, HIGHER" for twenty minutes.`}
+ if(k==='mall'){advanceTime(120,{silent:true});rememberPerson(sib,'They came to the mall with you.',1);return `${n} tags along to the mall and wants everything in every window.`}
+ if(k==='borrow'){const it=S.inventoryItems.find(i=>i.id===pl.itemId);if(it){it.loanedTo=sib.id;scheduleFollowUp('siblingReturn',{itemId:it.id,sibId:sib.id},{days:2})}return `You lend ${n} your ${it?it.name:'thing'}. "I'll be SO careful."`}
+ if(k==='tagAlong'){const p=(S.plans||[]).find(x=>x.id===pl.planId);if(p)p.tagAlong=sib.id;return `${n} is coming along. Your friends will have opinions.`}
+ return `${n} is delighted.`}
+function siblingRequestChoice(e,id){if(!['siblingRequest','siblingNegotiate'].includes(e.type))return false;const sib=personById(e.participants?.[0]);if(!sib)return true;const n=firstName(sib),pl=e.payload||{},cg=householdCaregiver();
+ if(e.type==='siblingNegotiate'){if(id==='deal'){S.family.sibChoreHelp=(S.family.sibChoreHelp||0)+1;log(`Deal with ${n}`,siblingYes(sib,pl)+` (They promise to help with your chores.)`)}else{sib.rel=clamp(sib.rel-(easygoing(sib)?0:2));log(`Still no`,`${n} sulks off${easygoing(sib)?', but gets over it fast':''}.`)}return true}
+ if(id==='yes'){log(`Saying yes to ${n}`,siblingYes(sib,pl));return true}
+ if(id==='later'){scheduleFollowUp('siblingLater',{sibId:sib.id,kind:pl.kind},{days:1});log(`"Maybe later"`,`${n}: "You PROMISE?"`);return true}
+ if(id==='askParent'){const ok=caregiverApproval(0);if(ok){log(`Asking ${cg?firstName(cg):'your parent'}`,`${cg?firstName(cg):'Your parent'}: "Yes, take ${n} with you — it's nice for them." `+siblingYes(sib,pl))}else{sib.rel=clamp(sib.rel-(easygoing(sib)?0:1));log(`Asking ${cg?firstName(cg):'your parent'}`,`${cg?firstName(cg):'Your parent'}: "Not today — ${n}, leave your ${S.age<13?'brother/sister':'sibling'} be."`)}return true}
+ // no — reaction depends on personality; persistent siblings negotiate
+ if(easygoing(sib)){log(`Saying no to ${n}`,`${n} shrugs. "Okay, next time." No hard feelings.`);return true}
+ if(chance(60)){const offer=rand(['I\'ll do your chores tomorrow!','Just thirty minutes?','I won\'t touch anything, I swear.','I\'ll give you my dessert.']);queueEvent({type:'siblingNegotiate',title:`${n} won't give up`,text:`"${offer}"`,participants:[sib.id],payload:pl,priority:3,expiresDays:1,choices:[{id:'deal',label:'Okay, deal'},{id:'no',label:'Still no'}]});log(`Saying no to ${n}`,`${n} is not taking no for an answer yet.`);return true}
+ sib.rel=clamp(sib.rel-3);log(`Saying no to ${n}`,`${n} stomps off: "You NEVER let me do anything!"`);return true}
+function familyFollowUp(f){if(f.type==='siblingReturn'){const it=S.inventoryItems.find(i=>i.id===f.payload.itemId),sib=personById(f.payload.sibId);if(it){it.loanedTo=null;if(chance(25)&&it.condition!=null)it.condition=Math.max(0,it.condition-10);if(!SIM.skipping)log('Item returned',`${sib?firstName(sib):'Your sibling'} gives back your ${it.name}${chance(25)?' — slightly sticky':''}.`)}return true}
+ if(f.type==='siblingLater'){const sib=personById(f.payload.sibId);if(sib&&!SIM.skipping){sib.rel=clamp(sib.rel-(easygoing(sib)?0:1));log(`${firstName(sib)} remembers`,`"You said LATER. It's later now." You find something else to do.`)}return true}return false}
+// ---------- 2B.5 — House Rules in the left dashboard ----------
+function houseRulesMiniHtml(){if(!livesWithParents()||S.age>=18)return '<p class="muted-text">You live on your own — your rules.</p>';return houseRulesHtml()}

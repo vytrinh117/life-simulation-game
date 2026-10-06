@@ -1,0 +1,54 @@
+
+// =====================================================================
+// v7.3 U — Small businesses: choose a type from a dropdown, run up to 3 at once, open/close any time
+// =====================================================================
+const BIZ_MAX=3;
+const BIZ_TYPES={lemonade:{name:'Lemonade stand',product:'lemonade',icon:'🍋'},cookies:{name:'Cookie stand',product:'cookies',icon:'🍪',skill:'baking'},cupcakes:{name:'Cupcake stand',product:'cupcakes',icon:'🧁',skill:'baking'},beads:{name:'Bead jewelry',product:'bracelets',icon:'📿',skill:'art',minAge:8},crafts:{name:'Art prints & crafts',product:'drawings',icon:'🎨',skill:'art'},yard:{name:'Yard sale',yard:true,icon:'🏷️',minAge:8}};
+function bizList(){S.businesses=Array.isArray(S.businesses)?S.businesses:[];if(S.stall&&!S.stallMigrated){S.stallMigrated=true;const st=S.stall,it=st.items?.[0],wasActive=st.active;st.active=false;if(st.type==='Stand'&&it){const k=Object.entries(BIZ_TYPES).find(([,t])=>t.product===st.product)?.[0]||'lemonade';S.businesses.push({id:uid('biz'),kind:k,name:BIZ_TYPES[k].name,location:st.location||'home',price:it.price,stock:it.stock,quality:it.quality||70,status:wasActive?'Open':'Closed',revenue:st.revenue||0,costs:0,customers:st.visitors||0,reputation:st.reputation||50,opened:st.dateISO||currentDate()})}}return S.businesses}
+function bizActive(){return bizList().filter(b=>b.status!=='Retired')}
+function bizProduct(b){return D.standProducts.find(p=>p.id===BIZ_TYPES[b.kind]?.product)}
+function bizLoc(b){return D.standLocations.find(l=>l.id===b.location)||D.standLocations[0]}
+function payStock(cost){if(S.age>=16){if(S.money<cost){toast(`That costs about ${money(cost)}.`);return false}S.money-=cost;return true}if(S.money>=cost&&S.age>=12){S.money-=cost;return true}if(caregiverApproval(S.wealth==='Struggling'?-10:0)){log('A caregiver helps',`${primaryCaregiver()} covers the ${money(cost)} for supplies.`);return true}toast('Your caregiver will not pay for supplies right now.');return false}
+function startBusiness(kind,location,price,stock){
+ const t=BIZ_TYPES[kind];if(!t)return;if(S.age<D.ageRules.smallBusiness){toast('A caregiver must lead selling at this age.');return}if(t.minAge&&S.age<t.minAge){toast(`${t.name} starts at age ${t.minAge}.`);return}
+ if(bizActive().length>=BIZ_MAX){toast(`You can run up to ${BIZ_MAX} businesses at once. Retire one first.`);return}
+ if(bizActive().some(b=>b.kind===kind)){toast(`You already have a ${t.name.toLowerCase()}.`);return}
+ if(S.age<16&&S.permissions.stand!==true&&!requestSellingPermission(t.yard?'yardSale':'stand'))return;
+ const loc=D.standLocations.find(l=>l.id===location)||D.standLocations[0];if(S.age<loc.minAge){toast(`${loc.name} is for ages ${loc.minAge}+.`);return}
+ const b={id:uid('biz'),kind,name:t.name,location:loc.id,price:0,stock:0,quality:60,status:'Open',revenue:0,costs:0,customers:0,reputation:50,opened:currentDate(),listed:[]};
+ if(t.yard){b.listed=[];b.price=0}else{const prod=D.standProducts.find(p=>p.id===t.product);b.price=Math.max(1,Math.min(50,Number(price)||prod.basePrice));const n=Math.max(3,Math.min(40,Math.round(Number(stock)||10))),lvl=t.skill?(S.skills?.[t.skill]||0):30;b.quality=clamp(50+lvl*.4+Math.random()*10);const cost=Math.round(prod.baseCost*n*100)/100;if(!payStock(cost))return;b.stock=n;b.costs+=cost}
+ bizList().push(b);advanceTime(20,{silent:true});log(`Opened: ${t.name}`,t.yard?'Pick a few things from Your things to put out on the table.':`${b.stock} to sell at ${money(b.price)} each, ${loc.name.toLowerCase()}.`,true)
+}
+function bizSell(b,hours,manual){
+ if(b.status!=='Open')return 0;const t=BIZ_TYPES[b.kind],loc=bizLoc(b),w=S.weather?.type,sev=S.weather?.severity||0;
+ if(sev>=2&&loc.id!=='school'){if(manual)toast(`Too ${String(w).toLowerCase()} to sell outside today.`);return 0}
+ const visitors=Math.max(0,Math.round(hours*(1+loc.traffic/30)+Math.random()*4));let sold=0,rev=0;
+ if(t.yard){for(const l of b.listed){if(l.sold)continue;const p=clamp(loc.traffic*.8+(l.value-l.price)/Math.max(1,l.value)*60+(S.luck-50)*.2,10,90);if(chance(p*hours/3)){l.sold=true;sold++;rev+=l.price;const it=S.inventoryItems.find(x=>x.id===l.itemId);if(it)removeItem(it.id,true)}}}
+ else{if(b.stock<=0){if(manual)toast(`${b.name}: sold out — restock first.`);return 0}const prod=bizProduct(b),weather=prod.weatherBonus?.[w]||0,priceP=(b.price-prod.basePrice)*9,quality=(b.quality-50)*.35,rep=(b.reputation-50)*.2,social=(S.personality||[]).includes('Social')?8:(S.personality||[]).includes('Shy')?-3:0,talent=(S.talents||[]).includes('Business')?6:0,luck=(S.luck-50)*.15;
+  const rate=clamp(loc.traffic+weather-priceP+quality+rep+social+talent+luck,5,95);sold=Math.min(b.stock,Math.round(visitors*rate/100));rev=sold*b.price;b.stock-=sold}
+ b.revenue+=rev;b.customers+=visitors;b.reputation=clamp(b.reputation+(sold>0?1:-.5));S.money+=rev;S.finance.earned=(S.finance.earned||0)+rev;if(sold)practiceSkill('business',manual?.6:.2);return {sold,rev,visitors}
+}
+function workBusiness(id,hours=2){const b=bizList().find(x=>x.id===id);if(!b)return;if(b.status!=='Open'){toast('Open it first.');return}if(atSchool()){toast('After school.');return}if(currentMinute()>1200){toast('Too late to sell today.');return}
+ const r=bizSell(b,hours,true);if(!r)return;advanceTime(hours*60,{silent:true});S.energy=clamp(S.energy-6*hours);noteOuting(b.location);
+ log(`${BIZ_TYPES[b.kind].icon} ${b.name}`,r.sold?`${r.visitors} people stop by; you sell ${r.sold} for ${money(r.rev)}.${!BIZ_TYPES[b.kind].yard&&b.stock===0?' Sold out!':''}`:`${r.visitors} people walk past. No sales today${S.weather?.type==='Rainy'?' — the rain does not help':''}.`)}
+function restock(id,n=10){const b=bizList().find(x=>x.id===id);if(!b||BIZ_TYPES[b.kind].yard)return;const prod=bizProduct(b),cost=Math.round(prod.baseCost*n*100)/100;if(!payStock(cost))return;b.stock+=n;b.costs+=cost;advanceTime(30,{silent:true});log(`Restocked ${b.name}`,`${n} more ready to sell (${money(cost)} in supplies).`)}
+function toggleBusiness(id){const b=bizList().find(x=>x.id===id);if(!b)return;b.status=b.status==='Open'?'Closed':'Open';log(b.status==='Open'?`Reopened ${b.name}`:`Closed ${b.name}`,b.status==='Open'?'The sign is back up.':'You pack everything away for now. You can reopen any time.')}
+function retireBusiness(id){const b=bizList().find(x=>x.id===id);if(!b)return;b.status='Retired';b.closedDate=currentDate();for(const l of b.listed||[])l.sold=l.sold||false;recordOutcome('Business',b.name,'Closed for good',`Revenue ${money(b.revenue)} • supplies ${money(b.costs)} • profit ${money(b.revenue-b.costs)}.`);log(`Retired: ${b.name}`,`Final tally: ${money(b.revenue)} revenue, ${money(b.revenue-b.costs)} profit.`)}
+function listYardItem(bizId,itemId){const b=bizList().find(x=>x.id===bizId),it=S.inventoryItems.find(x=>x.id===itemId);if(!b||!it||!BIZ_TYPES[b.kind].yard)return;if(b.listed.filter(l=>!l.sold).length>=8){toast('The table is full (8 items).');return}if(b.listed.some(l=>l.itemId===itemId&&!l.sold)){toast('Already on the table.');return}if(it.equipped||S.phone?.activeItemId===it.id){toast('Unequip it first.');return}const v=Math.max(1,Math.round(itemValue(it)/(it.quantity||1)));b.listed.push({itemId,name:it.name,value:v,price:Math.max(1,Math.round(v*.8)),sold:false});toast(`${it.name} listed for ${money(Math.max(1,Math.round(v*.8)))}`)}
+function bizDaily(){for(const b of bizActive())if(b.status==='Open'&&chance(35)&&!SIM.skipping){const r=bizSell(b,1,false);if(r&&r.sold&&chance(40))log(`${BIZ_TYPES[b.kind].icon} ${b.name}`,`A few sales while you were busy: ${money(r.rev)}.`)}}
+function businessesHtml(){
+ if(S.age<D.ageRules.smallBusiness)return `<p class="muted-text">From age ${D.ageRules.smallBusiness}, you can run small businesses with a caregiver's help.</p>`;
+ const act=bizActive(),types=Object.entries(BIZ_TYPES).filter(([k,t])=>(!t.minAge||S.age>=t.minAge)&&!act.some(b=>b.kind===k)),locs=D.standLocations.filter(l=>S.age>=l.minAge);
+ const cards=act.map(b=>{const t=BIZ_TYPES[b.kind],yard=t.yard,open=b.status==='Open';const items=yard?S.inventoryItems.filter(i=>!i.equipped&&!i.wrapped&&S.phone?.activeItemId!==i.id&&!b.listed.some(l=>l.itemId===i.id&&!l.sold)).slice(0,10):[];
+  return `<div class="biz-card ${open?'open':'closed'}"><div class="biz-head"><b>${t.icon} ${esc(b.name)}</b><span class="tag ${open?'ok':''}">${open?'Open':'Closed'}</span></div><small class="muted-text">${esc(bizLoc(b).name)}${yard?` • ${b.listed.filter(l=>!l.sold).length} on the table`:` • ${b.stock} in stock • ${money(b.price)} each • quality ${Math.round(b.quality)}`} • revenue ${money(b.revenue)} • profit ${money(b.revenue-b.costs)} • reputation ${Math.round(b.reputation)}</small>
+  <div class="inline-actions">${open?`<button class="small" data-biz-work="${b.id}">Work a 2-hour shift</button>`:''}${!yard?`<button class="small ghost" data-biz-restock="${b.id}">Restock 10</button>`:''}<button class="small ghost" data-biz-toggle="${b.id}">${open?'Close for now':'Reopen'}</button><button class="small ghost" data-biz-retire="${b.id}">Retire</button></div>
+  ${yard&&items.length?`<details class="more-menu"><summary>Put items on the table</summary><div>${items.map(i=>`<button class="small ghost" data-biz-list="${b.id}" data-item-id="${i.id}">${esc(i.name)}</button>`).join('')}</div></details>`:''}</div>`}).join('');
+ const can=act.length<BIZ_MAX&&types.length;
+ return `<p class="muted-text">Run up to ${BIZ_MAX} at once (${act.length}/${BIZ_MAX}). Weather, location, price, quality, reputation and your talents affect sales.</p>${cards||''}
+ ${can?`<div class="business-builder"><label>Business<select id="biz-kind">${types.map(([k,t])=>`<option value="${k}">${t.icon} ${esc(t.name)}</option>`).join('')}</select></label><label>Where<select id="biz-loc">${locs.map(l=>`<option value="${l.id}">${esc(l.name)}</option>`).join('')}</select></label><label>Price<input id="biz-price" type="number" min="1" max="50" value="3"></label><label>Stock<input id="biz-stock" type="number" min="3" max="40" value="10"></label><button class="primary" data-biz-start="1">Start</button></div>`:act.length>=BIZ_MAX?'<p class="muted-text">You are running the maximum of 3. Retire one to start another.</p>':''}`
+}
+function bizClick(b){const d=b.dataset;
+ if(d.bizStart){startBusiness(document.getElementById('biz-kind')?.value,document.getElementById('biz-loc')?.value,document.getElementById('biz-price')?.value,document.getElementById('biz-stock')?.value);save();render();return true}
+ if(d.bizWork){workBusiness(d.bizWork);save();render();return true}if(d.bizRestock){restock(d.bizRestock);save();render();return true}
+ if(d.bizToggle){toggleBusiness(d.bizToggle);save();render();return true}if(d.bizRetire){retireBusiness(d.bizRetire);save();render();return true}
+ if(d.bizList){listYardItem(d.bizList,d.itemId);save();render();return true}return false}

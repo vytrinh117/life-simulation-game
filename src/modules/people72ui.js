@@ -1,0 +1,10 @@
+// ---------- v7.2 PHASE 5a UI: people, plans, rules ----------
+function peoplePanel(){
+ const status=p=>{const a=npcStatusAt(p);return a.free?'<span class="tag ok">Free now</span>':`<span class="tag" title="${esc(a.why)}">${a.atSchool?'At school':'Busy'}</span>`};
+ const goals=p=>(p.goals||[]).length&&p.trust>=55&&!isFamilyPerson(p)?`<small class="person-goals">Wants to ${esc(p.goals.map(g=>GOAL_LABEL[g]||g).join(', '))}</small>`:'';
+ return `<div class="dashboard"><section class="card wide"><h3>${S.age<6?'Your social world':'Relationships remember what happened'}</h3><p class="muted-text">People have their own schedules, goals and limits. Close friends go by their nickname; others by their full name.</p></section>${peopleOrder().map(peopleCardCompact).join('')}${S.age>=8?`<section class="card"><h3>Friend group</h3>${groupHtml()}</section>`:''}${S.age>=13&&(S.rivals||[]).length?`<section class="card"><h3>Rivals</h3>${(S.rivals||[]).length?`${S.rivals.map(r=>{const p=S.people.find(x=>x.npcId===r.npcId);return p?`<p>${esc(p.name)} <small class="muted-text">• ${esc(r.domain)} • ${esc(r.type)}</small></p>`:''}).join('')}`:''}</section>`:''}<section class="card wide"><h3>Plans & invitations</h3>${plansHtml()}</section>${S.age<18?``:''}</div>`
+}
+PANEL_TABS.people=[['people','People'],['plans','Plans']];
+SECTION_RULES.people=[[/plans/i,'plans'],[/house rules/i,'rules'],[/.*/,'people']];
+SECTION_RULES.world=[[/journal|milestone|education|life log|story|outcome|awards/i,'journal'],[/.*/,'world']];
+function offerButtons(o){const i=clubInfo(o.name);if(o.status!=='Offered')return statusTag(o.status==='Tryout'?'Tryout scheduled':o.status);const lab=i.kind==='open'?(S.age<13?'Ask to join':'Sign up'):i.kind==='elected'?'Run for class rep':i.entry==='tryout'?(S.age<13?'Ask to try out':'Sign up for tryout'):(S.age<13?'Ask to audition':'Sign up for audition');return `<div class="inline-actions"><button class="small" data-activity-signup="${o.id}">${lab}</button><button class="small ghost" data-activity-info="${o.id}">Learn more</button><button class="small ghost" data-activity-decline="${o.id}">Decline</button></div>`}

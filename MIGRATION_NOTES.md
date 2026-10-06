@@ -194,3 +194,7 @@ The original legacy browser key is not silently deleted during migration. Restar
 
 ## v7.3+ Phase 3A (checkpoint 3A.5)
 - People gain lazily: `observedTraits`, `counterSeen`, `goalsKnown`/`goalsAsked`, `relStatusKnown`, `parentsKnown`, `separatedSince`. New milestone types: acquaintances, casualFriends, closeAgain, faded, reconnected (old types unchanged). No migration needed.
+
+
+## v7.3+ Phase 3A (checkpoint 3A.6)
+- New `S.dev` (origin, evidence, developing, emerging, histories). On every load `migrateDev` de-duplicates `S.personality`/`S.talents` and marks existing entries core / initial **only if unmarked** — idempotent; nothing is added, removed or rerolled.

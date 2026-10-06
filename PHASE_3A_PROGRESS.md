@@ -1,6 +1,6 @@
 # PHASE 3A PROGRESS — People cards & profiles, Relationship Log & Milestones, friendship model, active-friend cap, conversation continuity
 
-**Status: PHASE 3A INCOMPLETE — 3A.5 COMPLETE. Resume from checkpoint: 3A.6 (Personality & talent development, W3)**
+**Status: PHASE 3A COMPLETE** — all checkpoints 3A.1–3A.7 done; final validation passed (45 suites / 1,201 checks / 0 failures; fuzz at ages 3, 8, 14, 17, 20, 30; acceptance Y #1–37 verified; documentation solution A verified by a byte-identical rebuild).
 
 ## Scope (master spec 50–54, 60; plus the H2 note about calendar `party` events without a host)
 - 3A.1 Compact People card + full Profile (age, gender, birthday, zodiac, looks, smart, health, happiness, reputation, interests, relationship, love interest if known, where/how met, introduced by, known since; Unknown for private info)
@@ -10,7 +10,7 @@
 - 3A.5 Calendar `party` conversion keeps its host; QC, full regression, fuzz
 
 ## Checklist
-- [x] 3A.1  - [x] 3A.2  - [x] 3A.3  - [x] 3A.4  - [x] 3A.5 (W2)  - [ ] 3A.6 (W3)  - [ ] 3A.7 (W4)  - [ ] 3A.4  - [ ] 3A.5
+- [x] 3A.1  - [x] 3A.2  - [x] 3A.3  - [x] 3A.4  - [x] 3A.5  - [x] 3A.6  - [x] 3A.7
 
 ## Findings before coding (verified)
 - People cards showed all numeric bars plus several text lines; no profile view. NPCs had no interests, no "where/how met", no introducer.
@@ -209,7 +209,7 @@
 ### Documentation accuracy — verified source structure (finding while recording S4A-5)
 - **The delivered project does NOT contain separate module files.** The ZIP contains `index.html`, `game.js`, `data.js`, `style.css`, `qa/` tests and the docs. Files such as `people73.js`, `friends73.js`, `family73.js`, `health73.js` (41 module files) exist **only in the build workspace**; they are concatenated into `game.js` by the build script (`tools/splice.py`, also not in the ZIP). Inside the shipped `game.js` each module appears as a section with a header comment (e.g. `// v7.3+ PHASE 3A.3 — Friendship ladder …`).
 - Therefore earlier doc wording like "`friends73.js` (new)" in this file, CHANGELOG, QC_REPORT, AUDIT and the Phase 2A/2B progress files is **misleading for a reader of the repository**.
-- Correction to do in execution mode (3A.7 documentation, or earlier): either (a) ship the module sources and build script in the ZIP (e.g. `src/` + `tools/`) with a short build note, or (b) reword every reference to "section *PHASE x.y* in `game.js`". Default plan: **(a)** — it makes the references true and keeps the project rebuildable — plus a README note explaining that `game.js` is generated. Until then, treat module names in the docs as "section names inside `game.js`".
+- **RESOLVED in 3A.7 — solution A chosen and verified** (see the 3A.7 section). Original note: correction to do in execution mode (3A.7 documentation, or earlier): either (a) ship the module sources and build script in the ZIP (e.g. `src/` + `tools/`) with a short build note, or (b) reword every reference to "section *PHASE x.y* in `game.js`". Default plan: **(a)** — it makes the references true and keeps the project rebuildable — plus a README note explaining that `game.js` is generated. Until then, treat module names in the docs as "section names inside `game.js`".
 
 ### Status of the continuation
 - Parts 1–3 recorded in full; Part 4 sections O–R recorded; **Section S continuation series parts 1–3 of 4 recorded (S, T, U–V)**. Series part 4 is arriving in sub-parts: **S4A-1 (W1), S4A-2 (W2), S4A-3 (W3–W4), S4A-4 (X), S4A-5 (Y acceptance) recorded.** Next: execution mode on instruction. **No implementation until all parts are recorded and the user says to proceed.**
@@ -251,5 +251,110 @@
 
 **Known limitations**: Talking / Engaged / Married availability states and gossip-based learning are hooks only (3B); Busy is the only trait with a behavioural observation source so far (others are learned through familiarity) — more sources come with 3A.6's evidence system and later phases; parents are shown from the NPC household record (the player cannot yet "visit" a home to learn it).
 
+## 3A.6 INSTRUCTIONS — CONTINUATION PART 1 OF 2 (recorded; implementation NOT authorized yet)
+
+**Missing input resolved:** items 1–11 were re-sent in "3A.6 INSTRUCTION RECOVERY" and are recorded below; together with 12–18 they form one continuous focused-test list.
+
+### 3A.6 focused testing requirements — items 1–11 (from the recovery message)
+- 1. Existing personality survives migration unchanged.
+- 2. Existing talents survive migration unchanged.
+- 3. Existing personality/talent gameplay bonuses still work after the new architecture and migration — **verify the functional effect path still consumes the canonical data** (not just that names survived).
+- 4. Empty personality/talent slots are **not** auto-filled.
+- 5. Starting with 2 personality traits does not force development of traits 3–5.
+- 6. Starting with 2 talents does not force development of talents 3–5.
+- 7. One repeated action cannot instantly create a new personality trait — **anti-farming: repeating the same action/context cannot rapidly manufacture a trait**.
+- 8. One repeated action cannot instantly create a new talent (same anti-farming demonstration).
+- 9. High skill alone does **not** create a talent — skill proficiency and talent recognition stay distinct.
+- 10. Meaningful accumulated evidence can create an **Emerging Strength** without immediately granting a Recognized Talent (distinct states).
+- 11. Full talent recognition requires sufficient accumulated evidence and cannot come from one isolated action/event (stronger/sustained evidence per sections M–V). **No visible or required farmable percentage meter.**
+
+### 3A.6 focused testing requirements — items 12–18 (from Continuation Part 1; unchanged)
+- 12. A recognized talent is added to the **canonical talent collection** (`S.talents`).
+- 13. Talent count never exceeds 5.
+- 14. Personality count never exceeds 5.
+- 15. Recognition history records useful context when available.
+- 16. Save/reload preserves development evidence.
+- 17. Repeated migration does not duplicate traits, talents, evidence or recognition history.
+- 18. Existing Phase 3A People/Profile behaviour stays intact.
+- Test runs for 3A.6: the new 3A.6 focused suite + directly relevant existing personality/talent tests + directly relevant People/Profile regression. **No full regression / fuzz** (reserved for 3A.7).
+
+### Documentation cleanup (to do when 3A.6 is implemented)
+- Clean the duplicated obsolete checkpoint entries near the top (line 13 currently ends with stale "- [ ] 3A.4 - [ ] 3A.5"). The main checklist must show only: [x] 3A.1 • [x] 3A.2 • [x] 3A.3 • [x] 3A.4 • [x] 3A.5 • [ ] 3A.6 • [ ] 3A.7.
+- Mark 3A.6 `[x]` **only after** implementation and focused testing succeed — not from recording instructions.
+- Keep the useful historical notes; keep documentation accurate about shipped files vs build-workspace modules vs where the canonical implementation lives; never claim a module/file exists in the shipped project unless it does.
+
+## 3A.6 — Personality & talent development foundation (W3, sections M–V) — COMPLETE
+**Centralized architecture (one canonical system).** The effective lists stay `S.personality` and `S.talents` — the same arrays the existing `traitBoost()` / `TRAIT_TARGETS` / `TALENT_TARGETS` read, so every gameplay effect keeps working and anything newly developed or recognized gets its effect through the same path. All metadata lives in `S.dev`: `origin.trait` (core / developed), `origin.talent` (initial / recognized), `ev` (evidence aggregates per `trait:X` / `talent:X`: score, unique days, first/last date, contexts, strong/top counts, last 10 records with source, system, event id, date, age, context, quality, recognizer id), `developing` (tendencies), `emerging` (Emerging Strengths with the player's response), `talentHistory`, `traitHistory`, `places`.
+- API: `recordTraitEvidence(target, info)` / `recordTalentEvidence(target, info)` → `recordEvidence` (only names from `D.personalities` / `D.talents`; the same real event id never counts twice; **anti-farming**: per-day repetition of the same target decays 1 → .5 → .25 → 0 and the same context again on the same day ×0.4; sustained behaviour across days is not penalised — variety and days are required at evaluation). `evStats`, `evaluateTraits`, `evaluateTalents`, `recognizeTrait`, `recognizeTalent`, `respondTalentNotice`, `devWeeklyTick` (Sundays), `devStatusHtml`.
+- **Personality:** Core = creator traits (never removed). A trait becomes a *developing tendency* after modest evidence over ≥ 4 days; it becomes **Developed** (added to `S.personality`, origin "developed", history + "You are changing" story) only with score ≥ 18 over ≥ 12 different days, ≥ 2 contexts and ≥ 45 days, while fewer than 5 traits, and never if it contradicts a held trait (Social/Shy, Calm/Bold).
+- **Talents (≠ skill):** skill levels are never evidence. **Emerging Strength** needs real evidence over ≥ 6 days with ≥ 2 strong results across ≥ 21 days; it triggers a story ("Your art teacher pulls you aside: 'You have a natural eye for composition.'") with **Explore seriously / Keep it casual / Not now** (evidence weight ×1.3 / ×0.8 / ×0.6; "Not now" also quiets notices for 60 days; none of them unlocks). **Recognized Talent** needs a response other than "Not now", score ≥ 22 over ≥ 15 days, ≥ 90 days, ≥ 2 contexts and ≥ 1 outstanding result; thresholds scale with how many talents you already have (#4 ×1.5, #5 ×2.2); max 5. Recognition adds to `S.talents`, records history (talent, date, age, recognizer, source/event) and one milestone ("🌟 Art talent recognized"). No percentages or meters are shown anywhere.
+- **Migration (idempotent):** `migrateDev` (runs from the reconcile chain): de-duplicates `S.personality` / `S.talents` keeping order, marks existing traits **core** and existing talents **initial (recognized)** only if unmarked, removes developing entries that are already held. Never adds, removes or rerolls traits/talents; repeated loads change nothing.
+- **Evidence sources wired (existing gameplay only):** contest results (Ambitious + talent by contest: Math, Programming, Science, Photography, Art, Music, Acting, Writing, Sports, Cooking; quality by score), summer-program completion (Responsible + the program skill's talent; quality by result), homework submitted (Responsible; late = half quality), kept plans (Responsible + Social), helping someone who asked (Empathetic), "talk to people" social activity (Social), going somewhere new (Adventurous). **Not wired (no clear existing hook):** exam scores, election results, Calm, Leadership/Business/Photography practice — future phases submit through the same API (3B social/romance, 4B leadership, 4D competitions, 5B programs, 5D business, university, career).
+- **UI:** the Traits & Talents card now also shows Core personality, Developed traits, Developing tendencies and Emerging strengths (no numbers) and a note that empty slots are fine. `talentNotice` is a *soft* Fast Forward interruption.
+
+**Files actually changed**
+- Build sources (workspace only — not in the ZIP; see "Documentation accuracy"): `dev73.js` (new), `core72.js` (contest result + homework evidence; homework lives in `core72`'s `doHomework`), `plans72.js` (`attendPlan`), `world72.js` (`handleHelpRequest`), `clubs72.js` (social "talk"), `knx73.js` (`noteOuting` → new place), `lmpq73.js` (`finishProgram`), `family73.js` (`migrateDev` in the migration chain), `misc72.js` (weekly tick), `uni73.js` (event chain), `ff73.js` (soft interrupt), `ui3_72.js` (Traits & Talents card), `tools/splice.py` (module order + test hooks).
+- Shipped: `game.js` (section "PHASE 3A.6 — Personality & Talent Development Foundation"), `qa/t_dev.py` (new), this file, CHANGELOG, QC_REPORT, MIGRATION_NOTES.
+
+**Issues found and fixed during 3A.6 (own code)**
+- The first anti-farming rule decayed a context over the whole lifetime (9th time onward ×0.2), which made legitimate sustained behaviour (e.g. months of Math homework) nearly worthless; changed to per-day decay (the spec targets farming, not persistence).
+- A `//` comment inserted mid-line commented out the rest of the statement (`ReferenceError: w`); replaced with `/* */`.
+- The homework hook first targeted the original `doHomework` text, which is no longer in the build (replaced by `core72`); the build script stopped on it and the hook was moved to the real implementation. (A mid-check confusion — an earlier search printed only file names, so `orig/game.js` looked like the shipped `game.js` — was resolved; no logic was lost.)
+
+**Tests**
+- Added `t_dev.py` — 22 checks covering focused items **1–18** (plus: the developed-trait path, official recognition milestone, newly recognized talent bonus, no meter in the UI). Passed twice.
+- Directly relevant regression: personality/talent `t_growth` 28, `t_creator` 35; People/Profile `t_people` 14, `t_profile` 24, `t_friend` 17, `t_narrative` 20; wired sources `t_events` 22, `t_commit` 26, `t_lmpq` 36, `t_day` 30, `t_social` 52, `t_knx` 44, `t_ff2` 18; migration on real saves `t_jordan` 13, `t_regress` 16. **Totals: t_dev 22/22 (×2) + 15 suites, 0 failures.** Full regression and fuzz reserved for 3A.7.
+
+**Intentional limitations / deferred:** exam scores, elections, Calm and Leadership/Business/Photography sources are not wired (future phases via the API); talent recognizers are role descriptions (e.g. "your art teacher") rather than persistent staff NPCs; Emerging Strength gives no bonus (no temporary effect implemented); trait softening over long periods is not implemented (developed traits stay once developed).
+
+## 3A.7 — Final QA (W4) — COMPLETE
+**Full regression (all suites, run on the final build):** 45 suites, **1,201 checks, 0 failures** — Phase 3A focused: `t_people` 14, `t_friend` 17, `t_narrative` 20, `t_profile` 24, `t_dev` 22, `t_3a7` 13 (new); all prior suites: `t_regress` 16, `t_exam` 33, `t_day` 30, `t_commit` 26, `t_balance` 1, `t_jordan` 13, `t_items` 50, `t_theme` 30, `t_holidays` 57, `t_schoolyear` 55, `t_growth` 28, `t_hij` 40, `t_knx` 44, `t_social` 52, `t_romance` 49, `t_creator` 35, `t_ui` 50, `t_lmpq` 36, `t_rst` 43, `t_o` 14, `t_ident` 20, `t_biz` 16, `t_uni` 29, `t_sch` 25, `t_campus` 21, `t_major` 14, `t_work` 27, `t_context` 28, `t_events` 22, `t_ff2` 18, `t_health` 23, `t_med` 15, `t_nurse` 23, `t_care` 22, `t_2a6` 13, `t_bday` 16, `t_h2` 22, `t_family` 13, `t_family2` 22.
+
+**Save / migration validation (`t_3a7`, new):** the real legacy v7.2 save (Jordan) loads; its personality/talents are kept exactly (marked core / recognized), nothing auto-filled; three reloads change nothing; a rich Phase 3A state (friendship milestones, narrative thread, observed traits, trait/talent evidence, Former Friend status) survives save → reload ×3 and repeated `migrateDev` / `migrateFriendTiers` with **no duplicate traits, talents, evidence, talent history, friendship milestones or narrative threads**; the same real event id counts as evidence once; the first load only syncs a cached tier to the real status (finding below); family excluded from the active-friend count; only the new ladder labels are used.
+- Finding during validation (not a bug): a test that sets `friendStatus` directly leaves the cached `p.tier` stale until the next sync; the first load updates it to the real status (e.g. "Former Friend"). Idempotence is therefore measured from the settled state; subsequent loads are identical.
+
+**Fuzz (with new Phase 3A invariants):** starting ages **3, 8, 14, 17 (child/teen) and 20, 30 (adult)** — 140 random steps each, all invariants held, 0 JavaScript errors (age 8 progressed to 11 and 14 to 16 through fast-forward). New invariants: no legacy Friend/Good Friend tier, valid friend statuses, valid thread statuses, no duplicate once-only friendship/romance milestones, every person's Profile renders without error, no duplicate traits/talents, every trait/talent has an origin.
+
+**Acceptance Y — verified, with the evidence for each criterion**
+| # | Criterion | Verified by |
+|---|---|---|
+| 1 | Ladder Stranger → … → Best Friend | `t_3a7` (labels in use), `t_friend` (Stranger/Casual/Close/Best) |
+| 2 | Old / Former Friend persist | `t_3a7` (Former Friend after reloads), `t_friend` (Old Friend) |
+| 3 | Reconnect keeps the same id | `t_friend` (same id, status cleared) |
+| 4 | Family excluded from active count | `t_3a7` |
+| 5 | No arbitrary strong-friend demotion | `t_friend` (Close Friends untouched with 57 friends) |
+| 6 | No Best Friend by repeated clicks | `t_friend` (max closeness/trust on day one ≠ Close/Best) |
+| 7 | Fun alone ≠ Best Friend | `t_friend` |
+| 8 | Multi-dimensional tiers | `t_friend` (respect, conflict, trust, time, shared days, milestone) |
+| 9 | No duplicate milestones on wobble | `t_profile` (G), `t_people`, `t_3a7` |
+| 10 | Reconnected / Became close again | `t_profile` |
+| 11–15 | Personality, life goals, relationship status Unknown until learned; parents when known; Busy vs Right now | `t_profile` (#11–#15 checks) |
+| 16 | Stable descriptor | `t_profile`, `t_3a7` (across reload) |
+| 17–18 | Core personality / talents survive migration | `t_dev` #1–#2, `t_3a7` (Jordan legacy save) |
+| 19 | Bonuses still work | `t_dev` #3 (traitBoost path, incl. a newly recognized talent) |
+| 20 | No auto-fill | `t_dev` #4, `t_3a7` |
+| 21 | One repeated action ≠ trait | `t_dev` #7 |
+| 22 | Skill alone ≠ talent | `t_dev` #9 |
+| 23 | Talent needs accumulated evidence | `t_dev` #10–#11 |
+| 24 | Believable recognition story | `t_dev` #10 (talentNotice with the three responses), recognition milestone |
+| 25 | Evidence survives save/reload | `t_dev` #16, `t_3a7` |
+| 26 | No duplicates after migration | `t_dev` #17, `t_3a7` |
+| 27–28 | Max 5 personality / talents | `t_dev` #13–#14 |
+| 29 | May stay below both maximums | `t_dev` #4–#6 (8 months, nothing added) |
+| 30–33 | Narrative memory (real event, later follow-up, real outcome, expiry) | `t_narrative` |
+| 34 | H1 | `t_bday` 16/16 |
+| 35 | H2 | `t_h2` 22/22 |
+| 36 | Phase 2A health | `t_health`, `t_med`, `t_nurse`, `t_care`, `t_2a6` |
+| 37 | Phase 2B household/family | `t_family`, `t_family2` |
+
+**Documentation / source accuracy — solution A (chosen and verified).** The ZIP now ships the real build sources: `src/base/game.js` (original v7.1 script the build patches), `src/modules/*.js` (**41 modules** — exactly the ones `tools/splice.py` references; two workspace files not used by the build, `catalog72.js` and a backup `data_before_2A3b.js`, were deliberately not shipped), `src/style_before_theme.css`, `tools/splice.py`, `tools/theme.py` (paths made relative to the project root) and `BUILD.md`. **Verified:** running the shipped tools in an isolated copy reproduces `game.js` and `style.css` **byte-for-byte** (identical SHA-256). Module names in all docs now refer to real files under `src/modules/`. `game.js` is documented as a generated file.
+- Honest remaining caveat: the QA scripts in `qa/` were written for the development environment (absolute paths to the browser binary, project and fixtures); they document what was tested but need path edits to run elsewhere.
+
+**Regressions found and fixed in 3A.7:** none in game code (all suites passed on the first full run). Test tooling: `t_3a7` measures idempotence from the settled state after the first load (see finding).
+
+**Files changed in 3A.7:** `qa/t_3a7.py` (new), `qa/t_fuzz.py` (Phase 3A invariants), `BUILD.md` (new), `src/` + `tools/` (shipped build sources), docs (this file, CHANGELOG, QC_REPORT, README). No game logic changed.
+
+**Intentional limitations deferred (by scope X and earlier notes):** follow-ups happen in person (messaging is 3C); Talking / Engaged / Married availability and gossip learning are 3B hooks; evidence sources not yet wired (exam scores, elections, Calm, Leadership/Business/Photography); talent recognizers are role descriptions; Emerging Strength has no temporary bonus; developed traits do not soften yet; H3 items (request ledger, reroll fixes, contest-prepare limit, medicine refinement) untouched.
+
 ## Exact next task
-**3A.6 — Personality & talent development (W3, sections M–V):** central evidence API (trait + talent evidence records with context/quality/anti-farming), Core vs Developed vs Developing personality metadata, Emerging Strength → Recognized Talent with story-based recognition and Explore / Casual / Not now responses, talent history, capacity 5/5 never auto-filled, migration (existing `S.personality` = Core, `S.talents` = recognized; idempotent), keep `traitBoost` / `TRAIT_TARGETS` / `TALENT_TARGETS` effects; connect only existing evidence sources. Stop after 3A.6.
+None. **Phase 3A is complete.** Do not begin H3 or Phase 3B without instruction.

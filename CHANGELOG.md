@@ -1,6 +1,15 @@
 # Life Simulator Update Log
 
-## v7.3+ Phase 3A — checkpoint 3A.5 (Phase 3A INCOMPLETE)
+## v7.3+ Phase 3A — COMPLETE (people, friendship, narrative memory, profile knowledge, personality & talent development)
+- Final QA: full regression (45 suites, 1,201 checks, 0 failures), save/migration validation on a real legacy save and a rich Phase 3A state (no duplicates, idempotent), fuzz at ages 3, 8, 14, 17, 20, 30.
+- The project now ships its **build sources** (`src/`, `tools/`, `BUILD.md`); `game.js` and `style.css` are generated and reproduce byte-for-byte.
+
+## (earlier) v7.3+ Phase 3A — checkpoint 3A.6
+- **You can grow.** What you keep doing over weeks and months — homework on time, keeping plans, helping people, meeting new people, exploring new places — can slowly become part of who you are (a *developing tendency*, then a **Developed** trait next to your core personality). Repeating one thing all day does nothing.
+- **Talents are noticed, not ground.** Real results over time (competitions, summer programs…) may make someone notice an **emerging strength** — "You have a natural eye for composition." You choose to explore it, keep it casual, or not now. Only sustained evidence and a strong result make it a **recognized talent** (up to 5, rarer each time). High skill alone is not talent. Empty slots are fine — nothing fills them automatically.
+- Your existing personality and talents are kept exactly and keep their effects.
+
+## (earlier) v7.3+ Phase 3A — checkpoint 3A.5
 - **Profiles know only what you know.** The header shows the full name, what they are to you (Girlfriend, Best Friend, Older sister, Mom…), then age, gender and how long you have known them — and their parents once you know them.
 - **Relationship status** (Single / Seeing someone / In a relationship) stays **Unknown** until you know them well; the person window no longer reveals who someone is dating to people who would not know.
 - **Personality** appears as you get to know someone — and through what they do (someone who keeps offering another time turns out to be **Busy**). **Life goals** appear when they tell you ("Ask about their plans for the future"); nothing is made up.
