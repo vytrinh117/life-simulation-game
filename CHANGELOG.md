@@ -1,6 +1,10 @@
 # Life Simulator Update Log
 
-## Hotfix P1 — checkpoint P1.2 (hotfix incomplete)
+## Hotfix P1 — COMPLETE (P1.3: Profile redesign)
+- **New Profile layout**: one header with the name, age and a pink relationship badge; **Personal details** as six small tiles; **Social & lifestyle** (right now, romantic status, interests, dislikes, personality); a **Life goals** strip with "Ask about their plans for the future"; a one-line **How you know them** ("Summer camp · met during swimming practice · introduced by … · known since age 12"); and **Relationship to you** as six compact measures. Works on narrow screens too.
+- Final checks: 48 test suites, 1,272 checks, 0 failures.
+
+## (earlier) Hotfix P1 — checkpoint P1.2
 - **People is now the social hub**: People | Friend Groups | Plans. Inside People, filter by All, Family, Relatives, Closest Bonds, Friends, Acquaintances or Past Connections.
 - The separate **Family & Relationships** page is gone — its family overview (closeness, tension, responsibility, strictness, generosity), family tree, home, family trip, family memories and **Have a real conversation** are under **People › Family**; **Love life** is under People › All / Closest Bonds. Old links to the Family page open People › Family.
 - **Friend groups** have their own tab, and "Plan a group outing" still works.

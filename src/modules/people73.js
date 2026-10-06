@@ -56,21 +56,28 @@ function askFuture(id){const p=personById(id);if(!p)return;if(goalsKnown(p)){toa
  p.goalsKnown=true;p.rel=clamp(p.rel+1);(p.history=p.history||[]).unshift({dateISO:currentDate(),age:S.age,text:`They told you about their dreams: ${goalsText(p)}.`,importance:2});log(`Talking with ${firstName(p)}`,`${firstName(p)} opens up: they want to ${goalsText(p)}.`)}
 // --- right-now availability (schedule) — different from the "Busy" personality trait ---
 function availabilityNow(p){if(isFamilyPerson(p))return null;const a=npcStatusAt(p);return a.free?'Free now':a.atSchool?'At school':'Occupied right now'}
-function profileHtml(p){const n=npcById(p.npcId)||p,ints=personInterests(p),U='Unknown',row=(k,v)=>statRow(k,esc(v??U)),wide=(k,v)=>`<div class="span2">${row(k,v)}</div>`;ensureNpcTraits(n);
+function howYouKnowThem(p){/* HOTFIX P1.3 — one readable summary composed from the stored meeting data (metAt, metVia, introducedBy, knownSince); unknown parts are omitted, nothing is flattened */
+ if(isFamilyPerson(p))return personContextLine(p);const parts=[];const role=String(p.roleLabel||p.role||'');
+ let place=p.metAt?String(p.metAt).replace(/^(at|in|on|during)\s+(a |an |the )?/i,''):/classmate/i.test(role)?'school':/neighbor/i.test(role)?'neighborhood':/(club|team)/i.test(role)?role.replace(/^.*?((?:\w+\s)?(?:club|team)).*$/i,'$1'):null;if(place)parts.push(cap(place));
+ const esc_re=x=>String(x).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),via=p.metVia&&!/^(classmate|neighbor|friend)$/i.test(p.metVia)&&(!place||!new RegExp(esc_re(place),'i').test(p.metVia))?String(p.metVia):null;/* metVia is shown unless it only repeats the place (e.g. 'met at a party' when the place is 'party') */if(via)parts.push(via);
+ const intro=p.introducedBy&&personById(p.introducedBy);if(intro)parts.push(`introduced by ${intro.fullName||intro.name}`);parts.push(`known since age ${p.knownSince??S.age}`);return parts.join(' · ')}
+function profileHtml(p){/* HOTFIX P1.3 — Profile in the selected A2 layout: one header with a relationship badge, Personal details (3×2 tiles), Social & lifestyle, Life goals strip, How you know them strip, Relationship to you (3×2 metric tiles) */
+ const n=npcById(p.npcId)||p,ints=personInterests(p),U='Unknown',fam=isFamilyPerson(p);ensureNpcTraits(n);
  const bday=p.bday&&knowsWell(p,40)?formatDate(`${currentDate().slice(0,4)}-${p.bday}`).replace(/, \d{4}$/,''):U;
- const parents=p.npcId&&parentsKnown(p)?npcParentsLine(p):null,traits=knownTraits(p),hidden=(p.traits||[]).length>traits.length,avail=availabilityNow(p),fam=isFamilyPerson(p);
- const met=p.metAt||(fam?'Family':metLine(p)),intro=p.introducedBy?(personById(p.introducedBy)?.fullName||p.introducedBy):null;
- const bar=(k,v,cls='')=>`<label class="${cls}">${k} <span>${Math.round(v)}</span><i class="${cls==='conflict'?'dangerbar':''}"><em style="width:${clamp(v)}%"></em></i></label>`;
- return `<div class="profile"><div class="profile-head">${personIdentityHead(p,'h2')}<p>${esc(personGenderLove(p,{showUnknown:true}))}</p><p class="muted-text">${esc(personContextLine(p))}${p.metDate?` (${esc(formatDate(p.metDate))})`:''}</p>${parents?`<p class="muted-text">Parents: ${esc(parents)}</p>`:''}</div>
- <div class="profile-grid">
-  <div class="span2"><h4>Personality / Lifestyle</h4><p>${traits.length?traits.map(esc).join(', '):U}${hidden&&traits.length?' <small class="muted-text">(there may be more you have not noticed yet)</small>':''}</p></div>
-  ${row('Birthday',bday)}${row('Zodiac',bday!==U?(zodiacOf(p)||U):U)}${row('Looks',looksLabel(n.looks))}${row('Smart',knowsWell(p,60)?smartLabel(n.smart):U)}${row('Health',knowsWell(p,75)?(n.health!=null?`${Math.round(n.health)}%`:'Seems healthy'):U)}${row('Mood',`${moodEmoji(p.mood)} ${cap(p.mood||'okay')}`)}
-  ${avail?row('Right now',avail):''}${!fam?row('Romantic status',relStatusKnown(p)?npcRelStatus(p):U):''}
-  ${row('Interests',knowsWell(p,40)?ints.interests.join(', '):U)}${row('Dislikes',knowsWell(p,60)?ints.dislikes.join(', '):U)}
-  ${wide('Life goals',goalsKnown(p)&&goalsText(p)?goalsText(p):U)}${!fam&&!goalsKnown(p)&&tierRank(p)>=2?`<div class="span2 inline-actions"><button class="small ghost" data-ask-future="${p.id}">Ask about their plans for the future</button></div>`:''}
-  ${wide('Where met',met)}${wide('How met',p.metVia||U)}${intro?wide('Introduced by',intro):''}
- </div>
- <h4>Relationship to you</h4><div class="relationship-bars metrics-grid">${bar('Closeness',p.rel??0)}${bar('Trust',p.trust??50)}${bar('Fun',p.fun??50)}${bar('Respect',p.respect??50)}${bar('Reliability',p.reliability??70)}${bar('Conflict',p.conflict??0,'conflict')}</div></div>`}
+ const parents=p.npcId&&parentsKnown(p)?npcParentsLine(p):null,traits=knownTraits(p),hidden=(p.traits||[]).length>traits.length,avail=availabilityNow(p);
+ const tile=(ic,label,val,cls='')=>`<div class="pf-tile ${cls}">${icon(ic)}<div><small>${label}</small><b>${val}</b></div></div>`;
+ const social=[avail?tile('clock','Right now',esc(avail)):'',!fam?tile('heart','Romantic status',esc(relStatusKnown(p)?npcRelStatus(p):U)):'',tile('target','Interests',esc(knowsWell(p,40)?ints.interests.join(', '):U)),tile('thumbs-down','Dislikes',esc(knowsWell(p,60)?ints.dislikes.join(', '):U))].filter(Boolean);
+ const goal=goalsKnown(p)&&goalsText(p)?esc(goalsText(p)):U,canAsk=!fam&&!goalsKnown(p)&&tierRank(p)>=2;
+ const metric=(ic,label,v,cls)=>`<div class="pf-metric ${cls}">${icon(ic)}<div class="pf-metric-body"><small>${label}</small><div class="pf-metric-row"><b>${Math.round(v)}</b><i class="pf-bar"><em style="width:${clamp(v)}%"></em></i></div></div></div>`;
+ return `<div class="profile pf">
+ <header class="profile-head pf-head"><div class="pf-title"><h2 class="pc-ident"><span class="pc-name">${esc(p.fullName||p.name)}</span> <span class="pc-age">(${personAge(p)})</span></h2><span class="rel-badge descriptor">${esc(relationshipDescriptor(p))}</span></div>
+  <p class="pf-line">${esc(personGenderLove(p,{showUnknown:true}))}</p><p class="pf-line muted-text">${esc(personContextLine(p))}</p>${parents?`<p class="pf-line muted-text pf-parents">${icon('users')}<span>Parents: ${esc(parents)}</span></p>`:''}</header>
+ <section class="pf-sec"><h4 class="pf-h">Personal details</h4><div class="pf-grid pf-3">${tile('calendar','Birthday',esc(bday))}${tile('moon','Zodiac',esc(bday!==U?(zodiacOf(p)||U):U))}${tile('sparkle','Looks',esc(looksLabel(n.looks)))}${tile('health','Health',esc(knowsWell(p,75)?(n.health!=null?`${Math.round(n.health)}%`:'Seems healthy'):U))}${tile('book','Smart',esc(knowsWell(p,60)?smartLabel(n.smart):U))}${tile('smile','Mood',`${moodEmoji(p.mood)} ${esc(cap(p.mood||'okay'))}`)}</div></section>
+ <section class="pf-sec"><h4 class="pf-h">Social &amp; lifestyle</h4><div class="pf-grid pf-2 ${social.length%2?'pf-odd':''}">${social.join('')}</div>
+  <div class="pf-tile pf-wide">${icon('sprout')}<div><small>Personality / Lifestyle</small><b>${traits.length?traits.map(esc).join(', '):U}</b>${hidden&&traits.length?'<span class="muted-text pf-note">There may be more you have not noticed yet.</span>':''}</div></div></section>
+ <div class="pf-strip">${icon('flag')}<span class="pf-strip-label">Life goals</span><span class="pf-strip-val">${goal}</span>${canAsk?`<button class="small pf-ask" data-ask-future="${p.id}">${icon('smile')}<span>Ask about their plans for the future</span></button>`:''}</div>
+ <div class="pf-strip">${icon('users')}<span class="pf-strip-label">How you know them</span><span class="pf-strip-val">${esc(howYouKnowThem(p))}${p.metDate?` <span class="muted-text">(met ${esc(formatDate(p.metDate))})</span>`:''}</span></div>
+ <section class="pf-sec"><h4 class="pf-h">Relationship to you</h4><div class="pf-grid pf-3 pf-metrics">${metric('heart','Closeness',p.rel??0,'m-close')}${metric('handshake','Trust',p.trust??50,'m-trust')}${metric('star','Fun',p.fun??50,'m-fun')}${metric('shield','Respect',p.respect??50,'m-respect')}${metric('gear','Reliability',p.reliability??70,'m-rely')}${metric('bolt','Conflict',p.conflict??0,'m-conflict')}</div></section></div>`}
 // --- friendship milestones (section G): no duplicates on threshold wobble; contextual after real separation ---
 Object.assign(MILESTONE_TYPES,{acquaintances:'Became acquaintances',casualFriends:'Became casual friends',reconnected:'Reconnected',closeAgain:'Became close again',faded:'Friendship faded'});
 function hasMs(p,...types){return (p.milestones||[]).some(m=>types.includes(m.type))}
@@ -82,3 +89,19 @@ function friendshipMilestone(p,t){if(isFamilyPerson(p))return;
   if(t==='Close Friend'&&!hasMs(p,'closeFriends'))addPersonMilestone(p,'closeFriends');if(t==='Best Friend'&&!hasMs(p,'bestFriends'))addPersonMilestone(p,'bestFriends');p.separatedSince=null}}
 function noteSeparation(p){if(!p.separatedSince)p.separatedSince=currentDate()}
 function people3a5Click(b){if(b.dataset.askFuture){askFuture(b.dataset.askFuture);save();render();return true}return false}
+
+// =====================================================================
+// HOTFIX P1.2 — People hub categories (relationship category is separate from household residence)
+// =====================================================================
+const PEOPLE_FILTERS=[['all','All'],['family','Family'],['relatives','Relatives'],['bonds','Closest Bonds'],['friends','Friends'],['acquaintances','Acquaintances'],['past','Past Connections']];
+const FAMILY_CORE_RELATIONS=['mother','father','parent','sibling','child'];
+function peopleCategory(p){if(!p)return 'acquaintances';if(S.romance?.partnerId===p.id)return 'bonds';
+ if(isFamilyPerson(p)){if(!p.relation)migrateRelations();return FAMILY_CORE_RELATIONS.includes(p.relation)||['parent','older sibling','younger sibling','sibling','child'].includes(p.role)?'family':'relatives'}
+ const st=friendStatusLabel(p);if(st==='Old Friend'||st==='Former Friend'||p.formerPartner)return 'past';const t=friendTier(p);
+ if(t==='Best Friend')return 'bonds';if(t==='Close Friend'||t==='Casual Friend')return 'friends';return 'acquaintances'}
+function familyOverviewHtml(){const fr=familyRules(),d=[['Closeness',S.family.closeness],['Tension',S.family.tension],['Responsibility',S.family.responsibility],['Household strictness',fr.strictness],['Generosity',fr.generosity]];
+ return `<div class="family-overview"><h4>Family overview</h4><div class="fam-dyn">${d.map(([k,v])=>`<div><small>${k}</small><b>${Math.round(v??0)}%</b></div>`).join('')}</div>
+ <div class="inline-actions"><button class="small primary" data-act="familyTalk">${S.age<3?'Connect with caregiver':S.age<6?'Talk / express yourself':'Have a real conversation'}</button></div>
+ ${familyTreeHtml()}${housingHtml()}${familyTripHtml()}
+ <div class="fam-events"><h4>Family events & memories</h4>${S.familyEvents.slice(0,8).map(e=>`<div class="row"><span>${esc(e.text)}</span><small>${e.dateISO?formatDate(e.dateISO):'Age '+S.age}</small></div>`).join('')||'<p class="muted-text">No recent special family event.</p>'}</div></div>`}
+function peopleHubClick(b){if(b.dataset.peopleFilter){UI.peopleFilter=b.dataset.peopleFilter;saveUI();renderPanel();return true}return false}

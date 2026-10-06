@@ -1,6 +1,6 @@
 # HOTFIX P1 PROGRESS
 
-**Status: HOTFIX-P1 INCOMPLETE — P1.2 COMPLETE. Resume from checkpoint: P1.3.** (Phase 3A COMPLETE status unchanged.)
+**Status: HOTFIX-P1 COMPLETE — P1.1, P1.2, P1.3 complete. Ready for final audit before H3.** (Phase 3A COMPLETE status unchanged.)
 
 ## REQUIREMENTS — PART 1 OF 3 (recorded in full — section D was completed by a follow-up message)
 
@@ -93,7 +93,7 @@
 ## Checkpoints
 - [x] P1.1
 - [x] P1.2
-- [ ] P1.3
+- [x] P1.3
 
 Each checkpoint record: actual source files changed, generated files rebuilt, tests added/updated, test counts, known limitations, exact next checkpoint.
 
@@ -156,5 +156,78 @@ Each checkpoint record: actual source files changed, generated files rebuilt, te
 - The person window (Interact) header style is unchanged (out of scope for P1).
 - Visual QA of the hub at several widths is reserved for P1.3.
 
+## P1.3 PROFILE VISUAL REQUIREMENTS — PART 1 (recorded; NOT implemented)
+
+**Visual source of truth:** "REFINED OPTION A2 — SPLIT CONTEXT + DETAILS" — the ONLY visual source of truth. It was not attached to the Part 1 message; it **was received with Part 2** and is stored in the project as `docs/p1_3_profile_option_A2.png`. Do not reproduce or blend another layout.
+
+**Only structural refinement not shown in the image:** instead of separate *Where met* and *How met* fields, one compact full-width section **HOW YOU KNOW THEM**, composed from existing meeting data (e.g. "School · known since age 7", "School · introduced by Maya Chen · known since age 11", "Neighborhood · known since age 3"); unknown pieces omitted. This is textual only — not permission to change the rest of the A2 layout.
+
+1. **Design language:** same warm game style — cream/warm off-white surfaces, subtle beige borders, soft rounded corners, restrained shadows, dark readable type, muted accents, **pink relationship badge**, compact polished spacing. No dark theme, glassmorphism, neon, oversized gradients, excessive decorative colour, or giant empty whitespace.
+2. **Width / density:** use the desktop modal width efficiently, less vertical scrolling, comfortable not cramped, grouped sections instead of one row per field, consistent section spacing, no dense text walls. **No fixed height that clips content**; vertical scroll allowed when genuinely needed.
+3. **Header (one identity header, name not repeated):** `Samuel Hughes (13)   [Casual Friend]` → `Male · Love interest: Unknown` → `Met at school · known since age 7` → `Parents: Nora Hughes and Aiden Hughes`. The relationship is a **badge**: **remove the "|" separator** (P1.1 used "Name (Age) | Relationship"). Badge: rounded pill, subtle pink background, darker pink text, distinct but not large. The name stays the primary focus.
+4. **Header gating:** Phase 3A knowledge gating preserved — love interest only when age/system allows **and** known; parents only when legitimately known; no hidden romance information. "Unknown" only where meaningful; inappropriate fields omitted; no fake placeholders for symmetry.
+5. **PERSONAL DETAILS** — only Birthday, Zodiac, Looks, Smart, Health, Mood, in a **3 × 2 desktop grid** (row 1: Birthday · Zodiac · Looks; row 2: Health · Smart · Mood). Each a compact soft tile: small relevant icon, small label, stronger value, gentle rounded border/background, even padding, not tall.
+6. **SOCIAL & LIFESTYLE** — separate section below: Right now · Romantic status (row 1), Interests · Dislikes (row 2), two columns. Right now = schedule/availability; Romantic status = relationship knowledge; neither belongs in Personal Details.
+7. **Terminology:** header badge = **Relationship to Player** (Casual Friend / Best Friend / Mother / Partner …); field in Social & Lifestyle = **Romantic status** (Unknown / Single / Seeing someone / In a relationship …). Never both called "Relationship status". Phase 3B expands romance.
+8. **LIFE GOALS** — dedicated full-width strip (not half of the Personal Details grid): "LIFE GOALS   Unknown" (or the learned goal text) with the real **[Ask about their plans for the future]** action beside/below it. The existing Ask-about-future function must keep working; no decorative fake button.
+9. **HOW YOU KNOW THEM** — one compact full-width strip replacing the separate Where met / How met rows, composed into natural text (e.g. "Summer camp · met during swimming practice · known since age 12"); omit unknown parts gracefully — never "How met: Unknown". Presentation composition only: **do not flatten or destroy the stored data**.
+   - Mapping to the real data fields (verified in the current source): where met = `p.metAt` (5 uses); how met / context = `p.metVia` (1 use; the requirement's "metContext"); introduced by = `p.introducedBy` (5 uses; the requirement's "introducedById" — it stores a person id); known since = `p.knownSince` (age) and `p.metDate` (date); source/event ids where present. None of these fields is renamed or removed.
+
+## P1.3 PROFILE VISUAL REQUIREMENTS — PART 2 OF 2 (recorded; NOT implemented; Part 1 confirmed present)
+
+10. **RELATIONSHIP TO YOU** stays at the bottom of the main Profile information: six compact metric tiles (Closeness, Trust, Fun, Respect, Reliability, Conflict) in a **3 × 2 desktop grid**; each tile = name, numeric value, compact bar, optional small icon. Bars not overwhelming. **Presentation only — no calculation changes.**
+11. **Metric colours:** subtle individual accents, game stays coherent (no rainbow dashboard): Closeness = relationship accent/pink, Trust = restrained positive, Fun = warm, Respect = calm, Reliability = muted, Conflict = warning. Backgrounds mostly neutral; readability over matching the illustration's exact colours.
+12. **Icons:** use the game's existing icon/SVG language where available; no mixed emoji/SVG styles, no external icon library just for this modal, no 3D icons, no large decorative illustrations; icons support scanning only. If Mood already uses emoji, keep it unless an established SVG equivalent exists.
+13. **Responsive:** desktop — Personal Details 3×2, Social & Lifestyle 2×2, metrics 3×2, Life Goals and How You Know Them full width. Narrower — reduce columns gracefully (medium: Personal Details 2 cols, metrics 2 cols; small: one column); never horizontal overflow, no unreadably small text, no overlapping buttons/values, no unnecessary truncation. Use existing breakpoints where practical; no separate mobile component unless necessary.
+14. **Long text:** test long parent names, interests, life goals, meeting context, relationship labels — clean wrapping; no overlap, no value escaping a tile, no button covering labels, no horizontal scroll in the modal.
+15. **Do not copy mockup art:** the mockup's portrait/avatar is not to be built; no avatar system is invented (the game has none) — reproduce hierarchy, spacing, grouping, badge, sections, tiles, balance only.
+16. **Real data only:** nothing hard-coded (Samuel Hughes, Casual Friend, Capricorn, Attractive … are sample values). Preserve personId, knowledge state, family relation, personality / life-goal / romance knowledge, schedule availability, relationship metrics.
+17. **No P1.1 regression:** no all-caps names, specific family labels, canonical `p.relation`, child = Family, no duplicated Profile name, knowledge gating, relationship-to-player vs Romantic status, reproducible source/build workflow; no legacy name-based family inference.
+18. **Implementation location:** inspect current source first; edit real source modules/styles (`src/modules/`, `tools/theme.py`); rebuild with the shipped workflow; verify generated outputs match; use existing CSS variables/tokens; avoid one-off inline styles.
+19. **Visual acceptance:** (1) one clear header; (2) name + age then relationship **badge**; (3) no "|" between name and badge; (4) compact identity/context lines; (5) Personal Details = Birthday, Zodiac, Looks, Smart, Health, Mood only; (6) as compact tiles; (7) Social & Lifestyle a separate section; (8) Right now / Romantic status separate from core attributes; (9) Interests / Dislikes grouped; (10) Life Goals full-width row; (11) Ask About Future beside/within Life Goals; (12) one concise How You Know Them summary; (13) unknown meeting details omitted; (14) metrics clean 3 × 2 desktop grid; (15) no awkward blank grid cell; (16) no excessive vertical whitespace; (17) no information loss from Phase 3A; (18) no dead UI.
+20. **Visual QA (when implemented):** profiles for a family member, acquaintance, Casual / Close / Best Friend, current partner (if a fixture exists), many-Unknown and many-known profiles; at ~1280 / 1366 / 1440 px plus a narrower viewport; verify no overflow / overlap / large gaps / duplicate name, clean badge position, long Life Goal and How You Know Them wrap, Ask About Future clickable, metrics readable.
+21. **Scope boundary:** Profile UI polish only — no H3 decision ledger, permission changes, romance progression, 3B dating, 3C messaging, avatar system, new People simulation or relationship calculations.
+
+### Differences between the image and the written requirements (resolved by the written text — recorded so implementation does not copy them by accident)
+- **Section name:** the image labels the second section **"SOCIAL CONTEXT"**; Part 1 §6, §7 and acceptance §19.7 call it **"SOCIAL & LIFESTYLE"**. Planned: use "Social & Lifestyle" (the text is explicit and repeated) — to be confirmed by the user if the image label was intended.
+- **How You Know Them:** the image shows "School · How met: Unknown · Known since age 7" — exactly the pattern Part 1 §9 marks as **BAD**; Part 1 states this strip is the one refinement **not** shown in the image. Planned: compose only known pieces (e.g. "School · known since age 7").
+- **Avatar:** the image has a portrait; §15 says not to build one → header without avatar.
+- Everything else (header with pink pill badge and no "|", Parents line with a small people icon, 3×2 Personal Details tiles with icons, 2×2 social tiles, Life Goals strip with the action on the right, 3×2 metric tiles with small icons and thin coloured bars, Mood with emoji) follows the image.
+
+**Relation to the P1.3 plan:** P1.3 was recorded as "final regression / visual QA / documentation"; this Profile visual redesign is now part of P1.3 (further parts pending).
+
+## P1.3 — Profile visual polish (selected A2) + final QA — COMPLETE
+**Implementation (following `docs/p1_3_profile_option_A2.png` and the recorded spec)**
+- **Header:** one header — large name + muted (age) + **pink pill badge** for the relationship to the player (no "|"); `Gender · Love interest` (gated as before); context line; `Parents: …` with the sprite's `users` icon when known. The modal title "Profile" is kept for accessibility but visually hidden, so the name appears once. No avatar (the game has no portrait system — spec §15).
+- **Personal details:** exactly Birthday, Zodiac, Looks, Health, Smart, Mood as 3 × 2 tiles (icon, small label, strong value); Mood keeps the existing emoji.
+- **Social & lifestyle** (label per the written spec; the image says "Social context" — recorded difference): Right now, Romantic status, Interests, Dislikes as 2 × 2 tiles. Family members show no Right now / Romantic status; if an odd number of tiles remains, the last spans both columns (no blank cell). **Personality / Lifestyle** (observed traits, Phase 3A) is a full-width tile at the bottom of this section — the image has no personality block, but §17/§19.17 forbid losing 3A information, so it was kept here.
+- **Life goals:** full-width strip; known goal text or Unknown; the real **Ask about their plans for the future** action on the right (shown for Casual Friend or closer, as in 3A.5 — no premature/dead button).
+- **How you know them:** one full-width strip composed by `howYouKnowThem()` from the stored `metAt` (place), `metVia` (context — shown unless it only repeats the place), `introducedBy` (person id → name) and `knownSince` (+ met date when known); unknown pieces are omitted (never "How met: Unknown"); family shows their household/side line. Stored data is not changed.
+- **Relationship to you:** six metric tiles (Closeness, Trust, Fun, Respect, Reliability, Conflict) in a 3 × 2 grid, thin bars, restrained theme-aware accents (pink / good / warm / info / muted violet / bad); values unchanged.
+- **Icons:** 10 new symbols added to the game's own SVG sprite in `index.html` (sparkle, clock, target, thumbs-down, flag, handshake, star, shield, gear, bolt) in the same line style (stroke, 24-unit viewBox); no external library.
+- **Responsive:** desktop 3 / 2 / 3 columns; ≤ 900 px Personal details and metrics → 2; ≤ 600 px everything → 1 column; long text wraps (`overflow-wrap:anywhere`), the Ask button wraps below on narrow screens. Profile modal width `min(920px, 94vw)`, no fixed height.
+- **Badge colour fix during P1.3:** an older 3A.5 rule (`.profile-head .descriptor`) coloured the badge text purple; the P1.3 rule now wins by specificity. Same for the name size vs. a P1.1 rule.
+- **Bug found and fixed in my own code:** the first `howYouKnowThem` dropped every `metVia` starting with "met at/in/on/during", which also removed meaningful context ("met during swimming practice"); it now drops `metVia` only when it repeats the place (regex-escaped).
+
+**Files actually changed**
+- Shipped source: `src/modules/people73.js` (`howYouKnowThem`, new `profileHtml`; diffed — no other line lost), `tools/theme.py` (P1.3 Profile CSS + theme variables), `index.html` (10 sprite symbols; `index.html` is edited directly per BUILD.md).
+- Generated with the shipped tools: `game.js`, `style.css` — isolated rebuild byte-identical. Workspace module copies synced.
+- Reference image: `docs/p1_3_profile_option_A2.png`.
+
+**Tests**
+- Added `qa/t_p13.py` — 28 checks, passed twice: one header with pill badge and no "|"; name once; Personal details = the six fields as tiles; Social & lifestyle fields; no "Relationship status"; Life goals strip; no Ask button for a mere acquaintance, Ask inside the strip for a Casual Friend and it works; How you know them omits unknowns and composes real data ("Summer camp · met during swimming practice · introduced by … · known since age …") without changing stored data; at **1280 / 1366 / 1440** px: 3/3/2 columns, at **820** px: 2/2/2, at **480** px: 1/1/1 — no modal/page overflow, no value escaping a tile, no blank grid cell, Ask clickable (with long goals/interests/meeting text); representative profiles (mother, acquaintance, known casual friend, close friend, best friend, partner) render cleanly; six metric tiles with bars; icons only from the game's sprite; no mockup values hard-coded.
+- Updated for the new markup (same conditions checked): `t_profile` (Personality / Life goals / Romantic status / Right now selectors), `t_p1` (badge class; layout check now the A2 grids), `t_people` (header with badge; "How you know them" instead of "Where met").
+- **Final regression for the hotfix: 48 suites, 1,272 checks, 0 failures** (all project suites + `t_p1`, `t_p12`, `t_p13`). `t_exam` ran 29 checks this time (33 in 3A.7) — it has checks that only run when random conditions occur; 0 failures either way. **Fuzz** at ages 14 and 25 (incl. the Profile-render invariant for every person): clean.
+
+**P1 final acceptance (#1–20)** — #1/#17 no stretching (`t_p1` widths, `t_p12` group subtab) • #2 casing (`t_p1`) • #3/#4 one card language "Full Name (Age) | Relationship" (`t_p1`) • #5 gender / love interest gated (`t_p1`, `t_p13`) • #6 specific family labels (`t_p1`, `t_p13` mother) • #7 child = Family (`t_p1`, `t_p12`) • #8 name once in Profile (`t_p1`, `t_p13`) • #9 denser responsive Profile (`t_p13` widths) • #10 compact metrics (`t_p13`) • #11 Relationship-to-Player vs Romantic status (`t_p1`, `t_p13`) • #12 sidebar item gone (`t_p12`) • #13 family data under People › Family (`t_p12`) • #14 conversation works (`t_p12`) • #15/#16 Friend Groups + Plan a group outing (`t_p12`) • #18 saves load (`t_p1` legacy Jordan, `t_3a7`, `t_jordan`) • #19 Phase 3A intact (`t_people`, `t_friend`, `t_narrative`, `t_profile`, `t_dev`, `t_3a7`) • #20 no JS errors / overflow (`t_p1`, `t_p13`, fuzz).
+
+**Visual acceptance (§19.1–19.18)** — all covered by `t_p13` and the screenshots reviewed during implementation (1366 friend profile, 1440 family profile, 480 narrow).
+
+**Known limitations / deferred**
+- The person window (Interact) keeps its older header style (not in P1 scope).
+- "Social & lifestyle" label follows the written spec rather than the image's "Social context" (recorded difference; trivial to rename if the image label was intended).
+- Personality / Lifestyle is an extra full-width tile not drawn in the A2 image (kept to avoid losing 3A information).
+- Intermittent tests from earlier phases (`t_ff2` attendance, `t_hij` 45-absences / end-of-break, `t_items` gift, `t_o` neighbourhood event) did not fail in this final run; they remain listed, not claimed fixed.
+
 ## Exact next task
-**P1.3 — Final regression / visual QA / documentation:** broader regression appropriate for the hotfix, visual check of People (all filters), Friend Groups, Plans, Profile at ~1280 / 1366 / 1440 px, verify P1 final acceptance #1–20, update docs. Stop after P1.3.
+None in Hotfix P1. **Ready for final audit before H3.** Do not begin H3, Phase 3B or 3C without instruction.
