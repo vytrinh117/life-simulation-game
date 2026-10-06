@@ -51,7 +51,7 @@ async def main():
     fid=[x for x in s['people'] if x['role']=='friend'][0]['id']; await M(pg,f"const p=S.people.find(x=>x.id==='{fid}');p.age=15;const n=S.npcs.find(x=>x.id===p.npcId);if(n)n.birthYear=new Date(S.clock.dateISO).getUTCFullYear()-15")
     check('O: romance is available by default for teens', await C(pg,'eligibleRomance',fid))
     await C(pg,'toggleRomance'); check('O: turning romance content off removes romance options', not await C(pg,'eligibleRomance',fid))
-    await T(pg,"openTab('family')"); txt=await pg.inner_text('#panel-host'); check('O: the toggle lives in Family & Relationships', 'Turn romance content on' in txt)
+    await T(pg,"openTab('people')"); await pg.click("[data-people-filter='all']"); txt=await pg.inner_text('#panel-host'); check('O (moved by Hotfix P1.2): the romance toggle lives in the Love life card under People › All', 'Turn romance content on' in txt)
     await C(pg,'toggleRomance'); await M(pg,f"S.romance.partnerId='{fid}'"); await C(pg,'toggleRomance'); s=await st(pg)
     check('O: cannot turn romance off while in a relationship (end it first)', not s['romance'].get('optOut'))
     check('O: no JS errors', not pg.errs, pg.errs[:3]); await b.close()

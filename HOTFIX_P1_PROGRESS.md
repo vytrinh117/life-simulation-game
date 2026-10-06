@@ -1,6 +1,6 @@
 # HOTFIX P1 PROGRESS
 
-**Status: HOTFIX-P1 INCOMPLETE — P1.1 COMPLETE. Resume from checkpoint: P1.2.** (Phase 3A COMPLETE status unchanged.)
+**Status: HOTFIX-P1 INCOMPLETE — P1.2 COMPLETE. Resume from checkpoint: P1.3.** (Phase 3A COMPLETE status unchanged.)
 
 ## REQUIREMENTS — PART 1 OF 3 (recorded in full — section D was completed by a follow-up message)
 
@@ -92,7 +92,7 @@
 
 ## Checkpoints
 - [x] P1.1
-- [ ] P1.2
+- [x] P1.2
 - [ ] P1.3
 
 Each checkpoint record: actual source files changed, generated files rebuilt, tests added/updated, test counts, known limitations, exact next checkpoint.
@@ -124,5 +124,37 @@ Each checkpoint record: actual source files changed, generated files rebuilt, te
 - Player children created before this hotfix get `relation:'child'` but no gender until the identity system assigns one; the label follows whatever gender data exists.
 - `parentsKnown` still uses the NPC household record (no visit-based learning yet).
 
+## P1.2 — People hub consolidation — COMPLETE
+**Implementation**
+- **Navigation (A):** the sidebar item "Family & Relationships" / "Family" is removed (a `rep` in `tools/splice.py` drops the base script's `a.push(['family',…])`). Family data and simulation are untouched.
+- **Subnavigation:** People | **Friend Groups** | Plans (`PANEL_TABS.people`; Plans is preserved). The People subtab is one `section[data-sub="people"]` containing the filters and the people grid — this also **fixes a P1.1 side effect**: the P1.1 grid sat outside `.dashboard`, so person cards were not assigned to a subtab and stayed visible under Plans.
+- **Filters (B):** All / Family / Relatives / Closest Bonds / Friends / Acquaintances / Past Connections (`PEOPLE_FILTERS`, `peopleCategory`), UI-only state `UI.peopleFilter` (no save change), empty categories hidden, counts shown. Rules: current partner → Closest Bonds (even if also a Best Friend; shown once); Family = mother / father / parent / siblings / the player's children (by `relation` / role); Relatives = grandparents, aunts, uncles, other relatives — **regardless of residence** (a grandparent at home stays a Relative); Best Friend → Closest Bonds; Close / Casual Friend → Friends; Acquaintance / Stranger / Contact → Acquaintances; Old / Former Friend (and a future `formerPartner` flag) → Past Connections.
+- **Family content (C, D):** People › Family shows a compact **Family overview**: five dynamics tiles (Closeness, Tension, Responsibility, Household strictness, Generosity — the same values the old page showed), the existing **"Have a real conversation"** button (same `familyTalk` action — generic family conversation, unchanged; no per-person action was invented), Household + Family tree, housing, family trip, and **Family events & memories**. The old page's "Caregivers" list and "Romance status" card were not carried over (caregivers are the family cards themselves; romance is in Love life). **Love life** (incl. the romance on/off toggle and "Relationship steps") was split out of `familyExtrasHtml` into `loveLifeHtml()` and appears under People › All and Closest Bonds (13+). `familyExtrasHtml()` still exists for compatibility.
+- **Friend Groups (E, F):** rendered in their own subtab from the existing `S.groups` data via the existing `groupHtml()` (name, since date, members, inside jokes). The only real group action — **Plan a group outing** — is kept; no Interact / Profile / Chat buttons were added (no dead buttons). Group cards are never inside `.people-grid`.
+- **P1.1 audit cleanup:** `social72` (keeping her own surname in VN/KR/CN) now uses `relation` (mother / grandmother) instead of `/Mom|Grandmother/.test(p.name)`; `hij73` parent-teacher conference now finds the parent with `familyByRelation('father' / 'mother')` instead of `p.name==='Dad'/'Mom'` — **only the lookup changed**, not the decision/authority logic. No runtime family logic in `game.js` depends on the literal names Mom / Dad / Grandmother any more; legacy labels are read only by `migrateRelations`.
+
+**Compatibility for the old Family navigation**
+- `renderHeader()` used to send any tab that is not in the sidebar to Home **before** the panel rendered, so a saved/old `active='family'` would have landed on Home. A `rep` now maps `active==='family'` → People with the People subtab and the Family filter, before that check. The `renderPanel` `case 'family'` also redirects to People › Family as a second safety net. There is no separate Family page any more.
+
+**Own mistakes caught during P1.2**
+- The first edit built the new `peoplePanel` in memory but then ran a helper that re-read the file from disk, so only the subtab config was saved (three new subtabs over the old panel). Caught by `t_p12`; rewritten and verified in the file.
+- The P1.1 People grid outside `.dashboard` broke subtab hiding (above) — not caught by `t_p1`; now covered by `t_p12`.
+- Every module edit was diffed against a pre-P1.2 copy: no top-level line was lost.
+
+**Files actually changed (shipped source tree)**
+- `src/modules/people72ui.js` (People hub panel, subtabs), `src/modules/people73.js` (`PEOPLE_FILTERS`, `peopleCategory`, `familyOverviewHtml`, `peopleHubClick`), `src/modules/rst73.js` (`loveLifeHtml`, `familyTripHtml`), `src/modules/ui72.js` (click chain), `src/modules/hij73.js` (parent lookup), `src/modules/social72.js` (surname lookup), `tools/splice.py` (sidebar item removed, legacy `family` tab redirect in `renderHeader` and `renderPanel`, test hooks), `tools/theme.py` (filters, overview tiles, nested cards).
+- **Generated with the shipped tools:** `game.js`, `style.css` — isolated rebuild from `src/` + `tools/` is byte-identical. Workspace module copies synced from `src/modules/`.
+
+**Tests**
+- Added `qa/t_p12.py` — 24 checks, passed twice: no Family sidebar item (age 30 and 8); classification of mother/sibling/child (Family), grandparent at home (Relatives), partner-who-is-a-best-friend and Best Friend (Closest Bonds), Close/Casual (Friends), Acquaintance, Old/Former (Past); All shows everyone exactly once; each filter shows exactly its people; Family overview with dynamics, family tree and events; "Have a real conversation" works; subtabs People | Friend Groups | Plans; groups in their own subtab, outside the grid, only real buttons, "Plan a group outing" works; Plans works and hides person cards; old Family route → People › Family (no duplicate page); Love life reachable under All; no name-based family lookups left in `game.js`.
+- Updated (intent preserved): `t_o` — the romance toggle check now looks in People › All (Love life card) instead of the removed Family page; `t_rst` — "Love life lives in People (All / Closest Bonds); House rules in the left dashboard".
+- Run on this checkpoint: `t_p12` 24, `t_p1` 22, `t_people` 14, `t_profile` 24, `t_family` 13, `t_family2` 22, `t_rst` 44, `t_social` 52, `t_knx` 44, `t_o` 14, `t_ui` 50, `t_hij` 40, `t_holidays` 57, `t_ident` 20, `t_friend` 17, `t_narrative` 20, `t_3a7` 13, `t_jordan` 13, `t_regress` 16 — **19 suites, 519 checks, 0 failures in the final runs.**
+- Intermittent failures seen and **not** attributed to P1.2 (each passed on two re-runs; recorded, not claimed fixed): `t_hij` J ("End of break" fast-forward stopped at 8:04 instead of before 8:00 — same family as the known FF attendance flake) and `t_o` "neighborhood events say who…" (the random loop generated no neighborhood event in that run).
+
+**Known limitations**
+- "Have a real conversation" remains the existing generic family conversation (no per-family-member conversation exists yet; none was invented).
+- The person window (Interact) header style is unchanged (out of scope for P1).
+- Visual QA of the hub at several widths is reserved for P1.3.
+
 ## Exact next task
-**P1.2** — People navigation consolidation (remove the Family & Relationships sidebar destination, People | Friend Groups subnavigation, categories All / Family / Relatives / Closest Bonds / Friends / Acquaintances / Past Connections, Family Overview + "Have a real conversation" under People › Family with stable personIds, Friend Group cards with only real actions). Stop after P1.2.
+**P1.3 — Final regression / visual QA / documentation:** broader regression appropriate for the hotfix, visual check of People (all filters), Friend Groups, Plans, Profile at ~1280 / 1366 / 1440 px, verify P1 final acceptance #1–20, update docs. Stop after P1.3.

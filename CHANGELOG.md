@@ -1,6 +1,11 @@
 # Life Simulator Update Log
 
-## Hotfix P1 — checkpoint P1.1 (hotfix incomplete)
+## Hotfix P1 — checkpoint P1.2 (hotfix incomplete)
+- **People is now the social hub**: People | Friend Groups | Plans. Inside People, filter by All, Family, Relatives, Closest Bonds, Friends, Acquaintances or Past Connections.
+- The separate **Family & Relationships** page is gone — its family overview (closeness, tension, responsibility, strictness, generosity), family tree, home, family trip, family memories and **Have a real conversation** are under **People › Family**; **Love life** is under People › All / Closest Bonds. Old links to the Family page open People › Family.
+- **Friend groups** have their own tab, and "Plan a group outing" still works.
+
+## (earlier) Hotfix P1 — checkpoint P1.1
 - **People cards**: one style for everyone — **Full Name (Age) | Relationship**, then gender (and love interest when you know it), then how you know them. Names are no longer shown in capitals. Cards no longer stretch next to the friend group.
 - **Family labels from real family data**: Mother, Father, Grandmother, Older Sister, Younger Brother, Daughter, Son… Your own children now count as family. Older saves are converted once.
 - **Profile**: the name appears once, followed by a compact two-column layout and a small grid of relationship measures. "Romantic status" is now separate from what someone is to you.
