@@ -1,4 +1,5 @@
 from harness import *
+import re
 async def C(pg,fn,*a): return await T(pg,"call("+",".join([json.dumps(fn)]+[json.dumps(x) for x in a])+")")
 async def M(pg,code): return await pg.evaluate("c=>__LIFE_SIM_TEST__.mutate(c)",code)
 async def person(pg,pid): return [x for x in (await st(pg))['people'] if x['id']==pid][0]
@@ -68,7 +69,10 @@ async def main():
     check('S: history on the left (wider), memories on the right (narrower)', cols and cols[0]<cols[1] and cols[2]>cols[3], cols)
     await T(pg,"call('closeChoiceModal')"); await M(pg,f"S.romance.partnerId='{f['id']}';const p=S.people.find(x=>x.id==='{f['id']}');p.age=15;p.romanceStage='partner';p.love={{stage:'inLove',progress:20}};const n=S.npcs.find(x=>x.id===p.npcId);if(n)n.birthYear={yr-15}")
     await T(pg,"openTab('people')"); card=await pg.inner_text('#panel-host')
-    check('S/R: your partner\'s card shows the love stage (no conflicting tier label)', 'In love' in card)
+    head=await pg.inner_text(f"section.person-card:has([data-profile-open='{f['id']}']) .pc-ident")
+    check('S/R (header per Hotfix P1 C): your partner\'s card says Boyfriend/Girlfriend/Partner — no conflicting friendship tier label', re.search(r'\| (Boyfriend|Girlfriend|Partner)$',head) is not None and not any(k in head for k in ['Friend |','| Best Friend','| Close Friend','| Casual Friend','| Acquaintance']), head)
+    await pg.click(f"[data-person-open='{f['id']}']"); win=await pg.inner_text('#choice-content'); await T(pg,"call('closeChoiceModal')")
+    check('S/R: the love stage (In love) is still shown — in the person window', 'In love' in win)
     await pg.click(f"[data-person-open='{f['id']}']"); check('R: no "set them up" button on your own partner', not await pg.query_selector("#choice-content [data-matchmake-open]"))
     await T(pg,"call('closeChoiceModal')"); await M(pg,"S.romance.partnerId=null")
     await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.history=[{{dateISO:S.clock.dateISO,age:S.age,text:'You had a real conversation.',importance:1}},{{dateISO:S.clock.dateISO,age:S.age,text:'Became your Close Friend.',importance:3}},{{dateISO:S.clock.dateISO,age:S.age,text:'Something changed in their life while you were elsewhere.',importance:2}}];p.milestones=[];p.milestonesMigrated=false")

@@ -35,7 +35,7 @@ async def main():
     await T(pg,"setAge(8)")
     await M(pg,"S.people=S.people.filter(p=>!['older sibling','younger sibling'].includes(p.role));S.people.push(Object.assign({id:'sibA',name:'Older sister',firstName:'Emma',fullName:'Emma Test',role:'older sibling',age:S.age+4,gender:'Female',residence:'home',rel:60,trust:60,history:[]}),Object.assign({id:'sibB',name:'Younger brother',firstName:'Liam',fullName:'Liam Test',role:'younger sibling',age:Math.max(0,S.age-2),gender:'Male',residence:'home',rel:60,trust:60,history:[]}))")
     await T(pg,"openTab('family')"); txt=await pg.inner_html('#panel-host')
-    check('2B UI: Family shows a Household and a Family tree, with siblings labelled by type and age', 'HOUSEHOLD' in txt.upper() and 'FAMILY TREE' in txt.upper() and 'Older sister' in txt and 'Younger brother' in txt, {k:(k in txt or k.upper() in txt.upper()) for k in ['Household','Family tree','Older sister','Younger brother','Emma Test','Liam Test']})
+    check('2B UI: Family shows a Household and a Family tree, with siblings labelled by type and age', 'HOUSEHOLD' in txt.upper() and 'FAMILY TREE' in txt.upper() and 'Older Sister' in txt and 'Younger Brother' in txt, {k:(k in txt or k.upper() in txt.upper()) for k in ['Household','Family tree','Older Sister','Younger Brother','Emma Test','Liam Test']})
     errs+=pg.errs; await pg.close()
     # old save keeps its family (Jordan: grandmother at home, older sibling)
     pg=await new_page(b); fx=J.load(open('/home/claude/tests/fixture_jordan.json')); await pg.evaluate("s=>__LIFE_SIM_TEST__.loadState(s)",fx); s=await st(pg)

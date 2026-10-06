@@ -15,7 +15,7 @@ async def main():
     pr=await C(pg,'profileHtml',f['id'])
     check('#11: a weak acquaintance shows no personality traits (Unknown)', 'Personality / Lifestyle</h4><p>Unknown' in pr, pr[pr.find('Personality'):][:120])
     check('#12: life goals Unknown until learned', 'Life goals</span><b>Unknown' in pr)
-    check('#13: relationship status Unknown until learned', 'Relationship status</span><b>Unknown' in pr)
+    check('#13 (label per Hotfix P1 G): romantic status Unknown until learned', 'Romantic status</span><b>Unknown' in pr)
     check('#14: parents not shown when you barely know them', 'Parents:' not in pr)
     check('#16 / H: the header starts with the full name, then the relationship descriptor, then age • gender • known since', pr.find('<h2>')<pr.find('descriptor')<pr.find('known since'))
     await C(pg,'observeBusy',f['id']); k1=await C(pg,'knownTraits',f['id']); await C(pg,'observeBusy',f['id']); k2=await C(pg,'knownTraits',f['id'])
@@ -41,9 +41,9 @@ async def main():
     await M(pg,"S.romance.partnerId=null")
     pr=await C(pg,'profileHtml',f['id']); check('#14: parents appear once you know them', 'Parents:' in pr or not await pg.evaluate(f"()=>{{const p=__LIFE_SIM_TEST__.getState().people.find(x=>x.id==='{f['id']}');return true}}"))
     s=await st(pg); mom=[x for x in s['people'] if x['role']=='parent' and 'Mom' in x['name']][0]
-    check('#16: family descriptors (Mom)', await C(pg,'relationshipDescriptor',mom['id'])=='Mom')
+    check('#16 (label per Hotfix P1 D): family descriptors (Mother)', await C(pg,'relationshipDescriptor',mom['id'])=='Mother')
     st0=await st(pg); await pg.evaluate("s=>__LIFE_SIM_TEST__.loadState(s)",st0)
-    check('#16: descriptors and learned knowledge persist across reload', await C(pg,'relationshipDescriptor',mom['id'])=='Mom' and await C(pg,'goalsKnown',f['id']) and 'Busy' in await C(pg,'knownTraits',f['id']))
+    check('#16: descriptors and learned knowledge persist across reload', await C(pg,'relationshipDescriptor',mom['id'])=='Mother' and await C(pg,'goalsKnown',f['id']) and 'Busy' in await C(pg,'knownTraits',f['id']))
     # section G milestones
     await M(pg,f"const p=S.people.find(x=>x.id==='{g['id']}');p.milestones=[];p.tier='Acquaintance';p.rel=50;p.trust=45;p.conflict=0;p.separatedSince=null;p.friendStatus=null")
     await C(pg,'tierTick'); await M(pg,f"S.people.find(x=>x.id==='{g['id']}').rel=80;S.people.find(x=>x.id==='{g['id']}').trust=70"); await C(pg,'tierTick')

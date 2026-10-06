@@ -24,7 +24,7 @@ async def main():
     await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.rel=40;p.trust=30;p.loveKnown=false;p.age=15;const n=S.npcs.find(x=>x.id===p.npcId);n.birthYear={yr-15}")
     line=await C(pg,'identityLine',f['id']); check('P3: card line shows age, gender and "Interested in: Unknown" before you know them well', line.startswith('15 • ') and 'Interested in: Unknown' in line, line)
     await T(pg,"openTab('people')"); txt=await pg.inner_text('#panel-host'); pr=await C(pg,'profileHtml',f['id'])
-    check('P3 (moved by 3A): the compact card shows age • gender; love interest lives in the Profile', '15 • ' in txt and 'Love interest' in pr)
+    check('P3 (format per Hotfix P1 C): the compact card shows Full Name (Age) | Relationship; love interest appears in the Profile', '(15) |' in txt and 'Love interest' in pr)
     await pg.evaluate("()=>{window.__r=Math.random;Math.random=()=>0.99}"); await C(pg,'askLoveLife',f['id']); await pg.evaluate("()=>{Math.random=window.__r}"); line=await C(pg,'identityLine',f['id']); check('P3: asking with low trust → "that\'s kind of personal" (still Unknown)', 'Unknown' in line)
     await M(pg,f"S.people.find(x=>x.id==='{f['id']}').trust=90;S.farm=null"); await pg.evaluate("()=>{window.__r=Math.random;Math.random=()=>0.01}"); await C(pg,'askLoveLife',f['id']); await pg.evaluate("()=>{Math.random=window.__r}"); line=await C(pg,'identityLine',f['id']); check('P3: asking with high trust → they tell you', 'Unknown' not in line, line)
     await M(pg,f"const p=S.people.find(x=>x.id==='{f['id']}');p.loveKnown=false;p.rel=58"); await M(pg,f"S.people.find(x=>x.id==='{f['id']}').rel=62"); await C(pg,'identityTick'); line=await C(pg,'identityLine',f['id'])
